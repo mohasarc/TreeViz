@@ -25,9 +25,9 @@ class App extends React.Component {
       <div className="App">
         <Header welcomeMsg="TREEVIZ" h="h1"/>
         <Header welcomeMsg="Choose a tree type" h="h2"/>
-        <TreeChoices/>
+        {/* <TreeChoices/>
         <TreeOperations triggerUpdate={this.update} trees={this.trees} />
-        <CanvasContainer ref={this.canvasContainerRef} trees={this.trees} ></CanvasContainer>
+        <CanvasContainer ref={this.canvasContainerRef} trees={this.trees} ></CanvasContainer> */}
         <br/>
         <footer className="blockquote-footer">
         This website was developped by <a href='https://github.com/mohasarc'>Mohammed S. Yaseen</a>
