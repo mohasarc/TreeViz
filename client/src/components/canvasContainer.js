@@ -43,7 +43,7 @@ class CanvasContainer extends React.Component{
         <Container>
             <Container className="canvasContainer h-auto d-inline-block">
                 <br/>
-                <Row xs={1} md={1} lg={12} noGutters={true}>
+                <Row xs={1} md={1} lg={2} noGutters={true}>
                     {
                         this.state.trees.map((tree, i) => {
                             this.printed = true;

@@ -14,9 +14,10 @@ class Canvas extends React.Component{
         super(props);
         this.state = {
             height : 900,
-            width : 400,
+            width : 100,
             canvasNo : props.canvasNo,
             myRef : React.createRef(),
+            containerRef: React.createRef(),
         }
         this.tree = props.tree;
         this.state.height = this.tree.getHeight();
@@ -42,22 +43,24 @@ class Canvas extends React.Component{
     }
 
     update(){
-        console.log('update called with tree', this.tree);
-        this.state.myP5.windowResized(this.state.myRef.current.offsetWidth, this.tree.getHeight());
         this.setState((prevState) => {
             return {
-                width : prevState.myRef.current.offsetWidth
+                width : prevState.containerRef.current.offsetWidth - 20
             }
         });
+        console.log('update called with tree', this.tree);
+        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
     }
 
     componentDidMount() {
         this.state.myP5 = new p5(this.Sketch, this.state.myRef.current);
+        console.log('conponent did mound', this.state.containerRef.current.offsetWidth);
         this.setState({
             height : this.tree.getHeight() + 40,
-            width : this.state.myRef.current.offsetWidth
+            width : this.state.containerRef.current.offsetWidth - 20
         });
-        this.state.myP5.windowResized(this.state.myRef.current.offsetWidth, this.tree.getHeight());
+
+        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
         // this.state.myP5.draw.bind(this);
         window.addEventListener("resize", this.update);
     }
@@ -65,7 +68,7 @@ class Canvas extends React.Component{
     render(){
         return  (
         <Container>
-            <Container className="canvas" style={{'height' : this.state.height}}>
+            <Container className="canvas" ref={this.state.containerRef} style={{'height' : this.state.height }}>
                 <Row xs={12} md={12} lg={12} noGutters={true}>
                     <Col >
                         <Canvasno no={this.state.canvasNo}></Canvasno>
