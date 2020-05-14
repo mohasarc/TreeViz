@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "gypfile": true,
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean"
   },
   "author": "Mohammed S. Yaseen",
   "license": "ISC",
@@ -13,9 +16,11 @@
     "body-parser": "^1.19.0",
     "concurrently": "^5.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.9.14"
+    "mongoose": "^5.9.14",
+    "node-addon-api": "^3.0.0"
   },
   "devDependencies": {
+    "node-gyp": "^6.1.0",
     "nodemon": "^2.0.3"
   }
 }
