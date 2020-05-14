@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import Header from './components/header';
-import TreeChoices from './components/treeChoices';
-import CanvasContainer from './components/canvasContainer'
-import TreeOperations from './components/TreeOperations'
+// import TreeChoices from './components/treeChoices';
+// import CanvasContainer from './components/canvasContainer'
+// import TreeOperations from './components/TreeOperations'
 import { unstable_batchedUpdates } from 'react-dom';
 
 class App extends React.Component {
