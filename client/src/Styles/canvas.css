@@ -1,0 +1,11 @@
+.canvas {
+    background-color: #34495e;
+    width: 100px;
+    border-radius: 10px;
+}
+
+.canvasContainer {
+    background-color: #9fafc0;
+    width: 10000px;
+    border-radius: 10px;
+}
