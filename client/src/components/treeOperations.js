@@ -28,7 +28,7 @@ class TreeOperations extends React.Component{
                 // this.state.tree.insert(this.state.reference.current.value);
                 var curTreeString;
                 this.state.trees.length >= 1 
-                ? curTreeString = this.state.trees[this.state.trees.length - 1].getTreeString() 
+                ? curTreeString = this.state.trees[this.state.trees.length - 1].getTreeString()
                 : curTreeString = '';
 
                 axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
@@ -52,7 +52,8 @@ class TreeOperations extends React.Component{
                 this.isCalled = false;
             }
         });
-
+        
+        this.isCalled = false;
         e.preventDefault();
     }
 
