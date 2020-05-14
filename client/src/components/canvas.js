@@ -17,7 +17,6 @@ class Canvas extends React.Component{
             width : 100,
             canvasNo : props.canvasNo,
             myRef : React.createRef(),
-            containerRef: React.createRef(),
         }
         this.tree = props.tree;
         this.state.height = this.tree.getHeight();
@@ -45,7 +44,7 @@ class Canvas extends React.Component{
     update(){
         this.setState((prevState) => {
             return {
-                width : prevState.containerRef.current.offsetWidth - 20
+                width : prevState.myRef.current.offsetWidth
             }
         });
         console.log('update called with tree', this.tree);
@@ -54,10 +53,10 @@ class Canvas extends React.Component{
 
     componentDidMount() {
         this.state.myP5 = new p5(this.Sketch, this.state.myRef.current);
-        console.log('conponent did mound', this.state.containerRef.current.offsetWidth);
+        console.log('conponent did mound', this.state.myRef.current.offsetWidth);
         this.setState({
             height : this.tree.getHeight() + 40,
-            width : this.state.containerRef.current.offsetWidth - 20
+            width : this.state.myRef.current.offsetWidth
         });
 
         this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
@@ -68,7 +67,7 @@ class Canvas extends React.Component{
     render(){
         return  (
         <Container>
-            <Container className="canvas" ref={this.state.containerRef} style={{'height' : this.state.height }}>
+            <Container className="canvas" style={{'height' : this.state.height }}>
                 <Row xs={12} md={12} lg={12} noGutters={true}>
                     <Col >
                         <Canvasno no={this.state.canvasNo}></Canvasno>
