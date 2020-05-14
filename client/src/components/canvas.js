@@ -60,7 +60,6 @@ class Canvas extends React.Component{
         });
 
         this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
-        // this.state.myP5.draw.bind(this);
         window.addEventListener("resize", this.update);
     }
     
