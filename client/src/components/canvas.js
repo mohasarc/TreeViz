@@ -45,7 +45,7 @@ class Canvas extends React.Component{
     update(){
         this.setState((prevState) => {
             return {
-                width : prevState.containerRef.current.offsetWidth - 70
+                width : prevState.containerRef.current.offsetWidth - 20
             }
         });
         console.log('update called with tree', this.tree);
@@ -57,7 +57,7 @@ class Canvas extends React.Component{
         console.log('conponent did mound', this.state.containerRef.current.offsetWidth);
         this.setState({
             height : this.tree.getHeight() + 40,
-            width : this.state.containerRef.current.offsetWidth - 70
+            width : this.state.containerRef.current.offsetWidth - 20
         });
 
         this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
@@ -67,8 +67,8 @@ class Canvas extends React.Component{
     
     render(){
         return  (
-        <Container ref={this.state.containerRef}>
-            <Container className="canvas" style={{'height' : this.state.height }}>
+        <Container>
+            <Container className="canvas" ref={this.state.containerRef} style={{'height' : this.state.height }}>
                 <Row xs={12} md={12} lg={12} noGutters={true}>
                     <Col >
                         <Canvasno no={this.state.canvasNo}></Canvasno>
