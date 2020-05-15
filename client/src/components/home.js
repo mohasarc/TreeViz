@@ -34,6 +34,7 @@ class Home extends React.Component{
                 <footer className="blockquote-footer">
                 This website was developped by <a href='https://github.com/mohasarc'>Mohammed S. Yaseen</a>
                 </footer>
+                <br/>
             </div>
         );
     }
