@@ -1,4 +1,9 @@
 import React from 'react'
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+import Form from 'react-bootstrap/Form'
+import FormControl from 'react-bootstrap/FormControl'
+import Button from 'react-bootstrap/Button'
 
 class Header extends React.Component{
     constructor(props){
@@ -6,13 +11,18 @@ class Header extends React.Component{
         this.welcomeMsg = props.welcomeMsg;
         this.h = props.h;
     }
+
     render(){
-        if (this.h == 'h1')
-            return <h1>{this.welcomeMsg}</h1>;
-        else if (this.h == 'h2')
-            return <h2>{this.welcomeMsg}</h2>;
-        else
-            return <p>{this.welcomeMsg}</p>
+        return (
+            <Navbar bg="dark" variant="dark">
+                <Navbar.Brand href="/">TreeViz</Navbar.Brand>
+                <Nav className="mr-auto">
+                <Nav.Link href="/">Home</Nav.Link>
+                <Nav.Link href="/about">About</Nav.Link>
+                <Nav.Link href="/how-to">How to use</Nav.Link>
+                </Nav>
+            </Navbar>
+        );
     }
 }
 

@@ -1,38 +1,30 @@
 import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import Header from './components/header';
-import TreeChoices from './components/treeChoices';
-import CanvasContainer from './components/canvasContainer'
-import TreeOperations from './components/treeOperations'
+import Home from './components/home';
+import About from './components/About';
+import HowTo from './components/HowTo';
 import { unstable_batchedUpdates } from 'react-dom';
+// import {Router, Route} from 'react-router';
+// import { createBrowserHistory } from 'history';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props){
     super(props);
-    this.canvasContainerRef = React.createRef();
-    this.trees = [];
-
-    this.update = this.update.bind(this);
   }
 
-  update(){
-    this.canvasContainerRef.current.update();
-  }
-  
   render(){
     return (
-      <div className="App">
-        <Header welcomeMsg="TREEVIZ" h="h1"/>
-        <Header welcomeMsg="Choose a tree type" h="h2"/>
-        <TreeChoices/>
-        <TreeOperations triggerUpdate={this.update} trees={this.trees} />
-        <CanvasContainer ref={this.canvasContainerRef} trees={this.trees} ></CanvasContainer>
-        <br/>
-        <footer className="blockquote-footer">
-        This website was developped by <a href='https://github.com/mohasarc'>Mohammed S. Yaseen</a>
-        </footer>
-      </div>
+      <Router>
+        <div className="App">
+          <Switch>
+            <Route path={'/about'} component={About}/>
+            <Route path={'/how-to'} component={HowTo}/>
+            <Route path={'/'} exact component={Home}/>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }
