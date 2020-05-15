@@ -27,6 +27,11 @@ class About extends React.Component{
                         and many features are yet to be implemented..
                     </p>
                     <p>
+                        Node js, Express js, and React js were used to develop this website, 
+                        in addition to using node addons api to compile and run c++ logic libraries, s.t. 
+                        the trees logic, in the backend.
+                    </p>
+                    <p>
                         latest update: 15/5/2020
                     </p>
                 </Jumbotron>

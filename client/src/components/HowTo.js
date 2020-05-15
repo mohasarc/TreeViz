@@ -38,6 +38,14 @@ class HowTo extends React.Component{
                         {'{3}   {6}   {8}'}<br/>
                        tree string : {'{5,7}({3}{6}{8})'}<br/>
                     </p>
+                    <p>
+                        Currently only 2-3 tree is implemented and it can only construct a tree from a tree string
+                        and add values to empty or non-empty tree.
+                    </p>
+                    <p>
+                        Important note: the tree string should contain a valid 2-3 tree that is if a node has one item,
+                        it can have only two children and if it has two items it must have 3 children.
+                    </p>
                     </p>
                 </Jumbotron>
                 <footer className="blockquote-footer">
