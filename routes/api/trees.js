@@ -1,6 +1,6 @@
 // const logic = require('../../build/Release/logic.node');
-const {AVLTree} = require('bindings')('addon');
-const {Tree23} = require('bindings')('addon');
+const {AVLTree} = require('../../build/Release/AVLTree.node');
+const {Tree23} = require('../../build/Release/Tree23.node');
 const session = require('express-session');
 const express = require('express');
 const router = express.Router();
