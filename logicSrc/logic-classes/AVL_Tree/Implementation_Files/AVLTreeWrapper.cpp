@@ -1,47 +1,47 @@
 // The wrapper class of tree23 class
-#include "../Header_Files/Tree23Wrapper.h"
+#include "../Header_Files/AVLTreeWrapper.h"
 
-Napi::FunctionReference Tree23Wrapper::constructor;
+Napi::FunctionReference AVLTreeWrapper::constructor;
 
-Napi::Object Tree23Wrapper::Init(Napi::Env env, Napi::Object exports){
+Napi::Object AVLTreeWrapper::Init(Napi::Env env, Napi::Object exports){
     Napi::HandleScope scope(env);
 
-    Napi::Function func = DefineClass(env, "Tree23", {
-        InstanceMethod("traverse", &Tree23Wrapper::traverse),
-        InstanceMethod("insert", &Tree23Wrapper::insert),
-        InstanceMethod("toTreeString", &Tree23Wrapper::toTreeString),
-        InstanceMethod("constructFromTreeString", &Tree23Wrapper::constructFromTreeString),
-        // InstanceMethod("search", &Tree23Wrapper::search),
-        // InstanceMethod("remove", &Tree23Wrapper::remove)
+    Napi::Function func = DefineClass(env, "AVLTree", {
+        InstanceMethod("traverse", &AVLTreeWrapper::traverse),
+        InstanceMethod("insert", &AVLTreeWrapper::insert),
+        InstanceMethod("toTreeString", &AVLTreeWrapper::toTreeString),
+        InstanceMethod("constructFromTreeString", &AVLTreeWrapper::constructFromTreeString),
+        // InstanceMethod("search", &AVLTreeWrapper::search),
+        // InstanceMethod("remove", &AVLTreeWrapper::remove)
     });
 
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
 
-    exports.Set("Tree23", func);
+    exports.Set("AVLTree", func);
     return exports;
 }
 
 // The constructor wrapper
-Tree23Wrapper::Tree23Wrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Tree23Wrapper>(info){
+AVLTreeWrapper::AVLTreeWrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<AVLTreeWrapper>(info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
     int length = info.Length();
 
-    this->the23Tree = new Tree23<int>();
+    this->theAVLTree = new AVLTree<int>();
 }
 
 // Methods' wrappers
-Napi::Value Tree23Wrapper::traverse(const Napi::CallbackInfo& info){
+Napi::Value AVLTreeWrapper::traverse(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    string output = this->the23Tree->traverse();
+    string output = this->theAVLTree->traverse();
     return Napi::String::New(info.Env(), output);
 }
 
-Napi::Value Tree23Wrapper::insert(const Napi::CallbackInfo& info){
+Napi::Value AVLTreeWrapper::insert(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
@@ -52,12 +52,12 @@ Napi::Value Tree23Wrapper::insert(const Napi::CallbackInfo& info){
 
     if (info[0].IsNumber()){
         int val = info[0].As<Napi::Number>();
-        bool result = this->the23Tree->insert(val);
+        bool result = this->theAVLTree->insert(val);
         return Napi::Boolean::New(info.Env(), result);
     } 
     // else if (info[0].IsString()){
     //     string val = info[0].As<Napi::String>();
-    //     bool result = this->the23Tree->insert(val);
+    //     bool result = this->theAVLTree->insert(val);
     //     return Napi::Boolean::New(info.Env(), result);
     // }
      else {
@@ -66,15 +66,15 @@ Napi::Value Tree23Wrapper::insert(const Napi::CallbackInfo& info){
     }
 }
 
-Napi::Value Tree23Wrapper::toTreeString(const Napi::CallbackInfo& info){
+Napi::Value AVLTreeWrapper::toTreeString(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    string output = this->the23Tree->toTreeString();
+    string output = this->theAVLTree->toTreeString();
     return Napi::String::New(info.Env(), output);
 }
 
-Napi::Value Tree23Wrapper::constructFromTreeString(const Napi::CallbackInfo& info){
+Napi::Value AVLTreeWrapper::constructFromTreeString(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
@@ -83,21 +83,21 @@ Napi::Value Tree23Wrapper::constructFromTreeString(const Napi::CallbackInfo& inf
     }
 
     Napi::String treeString = info[0].As<Napi::String>();
-    this->the23Tree->constructFromTreeString(treeString);
-    return Napi::Number::New(info.Env(), 0);
+    this->theAVLTree->constructFromTreeString(treeString);
+    return Napi::Boolean::New(info.Env(), env.Undefined());
 }
 
-// Napi::Boolean Tree23Wrapper::search(const Napi::CallbackInfo& info){
+// Napi::Boolean AVLTreeWrapper::search(const Napi::CallbackInfo& info){
 
 // }
 
-// Napi::Boolean Tree23Wrapper::remove(const Napi::CallbackInfo& info){
+// Napi::Boolean AVLTreeWrapper::remove(const Napi::CallbackInfo& info){
 
 // }
 
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
-    Tree23Wrapper::Init(env, exports);
+    AVLTreeWrapper::Init(env, exports);
     return exports;
 }
 

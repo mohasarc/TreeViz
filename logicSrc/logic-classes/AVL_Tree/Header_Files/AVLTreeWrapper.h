@@ -1,14 +1,13 @@
-#ifndef TREE_23_WRAPPER_H
-#define TREE_23_WRAPPER_H
-
-// The wrapper class for Tree23 class
+// The wrapper class for AVLTree class
+#ifndef AVL_TREE_WRAPPER_H
+#define AVL_TREE_WRAPPER_H
 #include <napi.h>
-#include "Tree23.h"
+#include "AVLTree.h"
 
-class Tree23Wrapper : public Napi::ObjectWrap<Tree23Wrapper>{
+class AVLTreeWrapper : public Napi::ObjectWrap<AVLTreeWrapper>{
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    Tree23Wrapper(const Napi::CallbackInfo& info);
+    AVLTreeWrapper(const Napi::CallbackInfo& info);
 
 private:
     static Napi::FunctionReference constructor;
@@ -19,7 +18,7 @@ private:
     // Napi::Boolean search(const Napi::CallbackInfo& info);
     // Napi::Boolean remove(const Napi::CallbackInfo& info);
 
-    Tree23<int> *the23Tree;
+    AVLTree<int>* theAVLTree;
 };
 
 #endif

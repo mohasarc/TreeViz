@@ -1,4 +1,6 @@
-const logic = require('../../build/Release/logic.node');
+// const logic = require('../../build/Release/logic.node');
+const {AVLTree} = require('bindings')('addon');
+const {Tree23} = require('bindings')('addon');
 const session = require('express-session');
 const express = require('express');
 const router = express.Router();
@@ -21,7 +23,7 @@ router.get('/getTree', (req, res) => {
 // @access public
 router.post('/sendTree', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
-    req.session.tree = new logic.Tree23();
+    req.session.tree = new Tree23();
     req.session.tree.constructFromTreeString(req.body.treeString);
 
     // Send back the tree just recieved after adding it to json formatted object
@@ -36,7 +38,7 @@ router.post('/sendTree', (req, res) => {
 // @access public
 router.post('/addValue', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
-    req.session.tree = new logic.Tree23();
+    req.session.tree = new Tree23();
     req.session.tree.constructFromTreeString(req.body.treeString);
     // insert the value into the tree
     req.session.tree.insert(parseInt( req.body.value ));
@@ -48,7 +50,5 @@ router.post('/addValue', (req, res) => {
     res.send(treeObj);
 });
 
-
-// Exporting logic
-module.exports = logic;
+// Exporting router
 module.exports = router;
