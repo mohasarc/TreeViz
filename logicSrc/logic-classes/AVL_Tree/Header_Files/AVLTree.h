@@ -3,6 +3,7 @@
 #include "TreeNode.h"
 #include <iostream>
 #include <sstream>
+#include <stack>
 using namespace std;
 
 template <class T> 
@@ -26,6 +27,7 @@ void rotateLR(TreeNode<T>* parent, TreeNode<T>* leftChild, TreeNode<T>* rightGra
 void updateHeight(TreeNode<T>* cur, int amount);
 bool isBalanced(TreeNode<T>* cur);
 void toTreeString(TreeNode<T>* root, string &output);
+void insert(TreeNode<T> *child, TreeNode<T> *parent);
 
 public:
 AVLTree();

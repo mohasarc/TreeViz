@@ -5,6 +5,7 @@
 #define _TRI_NODE
 #include <iostream>
 #include <string>
+using namespace std;
 
 template < class ItemType>
 class TreeNode
@@ -14,6 +15,7 @@ ItemType item; // Data portion
 TreeNode<ItemType>* leftChildPtr; // Left-child pointer
 TreeNode<ItemType>* rightChildPtr; // Right-child pointer
 int height;
+bool hasLeftChild;
 
 public :
 TreeNode();
@@ -28,7 +30,10 @@ void setLeftChildPtr(TreeNode<ItemType>* leftPtr);
 void setRightChildPtr(TreeNode<ItemType>* rightPtr);
 int getHeight() const ;
 void setHeight(const int h);
-
+void NodeStringParser(string nodeString, ItemType* Values, int &numValues);
+void construct(const string& nodeString );
+void TreeNode<ItemType>::setHasLeftChild(bool hasLeftChild);
+bool doeshaveLeftChild();
 }; // end TreeNode
 
 #endif

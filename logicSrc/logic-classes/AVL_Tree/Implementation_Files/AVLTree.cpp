@@ -307,8 +307,65 @@ void AVLTree<T>::toTreeString(TreeNode<T>* root, string &output){
 }
 
 template <class T>
-void AVLTree<T>::constructFromTreeString(const string treeString){
+void AVLTree<T>::insert(TreeNode<T> *child, TreeNode<T> *parent){
+    if (parent == NULL){
+        root = child;
+        return;
+    }
 
+    if (parent->getLeftChildPtr() == NULL && !parent->doeshaveLeftChild()){
+        parent->setLeftChildPtr(child);
+        parent->setHasLeftChild(true);
+    } else if (parent->getRightChildPtr() == NULL){
+        parent->setRightChildPtr(child);
+    }
+}
+
+template <class T>
+void AVLTree<T>::constructFromTreeString(const string treeString){
+    stack<TreeNode<T>*> parentsStack;
+    TreeNode<T>* tmpNode;
+    int childCount = 0;
+
+    for (int i = 0; i < treeString.length(); i++){
+        switch (treeString.at(i))
+        {
+        case '{':
+        tmpNode = new TreeNode<T>();
+        tmpNode->construct(treeString.substr(i));
+            if (root == NULL){
+                insert(tmpNode, NULL);
+            } else {
+                insert(tmpNode, parentsStack.top());
+            }
+
+            // update stack
+            parentsStack.push(tmpNode);
+            break;
+
+        case '}':
+            // if node has no children pop it from parents
+            if (treeString[i+1] != '(')
+                parentsStack.pop();
+            break;
+
+        case '(':
+            childCount = 0;
+            break;
+
+        case ',':
+            /* code */
+            break;
+
+        case ')':
+            // node has finished so pop it from parents stack
+            parentsStack.pop();
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 template <class T>
