@@ -32,7 +32,8 @@ class TreeOperations extends React.Component{
                 : curTreeString = '';
 
                 axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
-                                         treeString : curTreeString
+                                         treeString : curTreeString,
+                                         treeChoice : this.props.treeChoice
                                         }
                             ).then((response) => {
 
@@ -69,7 +70,8 @@ class TreeOperations extends React.Component{
     buildTree(e){   
         this.setState((prevState)=>{
             if (!this.isCalled){
-                axios.post('/api/trees/sendTree', {treeString : this.state.description.current.value}).then((response) => {
+                axios.post('/api/trees/sendTree', {treeString : this.state.description.current.value,
+                                                   treeChoice : this.props.treeChoice[0]}).then((response) => {
                     var treeString = response.data.treeString;
                     if (treeString){
                         var tmpTree = new GenericTree();

@@ -25,11 +25,22 @@ router.post('/sendTree', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
     req.session.tree = new Tree23();
     req.session.tree.constructFromTreeString(req.body.treeString);
+    
+    console.log('tree choice ', req.body.treeChoice);
 
+    // var atree = new AVLTree();
+    // atree.insert(2);
+    // atree.insert(4);
+    // atree.insert(6);
+    // atree.insert(1);
+    // atree.insert(8);
+    // console.log( atree.traverse() );
+    // console.log( atree.toTreeString() );
     // Send back the tree just recieved after adding it to json formatted object
     treeObj = {'id': 0, 'treeString': ''};
     treeObj.id = 0; // will be fixed later
     treeObj.treeString = req.session.tree.toTreeString();
+    // treeObj.treeString = atree.toTreeString();
     res.send(treeObj);
 });
 

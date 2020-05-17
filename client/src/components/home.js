@@ -9,16 +9,22 @@ class Home extends React.Component{
     constructor(props){
         super(props);
         this.canvasContainerRef = React.createRef();
+        this.treeChoicesRef = React.createRef();
         this.trees = [];
-    
+        this.treeChoice = [];
+        this.treeChoice[0] = '23';
         this.update = this.update.bind(this);
+        this.updateTreeChoice = this.updateTreeChoice.bind(this);
     }
 
     update(){
         this.canvasContainerRef.current.update();
     }
+
+    updateTreeChoice(){
+        this.treeChoice[0] = this.treeChoicesRef.current.treeChoice;
+    }
   
-      
     render(){
         return (
             <div>
@@ -26,8 +32,8 @@ class Home extends React.Component{
                 <Jumbotron>
                     <br/>
                     <h3>Choose a tree type</h3>
-                    <TreeChoices/>
-                    <TreeOperations triggerUpdate={this.update} trees={this.trees} />
+                    <TreeChoices triggerUpdate={this.updateTreeChoice} ref={this.treeChoicesRef}/>
+                    <TreeOperations triggerUpdate={this.update} trees={this.trees} treeChoice={this.treeChoice} />
                     <CanvasContainer ref={this.canvasContainerRef} trees={this.trees} ></CanvasContainer>
                     <br/>
                 </Jumbotron>

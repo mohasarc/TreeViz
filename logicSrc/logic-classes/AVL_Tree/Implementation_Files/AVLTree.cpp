@@ -313,7 +313,9 @@ void AVLTree<T>::constructFromTreeString(const string treeString){
 
 template <class T>
 string AVLTree<T>::toTreeString(){
-    return "{5}({2}{7})";
+    string outStr = "";
+    this->toTreeString(root, outStr);
+    return outStr;
 }
 
 template class AVLTree<int>;
