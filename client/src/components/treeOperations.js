@@ -28,7 +28,7 @@ class TreeOperations extends React.Component{
                 // this.state.tree.insert(this.state.reference.current.value);
                 var curTreeString;
                 this.state.trees.length >= 1 
-                ? curTreeString = this.state.trees[this.state.trees.length - 1].getTreeString()
+                ? curTreeString = this.state.trees[0].getTreeString()
                 : curTreeString = '';
 
                 axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
@@ -43,7 +43,7 @@ class TreeOperations extends React.Component{
                         tmpTree.construct(treeString);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
-                        this.state.trees.push(tmpTree);
+                        this.state.trees.unshift(tmpTree);
                         this.triggerUpdate();
                     }
                 });
@@ -78,7 +78,7 @@ class TreeOperations extends React.Component{
                         tmpTree.construct(treeString);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
-                        this.state.trees.push(tmpTree);
+                        this.state.trees.unshift(tmpTree);
                         this.triggerUpdate();
                     }
                 });
