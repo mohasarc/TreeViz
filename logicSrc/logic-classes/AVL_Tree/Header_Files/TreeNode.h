@@ -32,7 +32,7 @@ int getHeight() const ;
 void setHeight(const int h);
 void NodeStringParser(string nodeString, ItemType* Values, int &numValues);
 void construct(const string& nodeString );
-void TreeNode<ItemType>::setHasLeftChild(bool hasLeftChild);
+void setHasLeftChild(bool hasLeftChild);
 bool doeshaveLeftChild();
 }; // end TreeNode
 
