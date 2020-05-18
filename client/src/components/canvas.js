@@ -42,24 +42,25 @@ class Canvas extends React.Component{
     }
 
     update(){
+        console.log('update called with tree', this.tree);
+        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
         this.setState((prevState) => {
             return {
                 width : prevState.myRef.current.offsetWidth
             }
         });
-        console.log('update called with tree', this.tree);
-        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
     }
 
     componentDidMount() {
+        var newWidth = this.state.myRef.current.offsetWidth;
         this.state.myP5 = new p5(this.Sketch, this.state.myRef.current);
-        console.log('conponent did mound', this.state.myRef.current.offsetWidth);
+        console.log('conponent did mound', newWidth);
         this.setState({
             height : this.tree.getHeight() + 40,
-            width : this.state.myRef.current.offsetWidth
+            width : newWidth
         });
 
-        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
+        this.state.myP5.windowResized(newWidth, this.tree.getHeight());
         window.addEventListener("resize", this.update);
     }
     

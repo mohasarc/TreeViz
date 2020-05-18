@@ -33,7 +33,7 @@ class TreeOperations extends React.Component{
 
                 axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
                                          treeString : curTreeString,
-                                         treeChoice : this.props.treeChoice
+                                         treeChoice : this.props.treeChoice[0]
                                         }
                             ).then((response) => {
 
