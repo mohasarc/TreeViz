@@ -58,8 +58,31 @@ router.post('/sendTree', (req, res) => {
 // @access public
 router.post('/addValue', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
-    req.session.tree = new Tree23();
+    switch (req.body.treeChoice) {
+        case 'binary':
+        break;
+
+        case '23':
+            req.session.tree = new Tree23();
+            console.log("23 tree");
+        break;
+        case '234':
+        break;
+        case 'avl':
+            req.session.tree = new AVLTree();
+            console.log("avl tree");
+        break;
+        case 'redblack':
+        break;
+
+        default:
+        break;
+    }
+
+    console.log('not crashed yet');
     req.session.tree.constructFromTreeString(req.body.treeString);
+    console.log('crashed');
+    console.log('was converted');
     // insert the value into the tree
     req.session.tree.insert(parseInt( req.body.value ));
 

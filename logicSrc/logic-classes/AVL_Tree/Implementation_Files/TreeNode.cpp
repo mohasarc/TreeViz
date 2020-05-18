@@ -104,7 +104,8 @@ void TreeNode<ItemType>::construct(const string& nodeString ){
     int numValues;
     
     NodeStringParser(nodeString, values, numValues);
-    this->item = values[0];
+    if (numValues > 0)
+        this->item = values[0];
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
 }
@@ -116,6 +117,7 @@ bool TreeNode<ItemType>::doeshaveLeftChild(){
 
 template < class ItemType>
 void TreeNode<ItemType>::setHasLeftChild(bool hasLeftChild){
+    cout << "setting hasleftchild " << endl;
     this->hasLeftChild = hasLeftChild;
 }
 // instantiating needed classes 

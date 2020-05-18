@@ -308,49 +308,69 @@ void AVLTree<T>::toTreeString(TreeNode<T>* root, string &output){
 
 template <class T>
 void AVLTree<T>::insert(TreeNode<T> *child, TreeNode<T> *parent){
+    cout << "in insert method" << endl;
     if (parent == NULL){
         root = child;
         return;
     }
 
+    cout << "deciding where to insert" << endl;
     if (parent->getLeftChildPtr() == NULL && !parent->doeshaveLeftChild()){
+        cout << "adding to left child " << endl;
         parent->setLeftChildPtr(child);
+        cout << "left child was set" << endl;
         parent->setHasLeftChild(true);
+        cout << "has left was set" << endl;
     } else if (parent->getRightChildPtr() == NULL){
+        cout << "adding to right child" << endl;
         parent->setRightChildPtr(child);
     }
 }
 
 template <class T>
 void AVLTree<T>::constructFromTreeString(const string treeString){
+    cout << "in constructFromTreeString function " << endl;
     stack<TreeNode<T>*> parentsStack;
     TreeNode<T>* tmpNode;
-    int childCount = 0;
 
     for (int i = 0; i < treeString.length(); i++){
+        cout << " from for " << parentsStack.size() << "   " << treeString[i] << endl;
         switch (treeString.at(i))
         {
         case '{':
         tmpNode = new TreeNode<T>();
         tmpNode->construct(treeString.substr(i));
             if (root == NULL){
+                cout << "inserting node at root" << endl;
                 insert(tmpNode, NULL);
             } else {
+                cout << "inserting node at its parent" << endl;
+                cout << tmpNode->getItem() << endl;
+                cout << "gotten item" << endl;
+                cout << parentsStack.size() << endl;
+                cout << parentsStack.top() << endl;
+                cout << (parentsStack.top())->getItem() << endl;
                 insert(tmpNode, parentsStack.top());
+                cout << "WAS INSERTED" << endl;
             }
 
             // update stack
             parentsStack.push(tmpNode);
-            break;
+            cout << parentsStack.size() << endl;
+            cout << parentsStack.top() << endl;
+            cout << (parentsStack.top())->getItem() << endl;
+            cout << "PUSHED TO STACK" << endl;
+        break;
 
         case '}':
             // if node has no children pop it from parents
-            if (treeString[i+1] != '(')
+            if (treeString[i+1] != '('){
+                cout << "popping the stack" << endl;
                 parentsStack.pop();
+            }
             break;
 
         case '(':
-            childCount = 0;
             break;
 
         case ',':
@@ -359,6 +379,9 @@ void AVLTree<T>::constructFromTreeString(const string treeString){
 
         case ')':
             // node has finished so pop it from parents stack
+            cout << " ) ";
+            cout << parentsStack.size() << endl;
+            cout << "popping" << endl;
             parentsStack.pop();
             break;
 
@@ -366,6 +389,8 @@ void AVLTree<T>::constructFromTreeString(const string treeString){
             break;
         }
     }
+
+    cout << "finished proessing string" << endl;
 }
 
 template <class T>
