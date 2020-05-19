@@ -48,9 +48,9 @@ class TreeChoices extends React.Component{
                 <ToggleButtonGroup type="radio" className='d-none d-sm-block' name="options" defaultValue={2}>
                     <ToggleButton treeId="binary" onClick={this.updateChoice} variant="secondary" value={1}>Binary Tree</ToggleButton>
                     <ToggleButton treeId="23" onClick={this.updateChoice} variant="secondary" value={2}>2-3 Tree</ToggleButton>
-                    <ToggleButton treeId="234" onClick={this.updateChoice} variant="secondary" value={3}>2-3-4 Tree</ToggleButton>
-                    <ToggleButton treeId="avl" onClick={this.updateChoice} variant="secondary" value={4}>AVL Tree</ToggleButton>
-                    <ToggleButton treeId="redblack" onClick={this.updateChoice} variant="secondary" value={5}>Black-Red Tree</ToggleButton>
+                    <ToggleButton disabled="true" treeId="234" /*onClick={this.updateChoice}*/ variant="secondary" value={3}>2-3-4 Tree</ToggleButton>
+                    <ToggleButton disabled="true" treeId="avl" /*onClick={this.updateChoice}*/ variant="secondary" value={4}>AVL Tree</ToggleButton>
+                    <ToggleButton disabled="true" treeId="redblack" /*onClick={this.updateChoice}*/ variant="secondary" value={5}>Black-Red Tree</ToggleButton>
                 </ToggleButtonGroup>
 
                 <ToggleButtonGroup type="radio" className='d-block d-sm-none' name="options">
