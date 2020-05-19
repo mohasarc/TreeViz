@@ -4,7 +4,7 @@ template < class ItemType>
 TreeNode<ItemType>::TreeNode(){
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
-    this->hasLeftChild = false;
+    this->leftChildExists = false;
     this->height = 0;
 }
 
@@ -13,7 +13,7 @@ TreeNode<ItemType>::TreeNode( const ItemType& anItem){
     this->item = anItem;
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
-    this->hasLeftChild = false;
+    this->leftChildExists = false;
     this->height = 0;
 }
 
@@ -23,7 +23,7 @@ TreeNode<ItemType>::TreeNode( const ItemType& anItem, TreeNode<ItemType>* leftPt
     item = anItem;
     leftChildPtr = leftPtr;
     rightChildPtr = rightPtr;
-    this->hasLeftChild = false;
+    this->leftChildExists = false;
     height = 0;
 }
 
@@ -99,27 +99,32 @@ void TreeNode<ItemType>::NodeStringParser(string nodeString, ItemType* Values, i
 }
 
 template < class ItemType>
-void TreeNode<ItemType>::construct(const string& nodeString ){
+bool TreeNode<ItemType>::construct(const string& nodeString ){ 
     ItemType values[1];
     int numValues;
     
     NodeStringParser(nodeString, values, numValues);
-    if (numValues > 0)
+    if (numValues > 0){
         this->item = values[0];
+        return true;
+    } else 
+        return false;
+        
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
 }
 
-template < class ItemType>
-bool TreeNode<ItemType>::doeshaveLeftChild(){
-    return this->hasLeftChild;
+template <class ItemType >
+void TreeNode< ItemType>::leftChildExistance(bool leftChildExists){
+    this->leftChildExists = leftChildExists;
 }
 
-template < class ItemType>
-void TreeNode<ItemType>::setHasLeftChild(bool hasLeftChild){
-    cout << "setting hasleftchild " << endl;
-    this->hasLeftChild = hasLeftChild;
+template <class  ItemType>
+bool TreeNode< ItemType>::doesLeftChildExist(){
+    return this->leftChildExists;
 }
+
+
 // instantiating needed classes 
 // not to get a linking time error (undefined reference to)
 // read more : https://bytefreaks.net/programming-2/c/c-undefined-reference-to-templated-class-function

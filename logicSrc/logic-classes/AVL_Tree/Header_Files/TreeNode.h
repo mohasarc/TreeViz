@@ -15,7 +15,7 @@ ItemType item; // Data portion
 TreeNode<ItemType>* leftChildPtr; // Left-child pointer
 TreeNode<ItemType>* rightChildPtr; // Right-child pointer
 int height;
-bool hasLeftChild;
+bool leftChildExists;
 
 public :
 TreeNode();
@@ -31,9 +31,9 @@ void setRightChildPtr(TreeNode<ItemType>* rightPtr);
 int getHeight() const ;
 void setHeight(const int h);
 void NodeStringParser(string nodeString, ItemType* Values, int &numValues);
-void construct(const string& nodeString );
-void setHasLeftChild(bool hasLeftChild);
-bool doeshaveLeftChild();
+bool construct(const string& nodeString );
+void leftChildExistance(bool leftChildExists);
+bool doesLeftChildExist();
 }; // end TreeNode
 
 #endif

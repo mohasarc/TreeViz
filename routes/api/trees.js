@@ -1,6 +1,7 @@
 // const logic = require('../../build/Release/logic.node');
 const {AVLTree} = require('../../build/Release/AVLTree.node');
 const {Tree23} = require('../../build/Release/Tree23.node');
+const {BSTree} = require('../../build/Release/BSTree.node');
 const session = require('express-session');
 const express = require('express');
 const router = express.Router();
@@ -25,6 +26,9 @@ router.post('/sendTree', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
     switch (req.body.treeChoice) {
         case 'binary':
+            req.session.tree = new BSTree();
+            req.session.tree.constructFromTreeString(req.body.treeString);
+            console.log('in binary tree');
         break;
 
         case '23':
@@ -60,6 +64,8 @@ router.post('/addValue', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
     switch (req.body.treeChoice) {
         case 'binary':
+            req.session.tree = new BSTree();
+            console.log('in binary tree');
         break;
 
         case '23':
@@ -90,6 +96,7 @@ router.post('/addValue', (req, res) => {
     treeObj = {'id': 0, 'treeString': ''};
     treeObj.id = 0; // will be fixed later
     treeObj.treeString = req.session.tree.toTreeString();
+    console.log('ther tree string', treeObj.treeString);
     res.send(treeObj);
 });
 

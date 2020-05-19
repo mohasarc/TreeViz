@@ -1,5 +1,5 @@
-#ifndef _TREE_23
-#define _TREE_23
+#ifndef _TREE_AVL
+#define _TREE_AVL
 #include "TreeNode.h"
 #include <iostream>
 #include <sstream>
