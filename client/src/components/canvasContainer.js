@@ -121,7 +121,7 @@ class CanvasContainer extends React.Component{
                             if ( this.state.lowerBound <= i && i < this.state.upperBound)
                                 return (
                                     <Col>
-                                        <Canvas key={this.state.trees.length - i} ref={this.state.children[i]} tree={tree} canvasNo={this.state.trees.length - i}/>
+                                        <Canvas key={this.state.trees.length - i} ref={this.state.children[i]} tree={tree} canvasNo={this.state.trees.length - i} treeType={tree.getTreeType()}/>
                                         <br/>
                                     </Col>
                                 );

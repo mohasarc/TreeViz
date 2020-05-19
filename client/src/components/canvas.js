@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Canvasno from './canvasno'
+import Badge from 'react-bootstrap/Badge'
 import p5 from 'p5'
 
 /**
@@ -16,6 +17,7 @@ class Canvas extends React.Component{
             height : 900,
             width : 100,
             canvasNo : props.canvasNo,
+            treeType : props.treeType,
             myRef : React.createRef(),
         }
         this.tree = props.tree;
@@ -68,8 +70,13 @@ class Canvas extends React.Component{
         return  (
         <Container>
             <Container className="canvas" style={{'height' : this.state.height }}>
-                <Row xs={12} md={12} lg={12} noGutters={true}>
-                    <Col >
+                <Row xs={3} md={3} lg={3} noGutters={true}>
+                    <Col>
+                        <Badge variant="warning">
+                            {this.state.treeType}
+                        </Badge>
+                    </Col>
+                    <Col>
                         <Canvasno no={this.state.canvasNo}></Canvasno>
                     </Col>
                 </Row>

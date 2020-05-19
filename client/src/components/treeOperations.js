@@ -43,6 +43,7 @@ class TreeOperations extends React.Component{
                         tmpTree.construct(treeString);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
+                        tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         this.state.trees.unshift(tmpTree);
                         this.triggerUpdate();
                     }
@@ -78,6 +79,7 @@ class TreeOperations extends React.Component{
                         tmpTree.construct(treeString);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
+                        tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         this.state.trees.unshift(tmpTree);
                         this.triggerUpdate();
                     }
@@ -90,6 +92,29 @@ class TreeOperations extends React.Component{
         });
 
         e.preventDefault();
+    }
+
+    typeIdToTreeTypeName(id){
+        switch (id) {
+            case 'binary':
+                return 'Binary Tree';
+            break;
+            case '23':
+                return '2-3 Tree';
+            break;
+            case '234':
+                return '2-3-4 Tree';
+            break;
+            case 'avl':
+                return 'AVL Tree';
+            break;
+            case 'redblack':
+                return 'Red-Black Tree';
+            break;
+
+            default:
+            break;
+        }
     }
 
     render(){

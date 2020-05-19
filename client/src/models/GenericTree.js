@@ -577,6 +577,21 @@ class GenericTree{
             }
         }
     }
+
+    /**
+     * 
+     * @param {The type of the tree} treeType 
+     */
+    setTreeType(treeType){
+        this.treeType = treeType;
+    }
+
+    /**
+     * 
+     */
+    getTreeType(){
+        return this.treeType;
+    }
 }
 
 export default GenericTree;
