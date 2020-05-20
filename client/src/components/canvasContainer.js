@@ -65,34 +65,6 @@ class CanvasContainer extends React.Component{
             }
         });
     }
-
-    // generateCanvases(){
-    //     this.setState(()=>{
-            
-    //     })
-    //     // reversin the trees
-    //     var treesRev = [];
-    //     for (let i = this.state.trees.length - 1; i >= 0;i--){
-    //         treesRev.push(this.state.trees[i]);
-    //         // console.log(treesRev[i - this.state.trees.length])
-    //     }
-
-    //     console.log(treesRev);
-
-    //     return (
-    //             treesRev.map((tree, i) => {
-    //             this.printed = true;
-    //             console.log('creating canvas for tree', i, tree);
-
-    //             return (
-    //                 <Col>
-    //                     <Canvas ref={this.state.children[i]} tree={tree} canvasNo={i + 1}/>
-    //                     <br/>
-    //                 </Col>
-    //             );
-    //         })
-    //     );
-    // }
     
     render(){
         return  (

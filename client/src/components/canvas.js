@@ -23,6 +23,9 @@ class Canvas extends React.Component{
         this.tree = props.tree;
         this.state.height = this.tree.getHeight();
         this.update = this.update.bind(this);
+        this.dragged = this.dragged.bind(this);
+        this.pressed = this.pressed.bind(this);
+        this.released = this.released.bind(this);
     }
 
     // P5
@@ -65,6 +68,26 @@ class Canvas extends React.Component{
         this.state.myP5.windowResized(newWidth, this.tree.getHeight());
         window.addEventListener("resize", this.update);
     }
+
+    pressed(e){
+        this.mousePressed = true;
+        this.initialX = e.clientX;
+        this.initialY = e.clientY;
+    }
+
+    released(e){
+        this.mousePressed = false;
+    }
+
+    dragged(e){
+        if (this.mousePressed){
+            this.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+            // update initial values
+            this.initialX = e.clientX;
+            this.initialY = e.clientY;
+        }
+        // console.log('mouse not pressed but moving', e.clientX, e.clientY);
+    }
     
     render(){
         return  (
@@ -82,7 +105,7 @@ class Canvas extends React.Component{
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
                     <Col>
-                        <div ref={this.state.myRef} />
+                        <div onMouseDown={this.pressed} onMouseMove={this.dragged} onMouseUp={this.released} ref={this.state.myRef} />
                     </Col>
                 </Row>
             </Container>

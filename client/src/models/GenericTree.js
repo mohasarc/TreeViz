@@ -592,6 +592,15 @@ class GenericTree{
     getTreeType(){
         return this.treeType;
     }
+
+    moveTree(xAmount, yAmount){
+        for (let i = 0; i < this.treeMatrix.length; i++){
+            for (let j = 0; j < this.treeMatrix[i].length; j++){
+                this.treeMatrix[i][j].setX(this.treeMatrix[i][j].getX() + xAmount * 0.2);
+                this.treeMatrix[i][j].setY(this.treeMatrix[i][j].getY() + yAmount * 0.2);
+            }
+        }
+    }
 }
 
 export default GenericTree;
