@@ -30,9 +30,9 @@ router.post('/sendTree', (req, res) => {
     // construct the tree
     console.log('not crashed yet');
     console.log(req.body);
-    if (req.body.treeStrings){
-        req.session.treeBinary.constructFromTreeString(req.body.treeStrings['binary']);
-        req.session.tree23.constructFromTreeString(req.body.treeStrings['23']);
+    if (req.body.treeString){
+        req.session.treeBinary.constructFromTreeString(req.body.treeString);
+        req.session.tree23.constructFromTreeString(req.body.treeString);
     } else {
         req.session.treeBinary.constructFromTreeString('');
         req.session.tree23.constructFromTreeString('');

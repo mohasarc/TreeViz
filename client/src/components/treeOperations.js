@@ -83,14 +83,24 @@ class TreeOperations extends React.Component{
             if (!this.isCalled){
                 axios.post('/api/trees/sendTree', {treeString : this.state.description.current.value,
                                                    treeChoice : this.props.treeChoice[0]}).then((response) => {
-                    var treeString = response.data.treeString;
-                    if (treeString){
+                    // Processing data came from backend
+                    var treeStrings = response.data.treeStrings;
+                    if (treeStrings){
+                        // add the tree strings into the treeStr array
+                        this.state.treesStrs.push(treeStrings);
+                        // pop a tree from trees
+                        // if (this.state.trees.length > 1)
+                        //     this.state.trees.pop();
+
+                        // add the tree read into the trees array
                         var tmpTree = new GenericTree();
-                        tmpTree.construct(treeString);
+                        tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
+                        tmpTree.setId(this.state.treesStrs.length);
                         this.state.trees.unshift(tmpTree);
+
                         this.triggerUpdate();
                     }
                 });
