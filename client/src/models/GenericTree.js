@@ -32,7 +32,8 @@ class GenericTree{
     construct(treeString){      
         var treeStack = [];
         var parentsStack = [];
-
+        // clear the previous tree
+        this.root = null;
         this.treeString = treeString;
 
         treeString.split('').map((char, i) => {
@@ -132,7 +133,7 @@ class GenericTree{
             var spacebefore = ' ';
             for (let i = 0; i < curLevel; i++)
                 spacebefore += '\t';
-            console.log(spacebefore, node.getValue());
+            // console.log(spacebefore, node.getValue());
 
             for (let i = 0; i < node.getChildren().length; i++){
                 this.traverseRec(node.getChildren()[i], p, curLevel + 1);
@@ -600,6 +601,14 @@ class GenericTree{
                 this.treeMatrix[i][j].setY(this.treeMatrix[i][j].getY() + yAmount * 0.2);
             }
         }
+    }
+
+    setId(id){
+        this.id = id;
+    }
+
+    getId(){
+        return this.id;
     }
 }
 

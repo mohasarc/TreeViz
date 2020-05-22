@@ -5,7 +5,7 @@ class Canvasno extends React.Component{
     constructor(props){
         super(props);
         this.no = props.no;
-        console.log(this.no);
+        // console.log(this.no);
     }
 
     render(){

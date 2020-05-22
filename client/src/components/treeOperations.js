@@ -12,6 +12,7 @@ class TreeOperations extends React.Component{
         super(props);
         this.state = {
             trees : props.trees,
+            treesStrs : props.treesStrs,
             reference : React.createRef(),
             description : React.createRef()
         }
@@ -20,31 +21,40 @@ class TreeOperations extends React.Component{
         this.addToArray = this.addToArray.bind(this);
         this.removeFromArray = this.removeFromArray.bind(this);
         this.buildTree = this.buildTree.bind(this);
+        this.counter = 0;
     }
 
     addToArray(e){
         this.setState(state => {
             if (!this.isCalled){
                 // this.state.tree.insert(this.state.reference.current.value);
-                var curTreeString;
-                this.state.trees.length >= 1 
-                ? curTreeString = this.state.trees[0].getTreeString()
-                : curTreeString = '';
+                var curTreeStrings;
+                this.state.treesStrs.length >= 1 
+                ? curTreeStrings = this.state.treesStrs[this.state.treesStrs.length-1]
+                : curTreeStrings = '';
 
                 axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
-                                         treeString : curTreeString,
-                                         treeChoice : this.props.treeChoice[0]
+                                         treeStrings : curTreeStrings
                                         }
                             ).then((response) => {
+                    // Processing data came from backend
+                    var treeStrings = response.data.treeStrings;
+                    if (treeStrings){
+                        // add the tree strings into the treeStr array
+                        this.state.treesStrs.push(treeStrings);
+                        // pop a tree from trees
+                        // if (this.state.trees.length > 1)
+                        //     this.state.trees.pop();
 
-                    var treeString = response.data.treeString;
-                    if (treeString){
+                        // add the tree read into the trees array
                         var tmpTree = new GenericTree();
-                        tmpTree.construct(treeString);
+                        tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
                         tmpTree.buildTreeMatrixCaller();
                         tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
+                        tmpTree.setId(this.state.treesStrs.length);
                         this.state.trees.unshift(tmpTree);
+
                         this.triggerUpdate();
                     }
                 });
@@ -63,7 +73,7 @@ class TreeOperations extends React.Component{
         e.preventDefault();
 
         this.setState(state => {
-            console.log('remove called', this.state.reference.current.value);
+            // console.log('remove called', this.state.reference.current.value);
             // return {};
         })
     }

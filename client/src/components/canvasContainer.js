@@ -15,10 +15,12 @@ class CanvasContainer extends React.Component{
             upperBound : 2,
             lowerBound : 0,
         }
+        this.isCalled = false;
         this.printed = false;
         this.update = this.update.bind(this);
         this.increaseBounds = this.increaseBounds.bind(this);
         this.decreaseBounds = this.decreaseBounds.bind(this);
+        this.popTree = this.popTree.bind(this);
     }
 
     createReferences(num){
@@ -65,6 +67,20 @@ class CanvasContainer extends React.Component{
             }
         });
     }
+
+    popTree(){
+        // console.log('pop tree called');
+            this.setState(prevState=>{
+                if (!this.isCalled){
+                    prevState.trees.shift();
+                    this.isCalled = true;
+                } else {
+                    this.isCalled = false;
+                    return ({trees: prevState.trees});
+                }
+            });
+
+    }
     
     render(){
         return  (
@@ -89,11 +105,13 @@ class CanvasContainer extends React.Component{
                         // this.generateCanvases()
                         this.state.trees.map((tree, i) => {
                             this.printed = true;
-                            console.log('creating canvas for tree', i, tree);
+                            // console.log('creating canvas for tree', i, tree);
                             if ( this.state.lowerBound <= i && i < this.state.upperBound)
                                 return (
                                     <Col>
-                                        <Canvas key={this.state.trees.length - i} ref={this.state.children[i]} tree={tree} canvasNo={this.state.trees.length - i} treeType={tree.getTreeType()}/>
+                                        <Canvas topTree={i==0?true:false} popTree={this.popTree} 
+                                                key={tree.getId()} ref={this.state.children[i]} 
+                                                tree={tree} canvasNo={tree.getId()} treeType={tree.getTreeType()}/>
                                         <br/>
                                     </Col>
                                 );

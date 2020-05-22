@@ -11,6 +11,7 @@ class Home extends React.Component{
         this.canvasContainerRef = React.createRef();
         this.treeChoicesRef = React.createRef();
         this.trees = [];
+        this.treesStrs = [];
         this.treeChoice = [];
         this.treeChoice[0] = '23';
         this.update = this.update.bind(this);
@@ -19,6 +20,8 @@ class Home extends React.Component{
 
     update(){
         this.canvasContainerRef.current.update();
+        // console.log('all data stored so far **********');
+        // console.log(this.trees, this.treesStrs);
     }
 
     updateTreeChoice(){
@@ -33,8 +36,8 @@ class Home extends React.Component{
                     <br/>
                     <h3>Choose a tree type</h3>
                     <TreeChoices triggerUpdate={this.updateTreeChoice} ref={this.treeChoicesRef}/>
-                    <TreeOperations triggerUpdate={this.update} trees={this.trees} treeChoice={this.treeChoice} />
-                    <CanvasContainer ref={this.canvasContainerRef} trees={this.trees} ></CanvasContainer>
+                    <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} trees={this.trees} treeChoice={this.treeChoice} />
+                    <CanvasContainer ref={this.canvasContainerRef} treesStrs={this.treesStrs} trees={this.trees} ></CanvasContainer>
                     <br/>
                 </Jumbotron>
                 <footer className="blockquote-footer">

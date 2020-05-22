@@ -20,13 +20,17 @@ class Canvas extends React.Component{
             canvasNo : props.canvasNo,
             treeType : props.treeType,
             myRef : React.createRef(),
+            tree : props.tree,
+            myP5 : null,
+
         }
-        this.tree = props.tree;
-        this.state.height = this.tree.getHeight();
+        this.state.height = this.state.tree.getHeight();
         this.update = this.update.bind(this);
         this.dragged = this.dragged.bind(this);
         this.pressed = this.pressed.bind(this);
         this.released = this.released.bind(this);
+        this.popTree = this.popTree.bind(this);
+        this.popTreeEnable = true;
     }
 
     // P5
@@ -37,19 +41,19 @@ class Canvas extends React.Component{
    
         p.draw = () => {
             p.background('#34495e');
-            this.tree.draw(p, this.state.width);
+            this.state.tree.draw(p, this.state.width);
         }
 
         p.windowResized = (width, height) => {
-            this.tree.resize(width);
-            p.resizeCanvas(width, height, false);
+            this.state.tree.resize(width);
+            p.resizeCanvas(width, height);
             p.redraw();
         }
     }
 
     update(){
-        console.log('update called with tree', this.tree);
-        this.state.myP5.windowResized(this.state.width, this.tree.getHeight());
+        // console.log('update called with tree', this.state.tree);
+        this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
         this.setState((prevState) => {
             return {
                 width : prevState.myRef.current.offsetWidth
@@ -60,13 +64,13 @@ class Canvas extends React.Component{
     componentDidMount() {
         var newWidth = this.state.myRef.current.offsetWidth;
         this.state.myP5 = new p5(this.Sketch, this.state.myRef.current);
-        console.log('conponent did mound', newWidth);
+        // console.log('conponent did mound', newWidth);
         this.setState({
-            height : this.tree.getHeight() + 40,
+            height : this.state.tree.getHeight() + 40,
             width : newWidth
         });
 
-        this.state.myP5.windowResized(newWidth, this.tree.getHeight());
+        this.state.myP5.windowResized(newWidth, this.state.tree.getHeight());
         window.addEventListener("resize", this.update);
     }
 
@@ -75,7 +79,7 @@ class Canvas extends React.Component{
         if (e.touches){
             this.initialX = e.touches[0].clientX;
             this.initialY = e.touches[0].clientY;
-            console.log('touch event');
+            // console.log('touch event');
         } else {
             this.initialX = e.clientX;
             this.initialY = e.clientY;
@@ -92,17 +96,33 @@ class Canvas extends React.Component{
             
             // update initial values
             if (e.touches){
-                this.tree.moveTree(e.changedTouches[0].clientX - this.initialX, e.changedTouches[0].clientY - this.initialY);
+                this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, e.changedTouches[0].clientY - this.initialY);
                 this.initialX = e.touches[0].clientX;
                 this.initialY = e.touches[0].clientY;
-                console.log('touch event');
+                // console.log('touch event');
             } else {
-                this.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+                this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
                 this.initialX = e.clientX;
                 this.initialY = e.clientY;
             }
         }
         // console.log('mouse not pressed but moving', e.clientX, e.clientY);
+    }
+
+    popTree(e){
+        if (this.props.topTree){
+            this.props.popTree();
+        } else {
+            this.popTreeEnable = false;
+        }
+
+        e.preventDefault();
+    }
+
+    copyTreeString(e){
+        for(let i = 0; i < 600; i++)
+            console.log('hiii');
+        e.preventDefault();
     }
     
     render(){
@@ -111,7 +131,12 @@ class Canvas extends React.Component{
             <Container className='canvas' style={{'height' : this.state.height }}>
                 <Row xs={12} md={12} lg={12} noGutters={true} className='justify-content-xs-left'>
                     <Col xs={1} md={1} lg={1}>
-                        <a  href="#" className='badge badge-warning' style={{'border-radius' : '100%', 'background-color':'white'}}>X</a>
+                        {
+                            this.props.topTree?(
+                                <a  href="#" onClick={this.popTree} className='badge badge-warning' style={{'border-radius' : '100%', 'background-color':'white'}}>X</a>
+                            ):<div/>
+                        }
+                        
                     </Col>
                     <Col xs={4} md={4} lg={4}>
                         <div className='float-left'>
@@ -123,10 +148,14 @@ class Canvas extends React.Component{
                     <Col xs={2} md={2} lg={2}>
                         <Canvasno no={this.state.canvasNo}></Canvasno>
                     </Col>
-                    <Col xs={5} md={5} lg={5}></Col>
+                    <Col xs={5} md={5} lg={5}>
+                        <div className='float-right'>
+                            <a  href="#" onClick={this.copyTreeString} className='badge badge-secondary'>Copy tree string</a>
+                        </div>
+                    </Col>
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
-                    <Col>
+                    <Col key={this.state.tree.getId()}>
                         <div onTouchStart={this.pressed} onMouseDown={this.pressed} 
                              onTouchMove={this.dragged} onMouseMove={this.dragged} 
                              onTouchEnd={this.released} onMouseUp={this.released} ref={this.state.myRef} />
