@@ -24,36 +24,26 @@ router.get('/getTree', (req, res) => {
 // @access public
 router.post('/sendTree', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
-    switch (req.body.treeChoice) {
-        case 'binary':
-            req.session.tree = new BSTree();
-            req.session.tree.constructFromTreeString(req.body.treeString);
-            console.log('in binary tree');
-        break;
+    req.session.treeBinary = new BSTree();
+    req.session.tree23 = new Tree23();
 
-        case '23':
-            req.session.tree = new Tree23();
-            req.session.tree.constructFromTreeString(req.body.treeString);
-            console.log("23 tree");
-        break;
-        case '234':
-        break;
-        case 'avl':
-            req.session.tree = new AVLTree();
-            req.session.tree.constructFromTreeString(req.body.treeString);
-            console.log("avl tree");
-        break;
-        case 'redblack':
-        break;
-
-        default:
-        break;
+    // construct the tree
+    console.log('not crashed yet');
+    console.log(req.body);
+    if (req.body.treeStrings){
+        req.session.treeBinary.constructFromTreeString(req.body.treeStrings['binary']);
+        req.session.tree23.constructFromTreeString(req.body.treeStrings['23']);
+    } else {
+        req.session.treeBinary.constructFromTreeString('');
+        req.session.tree23.constructFromTreeString('');
     }
 
     // Send back the tree just recieved after adding it to json formatted object
-    treeObj = {'id': 0, 'treeString': ''};
+    treeObj = {'id': 0, 'treeStrings': {}};
     treeObj.id = 0; // will be fixed later
-    treeObj.treeString = req.session.tree.toTreeString();
+    treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
+    treeObj.treeStrings['binary'] = req.session.treeBinary.toTreeString();
+
     res.send(treeObj);
 });
 
