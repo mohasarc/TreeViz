@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Canvasno from './canvasno'
 import Badge from 'react-bootstrap/Badge'
+import Button from 'react-bootstrap/Button'
 import p5 from 'p5'
 
 /**
@@ -71,8 +72,15 @@ class Canvas extends React.Component{
 
     pressed(e){
         this.mousePressed = true;
-        this.initialX = e.clientX;
-        this.initialY = e.clientY;
+        if (e.touches){
+            this.initialX = e.touches[0].clientX;
+            this.initialY = e.touches[0].clientY;
+            console.log('touch event');
+        } else {
+            this.initialX = e.clientX;
+            this.initialY = e.clientY;
+        }
+
     }
 
     released(e){
@@ -81,10 +89,18 @@ class Canvas extends React.Component{
 
     dragged(e){
         if (this.mousePressed){
-            this.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+            
             // update initial values
-            this.initialX = e.clientX;
-            this.initialY = e.clientY;
+            if (e.touches){
+                this.tree.moveTree(e.changedTouches[0].clientX - this.initialX, e.changedTouches[0].clientY - this.initialY);
+                this.initialX = e.touches[0].clientX;
+                this.initialY = e.touches[0].clientY;
+                console.log('touch event');
+            } else {
+                this.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+                this.initialX = e.clientX;
+                this.initialY = e.clientY;
+            }
         }
         // console.log('mouse not pressed but moving', e.clientX, e.clientY);
     }
@@ -92,20 +108,28 @@ class Canvas extends React.Component{
     render(){
         return  (
         <Container>
-            <Container className="canvas" style={{'height' : this.state.height }}>
-                <Row xs={3} md={3} lg={3} noGutters={true}>
-                    <Col>
-                        <Badge variant="warning">
-                            {this.state.treeType}
-                        </Badge>
+            <Container className='canvas' style={{'height' : this.state.height }}>
+                <Row xs={12} md={12} lg={12} noGutters={true} className='justify-content-xs-left'>
+                    <Col xs={1} md={1} lg={1}>
+                        <a  href="#" className='badge badge-warning' style={{'border-radius' : '100%', 'background-color':'white'}}>X</a>
                     </Col>
-                    <Col>
+                    <Col xs={4} md={4} lg={4}>
+                        <div className='float-left'>
+                            <Badge variant='warning'>
+                                {this.state.treeType}
+                            </Badge>
+                        </div>
+                    </Col>
+                    <Col xs={2} md={2} lg={2}>
                         <Canvasno no={this.state.canvasNo}></Canvasno>
                     </Col>
+                    <Col xs={5} md={5} lg={5}></Col>
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
                     <Col>
-                        <div onMouseDown={this.pressed} onMouseMove={this.dragged} onMouseUp={this.released} ref={this.state.myRef} />
+                        <div onTouchStart={this.pressed} onMouseDown={this.pressed} 
+                             onTouchMove={this.dragged} onMouseMove={this.dragged} 
+                             onTouchEnd={this.released} onMouseUp={this.released} ref={this.state.myRef} />
                     </Col>
                 </Row>
             </Container>
