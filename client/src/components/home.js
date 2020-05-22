@@ -8,6 +8,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron'
 class Home extends React.Component{
     constructor(props){
         super(props);
+        this.TreeOperationsRef = React.createRef();
         this.canvasContainerRef = React.createRef();
         this.treeChoicesRef = React.createRef();
         this.trees = [];
@@ -16,6 +17,7 @@ class Home extends React.Component{
         this.treeChoice[0] = '23';
         this.update = this.update.bind(this);
         this.updateTreeChoice = this.updateTreeChoice.bind(this);
+        this.updateTreeOperations = this.updateTreeOperations.bind(this);
     }
 
     update(){
@@ -27,6 +29,10 @@ class Home extends React.Component{
     updateTreeChoice(){
         this.treeChoice[0] = this.treeChoicesRef.current.treeChoice;
     }
+
+    updateTreeOperations(treeDescription){
+        this.TreeOperationsRef.current.setTreeDescription(treeDescription);
+    }
   
     render(){
         return (
@@ -36,8 +42,12 @@ class Home extends React.Component{
                     <br/>
                     <h3>Choose a tree type</h3>
                     <TreeChoices triggerUpdate={this.updateTreeChoice} ref={this.treeChoicesRef}/>
-                    <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} trees={this.trees} treeChoice={this.treeChoice} />
-                    <CanvasContainer ref={this.canvasContainerRef} treesStrs={this.treesStrs} trees={this.trees} ></CanvasContainer>
+                    <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} 
+                                    trees={this.trees} treeChoice={this.treeChoice} 
+                                    ref={this.TreeOperationsRef}/>
+                    <CanvasContainer updateTreeOperations={this.updateTreeOperations} 
+                                     ref={this.canvasContainerRef} treesStrs={this.treesStrs} 
+                                     trees={this.trees} ></CanvasContainer>
                     <br/>
                 </Jumbotron>
                 <footer className="blockquote-footer">

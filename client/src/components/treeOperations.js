@@ -137,6 +137,10 @@ class TreeOperations extends React.Component{
         }
     }
 
+    setTreeDescription(description){
+        this.state.description.current.value = description;
+    }
+
     render(){
         return (
             <Container>

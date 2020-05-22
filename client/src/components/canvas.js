@@ -22,6 +22,7 @@ class Canvas extends React.Component{
             myRef : React.createRef(),
             tree : props.tree,
             myP5 : null,
+            updateTreeOperations : props.updateTreeOperations,
 
         }
         this.state.height = this.state.tree.getHeight();
@@ -30,6 +31,7 @@ class Canvas extends React.Component{
         this.pressed = this.pressed.bind(this);
         this.released = this.released.bind(this);
         this.popTree = this.popTree.bind(this);
+        this.copyTreeString = this.copyTreeString.bind(this);
         this.popTreeEnable = true;
     }
 
@@ -120,8 +122,7 @@ class Canvas extends React.Component{
     }
 
     copyTreeString(e){
-        for(let i = 0; i < 600; i++)
-            console.log('hiii');
+        this.state.updateTreeOperations(this.state.tree.getTreeString());
         e.preventDefault();
     }
     

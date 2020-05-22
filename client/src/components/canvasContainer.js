@@ -11,6 +11,7 @@ class CanvasContainer extends React.Component{
         super(props);
         this.state = {
             trees : props.trees,
+            treesStrs: props.treesStrs,
             children : this.createReferences(props.trees.length),
             upperBound : 2,
             lowerBound : 0,
@@ -72,6 +73,7 @@ class CanvasContainer extends React.Component{
         // console.log('pop tree called');
             this.setState(prevState=>{
                 if (!this.isCalled){
+                    prevState.treesStrs.pop()
                     prevState.trees.shift();
                     this.isCalled = true;
                 } else {
@@ -111,7 +113,8 @@ class CanvasContainer extends React.Component{
                                     <Col>
                                         <Canvas topTree={i==0?true:false} popTree={this.popTree} 
                                                 key={tree.getId()} ref={this.state.children[i]} 
-                                                tree={tree} canvasNo={tree.getId()} treeType={tree.getTreeType()}/>
+                                                tree={tree} canvasNo={tree.getId()} treeType={tree.getTreeType()}
+                                                updateTreeOperations={this.props.updateTreeOperations}/>
                                         <br/>
                                     </Col>
                                 );
