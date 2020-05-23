@@ -79,5 +79,39 @@ router.post('/addValue', (req, res) => {
     res.send(treeObj);
 });
 
+// @route  POST api/trees/buildRandomTree
+// @desc   Creates a random tree
+// @access public
+router.post('/buildRandomTree', (req, res) => {
+    // get values from request
+    var minRange = req.body.range.min;
+    var maxRange = req.body.range.max;
+    var numNodes = req.body.numNodes;
+
+    // Creating a new tree object & initializing it from tree string recieved
+    req.session.treeBinary = new BSTree();
+    req.session.tree23 = new Tree23();
+
+    // construct the tree
+    req.session.treeBinary.constructFromTreeString('');
+    req.session.tree23.constructFromTreeString('');
+
+    // insert random values into the trees
+    for (let i = 0; i < numNodes; i++){
+        let randomValue = Math.round((Math.random() * maxRange) - minRange);
+        req.session.treeBinary.insert(parseInt( randomValue));
+        req.session.tree23.insert(parseInt( randomValue ));
+    }
+
+
+    // Send back the tree just recieved after adding it to json formatted object
+    treeObj = {'id': 0, 'treeStrings': {}};
+    treeObj.id = 0; // will be fixed later
+    treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
+    treeObj.treeStrings['binary'] = req.session.treeBinary.toTreeString();
+
+    res.send(treeObj);
+});
+
 // Exporting router
 module.exports = router;

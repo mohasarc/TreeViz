@@ -151,7 +151,7 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={5} md={5} lg={5}>
                         <div className='float-right'>
-                            <a  href="#" onClick={this.copyTreeString} className='badge badge-secondary'>Copy tree string</a>
+                            <a  href="#" onClick={this.copyTreeString} className='badge badge-secondary'>USE</a>
                         </div>
                     </Col>
                 </Row>
