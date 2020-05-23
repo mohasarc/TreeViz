@@ -28,6 +28,11 @@ class TreeOperations extends React.Component{
         this.buildTree = this.buildTree.bind(this);
         this.buildRandonTree = this.buildRandonTree.bind(this);
         this.counter = 0;
+        this.defaultValues = {
+            min : 5,
+            max : 99,
+            numNodes : 15,
+        }
     }
 
     addToArray(e){
@@ -226,12 +231,14 @@ class TreeOperations extends React.Component{
                             ref={this.state.rangeMin}
                             placeholder="min"
                             aria-label="min"
+                            value={this.defaultValues.min}
                             aria-describedby="basic-addon2"
                             />
                             <FormControl
                             ref={this.state.rangeMax}
                             placeholder="max"
                             aria-label="max"
+                            value={this.defaultValues.max}
                             aria-describedby="basic-addon2"
                             />
                         </InputGroup>
@@ -243,6 +250,7 @@ class TreeOperations extends React.Component{
                             ref={this.state.numNodes}
                             placeholder="number of nodes"
                             aria-label="number of nodes"
+                            value={this.defaultValues.numNodes}
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>
