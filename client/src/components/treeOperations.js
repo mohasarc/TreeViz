@@ -236,6 +236,9 @@ class TreeOperations extends React.Component{
                             />
                         </InputGroup>
                         <InputGroup className="mb-3" size='sm'>
+                            <InputGroup.Prepend>
+                                <InputGroup.Text>Nodes count</InputGroup.Text>
+                            </InputGroup.Prepend>
                             <FormControl
                             ref={this.state.numNodes}
                             placeholder="number of nodes"
