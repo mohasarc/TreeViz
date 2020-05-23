@@ -20,6 +20,11 @@ class TreeOperations extends React.Component{
             rangeMin : React.createRef(),
             rangeMax : React.createRef(),
             numNodes : React.createRef(),
+            defaultValues : {
+                min : 5,
+                max : 99,
+                numNodes : 15,
+            }
         }
         this.triggerUpdate = props.triggerUpdate;
         this.isCalled = false;
@@ -27,12 +32,10 @@ class TreeOperations extends React.Component{
         this.removeFromArray = this.removeFromArray.bind(this);
         this.buildTree = this.buildTree.bind(this);
         this.buildRandonTree = this.buildRandonTree.bind(this);
+        this.minChanged = this.minChanged.bind(this);
+        this.maxChanged = this.maxChanged.bind(this);
+        this.numNodesChanged = this.numNodesChanged.bind(this);
         this.counter = 0;
-        this.defaultValues = {
-            min : 5,
-            max : 99,
-            numNodes : 15,
-        }
     }
 
     addToArray(e){
@@ -193,6 +196,32 @@ class TreeOperations extends React.Component{
         this.state.description.current.value = description;
     }
 
+    
+    maxChanged(value){
+        this.setState({
+            defaultValues : {
+                max : value
+            }
+        });
+    }
+
+    minChanged(value){
+        this.setState({
+            defaultValues : {
+                min : value
+            }
+        });
+    }
+
+    numNodesChanged(value){
+        this.setState({
+            defaultValues : {
+                numNodes : value
+            }
+        });
+    }
+    
+
     render(){
         return (
             <Container>
@@ -231,14 +260,16 @@ class TreeOperations extends React.Component{
                             ref={this.state.rangeMin}
                             placeholder="min"
                             aria-label="min"
-                            value={this.defaultValues.min}
+                            value={this.state.defaultValues.min}
+                            onChange={e=>this.minChanged(e.target.value)}
                             aria-describedby="basic-addon2"
                             />
                             <FormControl
                             ref={this.state.rangeMax}
                             placeholder="max"
                             aria-label="max"
-                            value={this.defaultValues.max}
+                            value={this.state.defaultValues.max}
+                            onChange={e=>this.maxChanged(e.target.value)}
                             aria-describedby="basic-addon2"
                             />
                         </InputGroup>
@@ -250,7 +281,8 @@ class TreeOperations extends React.Component{
                             ref={this.state.numNodes}
                             placeholder="number of nodes"
                             aria-label="number of nodes"
-                            value={this.defaultValues.numNodes}
+                            value={this.state.defaultValues.numNodes}
+                            onChange={e=>this.numNodesChanged(e.target.value)}
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>

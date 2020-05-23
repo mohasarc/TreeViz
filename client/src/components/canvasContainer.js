@@ -88,7 +88,6 @@ class CanvasContainer extends React.Component{
                     return ({trees: prevState.trees});
                 }
             });
-
     }
     
     render(){

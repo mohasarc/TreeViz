@@ -167,10 +167,12 @@ class GenericNode {
     updateWidth(){
         var contentCount = 0;
         this.values.map(val=>{
-            contentCount++;
+            var valStr = val.toString(10);
+            console.log(val, valStr, valStr.length);
+            contentCount += valStr.length;
         });
-
-        this.width = this.BaseWidth * contentCount;
+        var newWidth = this.BaseWidth * contentCount / 2;
+        this.width = newWidth >= 25 ? newWidth : 25;
     }
 
     /**
