@@ -84,9 +84,9 @@ router.post('/addValue', (req, res) => {
 // @access public
 router.post('/buildRandomTree', (req, res) => {
     // get values from request
-    var minRange = req.body.range.min;
-    var maxRange = req.body.range.max;
-    var numNodes = req.body.numNodes;
+    var minRange = parseInt(req.body.range.min);
+    var maxRange = parseInt(req.body.range.max);
+    var numNodes = parseInt(req.body.numNodes);
 
     // Creating a new tree object & initializing it from tree string recieved
     req.session.treeBinary = new BSTree();
@@ -96,9 +96,12 @@ router.post('/buildRandomTree', (req, res) => {
     req.session.treeBinary.constructFromTreeString('');
     req.session.tree23.constructFromTreeString('');
 
+    console.log('min', minRange);
+    console.log('max', maxRange);
+    console.log('numNodes', numNodes);
     // insert random values into the trees
     for (let i = 0; i < numNodes; i++){
-        let randomValue = Math.round((Math.random() * maxRange) + minRange);
+        let randomValue = Math.random() * (maxRange - minRange) + minRange;
         req.session.treeBinary.insert(parseInt( randomValue));
         req.session.tree23.insert(parseInt( randomValue ));
     }
