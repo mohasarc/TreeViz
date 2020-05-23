@@ -246,7 +246,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>
-                                <Button size='sm' variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
+                                <Button variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
                             </InputGroup.Prepend>
                         </InputGroup>
                     </Col>
