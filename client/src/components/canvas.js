@@ -81,7 +81,6 @@ class Canvas extends React.Component{
         if (e.touches){
             this.initialX = e.touches[0].clientX;
             this.initialY = e.touches[0].clientY;
-            // console.log('touch event');
         } else {
             this.initialX = e.clientX;
             this.initialY = e.clientY;
@@ -95,20 +94,18 @@ class Canvas extends React.Component{
 
     dragged(e){
         if (this.mousePressed){
-            
             // update initial values
             if (e.touches){
-                this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, e.changedTouches[0].clientY - this.initialY);
+                this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, 
+                                         e.changedTouches[0].clientY - this.initialY);
                 this.initialX = e.touches[0].clientX;
                 this.initialY = e.touches[0].clientY;
-                // console.log('touch event');
             } else {
                 this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
                 this.initialX = e.clientX;
                 this.initialY = e.clientY;
             }
         }
-        // console.log('mouse not pressed but moving', e.clientX, e.clientY);
     }
 
     popTree(e){
@@ -125,7 +122,7 @@ class Canvas extends React.Component{
         this.state.updateTreeOperations(this.state.tree.getTreeString());
         e.preventDefault();
     }
-    
+
     render(){
         return  (
         <Container>
@@ -133,11 +130,14 @@ class Canvas extends React.Component{
                 <Row xs={12} md={12} lg={12} noGutters={true} className='justify-content-xs-left'>
                     <Col xs={1} md={1} lg={1}>
                         {
-                            this.props.topTree?(
-                                <a  href="#" onClick={this.popTree} className='badge badge-warning' style={{'border-radius' : '100%', 'background-color':'white'}}>X</a>
-                            ):<div/>
+                            this.props.topTree
+                            ?<a  href="#" onClick={this.popTree} 
+                                className='badge badge-warning' 
+                                style={{'border-radius' : '100%', 'background-color':'white'}}>
+                                X
+                            </a>
+                            :<div/>
                         }
-                        
                     </Col>
                     <Col xs={4} md={4} lg={4}>
                         <div className='float-left'>
@@ -147,11 +147,14 @@ class Canvas extends React.Component{
                         </div>
                     </Col>
                     <Col xs={2} md={2} lg={2}>
-                        <Canvasno no={this.state.canvasNo}></Canvasno>
+                        <Canvasno no={this.state.canvasNo}/>
                     </Col>
                     <Col xs={5} md={5} lg={5}>
                         <div className='float-right'>
-                            <a  href="#" onClick={this.copyTreeString} className='badge badge-secondary'>USE</a>
+                            <a  href="#" onClick={this.copyTreeString} 
+                                className='badge badge-secondary'>
+                                USE
+                            </a>
                         </div>
                     </Col>
                 </Row>
@@ -159,7 +162,9 @@ class Canvas extends React.Component{
                     <Col key={this.state.tree.getId()}>
                         <div onTouchStart={this.pressed} onMouseDown={this.pressed} 
                              onTouchMove={this.dragged} onMouseMove={this.dragged} 
-                             onTouchEnd={this.released} onMouseUp={this.released} ref={this.state.myRef} />
+                             onTouchEnd={this.released} onMouseUp={this.released} 
+                             ref={this.state.myRef} 
+                        />
                     </Col>
                 </Row>
             </Container>

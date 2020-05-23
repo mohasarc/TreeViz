@@ -171,7 +171,7 @@ class GenericNode {
             console.log(val, valStr, valStr.length);
             contentCount += valStr.length;
         });
-        var newWidth = this.BaseWidth * contentCount / 2;
+        var newWidth = 20 * contentCount / 2;
         this.width = newWidth >= 25 ? newWidth : 25;
     }
 
@@ -184,20 +184,24 @@ class GenericNode {
             return;
 
         // Draw circles
+        p.rectMode(p.CENTER)
         p.fill(255);
-        p.ellipse(this.x, this.y, this.width, 25);
+        p.rect(this.x, this.y, this.width, 25, 20);
 
-        // The values
-        p.fill(0);
-        var drawAt = this.getLeftBound() + 6;
+        // Draw the node's text
+        // create the text
+        var valuesStr = ''
         this.values.map((val, i) => {
-            if (i < this.values.length - 1)
-                p.text(val + ', ', drawAt, this.y + 5);
-            else
-                p.text(val , drawAt, this.y + 5);
-
-            drawAt += (val+'                 ').length;
+            valuesStr += val.toString(10);
+            this.values.length - 1 > i ? valuesStr += ', ' : valuesStr += '';
         });
+        // Identify the location
+        var nodeCenterX = this.getLeftBound()+this.width/2;
+        var nodeCenterY = this.y + 5;
+        // Draw it
+        p.fill(0);
+        p.textAlign(p.CENTER);
+        p.text(valuesStr, nodeCenterX, nodeCenterY);
     }
 
     /**
