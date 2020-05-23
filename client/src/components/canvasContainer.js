@@ -5,6 +5,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Canvas from './canvas'
 import Button from 'react-bootstrap/Button'
+import backArrowSvg from '../resources/back.svg'
+import nextArrowSvg from '../resources/next.svg'
 
 class CanvasContainer extends React.Component{
     constructor(props){
@@ -47,7 +49,7 @@ class CanvasContainer extends React.Component{
         });
     }
 
-    increaseBounds(){
+    increaseBounds(e){
         this.setState((prevState)=>{
             if (prevState.upperBound < prevState.trees.length){
                 return ({
@@ -56,9 +58,11 @@ class CanvasContainer extends React.Component{
                 });
             }
         });
+
+        e.preventDefault(); // to pevent the default behavior (refreshing the page)
     }
 
-    decreaseBounds(){
+    decreaseBounds(e){
         this.setState((prevState)=>{
             if (prevState.lowerBound > 0){
                 return ({
@@ -67,6 +71,8 @@ class CanvasContainer extends React.Component{
                 });
             }
         });
+
+        e.preventDefault(); // to pevent the default behavior (refreshing the page)
     }
 
     popTree(){
@@ -91,14 +97,14 @@ class CanvasContainer extends React.Component{
                 <br/>
                 <Row>
                     <Col>
-                        <Button onClick={this.decreaseBounds} variant="outline-warning"style={{'border-radius' : '100%', 'background-color':'white'}}>
-                            {"<"}
-                        </Button>
+                        <a href='#'  onClick={this.decreaseBounds}>
+                            <img src={backArrowSvg} alt='right arrow'/>
+                        </a>
                     </Col>
                     <Col>
-                        <Button onClick={this.increaseBounds} variant="outline-warning"style={{'border-radius' : '100%', 'background-color':'white'}}>
-                            >
-                        </Button>
+                        <a href='#'  onClick={this.increaseBounds}>
+                            <img src={nextArrowSvg} alt='right arrow'/>
+                        </a>
                     </Col>
                 </Row>
                 <br/>
