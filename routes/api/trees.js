@@ -96,9 +96,6 @@ router.post('/buildRandomTree', (req, res) => {
     req.session.treeBinary.constructFromTreeString('');
     req.session.tree23.constructFromTreeString('');
 
-    console.log('min', minRange);
-    console.log('max', maxRange);
-    console.log('numNodes', numNodes);
     // insert random values into the trees
     for (let i = 0; i < numNodes; i++){
         let randomValue = Math.random() * (maxRange - minRange) + minRange;
