@@ -213,7 +213,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Append>
-                            <Button variant="outline-secondary" onClick={this.buildTree}>Go</Button>
+                                <Button variant="outline-secondary" onClick={this.buildTree}>Go</Button>
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>
@@ -245,7 +245,9 @@ class TreeOperations extends React.Component{
                             aria-label="number of nodes"
                             aria-describedby="basic-addon2"
                             />
-                            <Button size='sm' variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
+                            <InputGroup.Prepend>
+                                <Button size='sm' variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
+                            </InputGroup.Prepend>
                         </InputGroup>
                     </Col>
                 </Row>
