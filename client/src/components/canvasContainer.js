@@ -1,5 +1,6 @@
 import React from 'react'
 import '../Styles/canvas.css'
+import '../Styles/buttons.css'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -97,13 +98,13 @@ class CanvasContainer extends React.Component{
                 <br/>
                 <Row>
                     <Col>
-                        <a href='#'  onClick={this.decreaseBounds}>
-                            <img src={backArrowSvg} alt='right arrow'/>
+                        <a href='#'   onClick={this.decreaseBounds}>
+                            <span className='icon icon-back' ></span>
                         </a>
                     </Col>
                     <Col>
                         <a href='#'  onClick={this.increaseBounds}>
-                            <img src={nextArrowSvg} alt='right arrow'/>
+                            <span className='icon icon-next' ></span>
                         </a>
                     </Col>
                 </Row>

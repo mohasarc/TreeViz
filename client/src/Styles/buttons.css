@@ -1,0 +1,25 @@
+.icon{
+display: inline-block;
+width: 40px;
+height: 40px;
+background-size: cover;
+transition: 0.3s;
+}
+
+.icon-next{
+    background-image: url(../resources/next.svg);
+}
+
+.icon-next:hover, 
+.icon-next:focus {
+    background-image: url(../resources/next-hover.svg);
+}
+
+.icon-back{
+    background-image: url(../resources/back.svg);
+}
+
+.icon-back:hover, 
+.icon-back:focus {
+    background-image: url(../resources/back-hover.svg);
+}
