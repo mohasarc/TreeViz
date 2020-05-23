@@ -192,7 +192,7 @@ class TreeOperations extends React.Component{
         return (
             <Container>
                 <Row xs={12} md={12} lg={12}>
-                    <Col xs={6} md={6} lg={6}>
+                    <Col xs={12} md={6} lg={6}>
                         <InputGroup className="mb-3">
                             <FormControl
                             ref={this.state.reference}
@@ -217,7 +217,7 @@ class TreeOperations extends React.Component{
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>
-                    <Col xs={6} md={6} lg={6}>
+                    <Col xs={12} md={6} lg={6}>
                         <InputGroup className="mb-3" size='sm' style={{'margin-top':'0.5em'}}>
                             <InputGroup.Prepend>
                                 <InputGroup.Text>Values range</InputGroup.Text>
