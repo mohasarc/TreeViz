@@ -66,7 +66,11 @@ class CanvasContainer extends React.Component{
     }
 
     update(e){
-        this.setState({trees : this.props.trees});
+        this.setState({
+            fullScreenTreeIndex : 0,
+            leftTreeIndex : 0,
+            rightTreeIndex : 1,
+            trees : this.props.trees});
     }
 
     viewOlderTrees(e){

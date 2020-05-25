@@ -37,24 +37,6 @@ class Canvas extends React.Component{
         this.popTreeEnable = true;
     }
 
-    // P5
-    // Sketch = (p) => {
-    //     p.setup = () => {
-    //         p.createCanvas(this.state.width, this.state.height - 40);
-    //     }
-   
-    //     p.draw = () => {
-    //         p.background('#34495e');
-    //         this.state.tree.draw(p, this.state.width);
-    //     }
-
-    //     p.windowResized = (width, height) => {
-    //         this.state.tree.resize(width);
-    //         p.resizeCanvas(width, height);
-    //         p.redraw();
-    //     }
-    // }
-
     update(){
         // console.log('update called with tree', this.state.tree);
         this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
@@ -71,11 +53,6 @@ class Canvas extends React.Component{
         this.state.myP5.width = this.state.width;
         this.state.myP5.height = this.state.height;
         this.state.myP5.tree = this.state.tree;
-        // document.getElementById("treeCanvas").parent();
-        // this.state.myP5 = new p5(this.Sketch, 'treeCanvas');
-        // this.state.myP5 = this.props.p5;
-        // this.state.myP5.clear();
-        // console.log('conponent did mound', newWidth);
         this.setState({
             height : this.state.tree.getHeight() + 40,
             width : newWidth
