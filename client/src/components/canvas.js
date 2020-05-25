@@ -19,12 +19,14 @@ class Canvas extends React.Component{
             width : 100,
             canvasNo : props.canvasNo,
             treeType : props.treeType,
-            myRef : React.createRef(),
+            canvasRef : React.createRef(),
             tree : props.tree,
             myP5 : null,
             updateTreeOperations : props.updateTreeOperations,
 
         }
+        this.node = props.theNode;
+        this.state.myP5 = this.props.p5;
         this.state.height = this.state.tree.getHeight();
         this.update = this.update.bind(this);
         this.dragged = this.dragged.bind(this);
@@ -36,36 +38,43 @@ class Canvas extends React.Component{
     }
 
     // P5
-    Sketch = (p) => {
-        p.setup = () => {
-            p.createCanvas(this.state.width, this.state.height - 40);
-        }
+    // Sketch = (p) => {
+    //     p.setup = () => {
+    //         p.createCanvas(this.state.width, this.state.height - 40);
+    //     }
    
-        p.draw = () => {
-            p.background('#34495e');
-            this.state.tree.draw(p, this.state.width);
-        }
+    //     p.draw = () => {
+    //         p.background('#34495e');
+    //         this.state.tree.draw(p, this.state.width);
+    //     }
 
-        p.windowResized = (width, height) => {
-            this.state.tree.resize(width);
-            p.resizeCanvas(width, height);
-            p.redraw();
-        }
-    }
+    //     p.windowResized = (width, height) => {
+    //         this.state.tree.resize(width);
+    //         p.resizeCanvas(width, height);
+    //         p.redraw();
+    //     }
+    // }
 
     update(){
         // console.log('update called with tree', this.state.tree);
         this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
         this.setState((prevState) => {
             return {
-                width : prevState.myRef.current.offsetWidth
+                width : prevState.canvasRef.current.offsetWidth
             }
         });
     }
 
     componentDidMount() {
-        var newWidth = this.state.myRef.current.offsetWidth;
-        this.state.myP5 = new p5(this.Sketch, this.state.myRef.current);
+        window.document.getElementById(this.state.canvasNo).appendChild(this.node);
+        var newWidth = this.state.canvasRef.current.offsetWidth;
+        this.state.myP5.width = this.state.width;
+        this.state.myP5.height = this.state.height;
+        this.state.myP5.tree = this.state.tree;
+        // document.getElementById("treeCanvas").parent();
+        // this.state.myP5 = new p5(this.Sketch, 'treeCanvas');
+        // this.state.myP5 = this.props.p5;
+        // this.state.myP5.clear();
         // console.log('conponent did mound', newWidth);
         this.setState({
             height : this.state.tree.getHeight() + 40,
@@ -85,7 +94,6 @@ class Canvas extends React.Component{
             this.initialX = e.clientX;
             this.initialY = e.clientY;
         }
-
     }
 
     released(e){
@@ -159,11 +167,11 @@ class Canvas extends React.Component{
                     </Col>
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
-                    <Col key={this.state.tree.getId()}>
-                        <div onTouchStart={this.pressed} onMouseDown={this.pressed} 
+                    <Col>
+                        <div id={this.state.canvasNo} onTouchStart={this.pressed} onMouseDown={this.pressed} 
                              onTouchMove={this.dragged} onMouseMove={this.dragged} 
                              onTouchEnd={this.released} onMouseUp={this.released} 
-                             ref={this.state.myRef} 
+                             ref={this.state.canvasRef} 
                         />
                     </Col>
                 </Row>
