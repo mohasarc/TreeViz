@@ -321,6 +321,8 @@ class GenericTree{
      */
     buildTreeMatrixCaller(){
         // console.log('callig with root', this.root);
+        // reinitialize treeMatrix
+        this.treeMatrix = [];
         this.buildTreeMatrix(this.root, 0);
     }
 
@@ -609,6 +611,21 @@ class GenericTree{
 
     getId(){
         return this.id;
+    }
+
+    center(width){
+        this.buildTreeMatrixCaller();
+        this.organizeTreeMatrix();
+        this.resize(width);
+
+        // set the y for root
+        var Ydistance = 0;
+        for (let i = 0; i < this.treeMatrix.length; i++){
+            Ydistance += 40;
+            for (let j = 0; j < this.treeMatrix[i].length; j++){
+                this.treeMatrix[i][j].setY(Ydistance);
+            }
+        }
     }
 }
 

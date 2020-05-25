@@ -34,11 +34,13 @@ class Canvas extends React.Component{
         this.released = this.released.bind(this);
         this.popTree = this.popTree.bind(this);
         this.copyTreeString = this.copyTreeString.bind(this);
+        this.treeToCenter = this.treeToCenter.bind(this);
         this.popTreeEnable = true;
     }
 
     update(){
         // console.log('update called with tree', this.state.tree);
+        console.log('update called');
         this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
         this.setState((prevState) => {
             return {
@@ -108,6 +110,13 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
+    treeToCenter(e){
+        this.setState(prevState=>{
+            prevState.tree.center(prevState.width);
+        });
+        e.preventDefault();
+    }
+
     render(){
         return  (
         <Container>
@@ -117,8 +126,8 @@ class Canvas extends React.Component{
                         {
                             this.props.topTree
                             ?<a  href="#" onClick={this.popTree} 
-                                className='badge badge-warning' 
-                                style={{'border-radius' : '100%', 'background-color':'white'}}>
+                                className='badge badge-light' 
+                                style={{'border-radius' : '100%'}}>
                                 X
                             </a>
                             :<div/>
@@ -136,6 +145,10 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={5} md={5} lg={5}>
                         <div className='float-right'>
+                            <a href='#' className='badge badge-light'  onClick={this.treeToCenter}
+                               style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
+                                <div className='center' >.</div>
+                            </a>
                             <a  href="#" onClick={this.copyTreeString} 
                                 className='badge badge-secondary'>
                                 USE

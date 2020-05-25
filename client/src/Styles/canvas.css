@@ -7,3 +7,12 @@
     background-color: #9fafc0;
     border-radius: 10px;
 }
+
+.center{
+    /* display: inline-block; */
+    width: 12px;
+    height: 12px;
+    background-size: cover;
+    transition: 0.3s;
+    background-image: url(../resources/target.svg);
+}
