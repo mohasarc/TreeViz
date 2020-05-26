@@ -640,7 +640,6 @@ class GenericTree{
     }
 
     shapeTree(curNode, level, properties){
-        console.log('properties ', properties);
         // Go through the left children if they exist
         var leftChildren = curNode.getLeftChildren();
         if (leftChildren)
@@ -652,16 +651,13 @@ class GenericTree{
         // Visit the middle child
         var middleChild = curNode.getMiddleChild();
         var leftBoundBeforeMid = properties.spaceLeftBound;
-        console.log('bound before mid', leftBoundBeforeMid);
         if (middleChild)
             this.shapeTree(middleChild, level + 1, properties)
         else // only update the space left bound
             properties.spaceLeftBound = properties.spaceLeftBound + this.NODE_SEPARATION + curNode.getWidth();
 
         var leftBoundAfterMid = properties.spaceLeftBound;
-        console.log('bound after mid', leftBoundAfterMid);
         var width = leftBoundAfterMid - leftBoundBeforeMid;
-        console.log('width', width);
 
         // calculate X-value for current node using width from
         // max(currentNodeWidth, middleSubTreeWidth)
@@ -670,7 +666,6 @@ class GenericTree{
         // IF NOT VISITED BEFORE
         // Assign X-value for current node and mark as visited
         // Assign X-value for middle child node and mark as visited
-        console.log('visited mark', this.visitedMark);
         if (curNode.isVisited() != this.visitedMark){
             curNode.setX(xValue);
             curNode.setY(level*40);
