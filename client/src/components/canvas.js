@@ -64,6 +64,7 @@ class Canvas extends React.Component{
 
         this.state.myP5.windowResized(newWidth, this.state.tree.getHeight());
         window.addEventListener("resize", this.update);
+        window.addEventListener("orientationchange", ()=>{setTimeout(this.update, 20)}, false);
     }
 
     pressed(e){
