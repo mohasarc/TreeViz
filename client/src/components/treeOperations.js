@@ -63,8 +63,8 @@ class TreeOperations extends React.Component{
                         // add the tree read into the trees array
                         var tmpTree = new GenericTree();
                         tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        tmpTree.buildTreeMatrixCaller();
-                        tmpTree.organizeTreeMatrix();
+                        // tmpTree.buildTreeMatrixCaller();
+                        // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
                         this.state.trees.unshift(tmpTree);
@@ -109,8 +109,8 @@ class TreeOperations extends React.Component{
                         // add the tree read into the trees array
                         var tmpTree = new GenericTree();
                         tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        tmpTree.buildTreeMatrixCaller();
-                        tmpTree.organizeTreeMatrix();
+                        // tmpTree.buildTreeMatrixCaller();
+                        // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
                         this.state.trees.unshift(tmpTree);
@@ -149,8 +149,8 @@ class TreeOperations extends React.Component{
                         // add the tree read into the trees array
                         var tmpTree = new GenericTree();
                         tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        tmpTree.buildTreeMatrixCaller();
-                        tmpTree.organizeTreeMatrix();
+                        // tmpTree.buildTreeMatrixCaller();
+                        // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
                         this.state.trees.unshift(tmpTree);
