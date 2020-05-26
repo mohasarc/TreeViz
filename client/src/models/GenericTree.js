@@ -16,6 +16,9 @@ class GenericTree{
         this.treeString = '';
         // for testing
         this.printed = false;
+        this.spaceLeftBound = 0;
+        this.NODE_SEPARATION = 3;
+        this.visitedMark = true;
     }
 
     /**
@@ -614,18 +617,83 @@ class GenericTree{
     }
 
     center(width){
-        this.buildTreeMatrixCaller();
-        this.organizeTreeMatrix();
-        this.resize(width);
+        // this.buildTreeMatrixCaller();
+        // this.organizeTreeMatrix();
+        // this.resize(width);
 
-        // set the y for root
-        var Ydistance = 0;
-        for (let i = 0; i < this.treeMatrix.length; i++){
-            Ydistance += 40;
-            for (let j = 0; j < this.treeMatrix[i].length; j++){
-                this.treeMatrix[i][j].setY(Ydistance);
-            }
+        // // set the y for root
+        // var Ydistance = 0;
+        // for (let i = 0; i < this.treeMatrix.length; i++){
+        //     Ydistance += 40;
+        //     for (let j = 0; j < this.treeMatrix[i].length; j++){
+        //         this.treeMatrix[i][j].setY(Ydistance);
+        //     }
+        // }
+        var properties = {
+            spaceLeftBound : 0
+        };
+        this.shapeTree(this.root, 1, properties);
+        this.visitedMark = !this.visitedMark;
+        var xShamt = width/2 - this.root.getX();
+        var yShamt = 40 - this.root.getY();
+        this.centerTree(this.root, xShamt, yShamt);
+    }
+
+    shapeTree(curNode, level, properties){
+        console.log('properties ', properties);
+        // Go through the left children if they exist
+        var leftChildren = curNode.getLeftChildren();
+        if (leftChildren)
+            leftChildren.map(child=>{
+                this.shapeTree(child, level + 1, properties);
+            });
+
+
+        // Visit the middle child
+        var middleChild = curNode.getMiddleChild();
+        var leftBoundBeforeMid = properties.spaceLeftBound;
+        console.log('bound before mid', leftBoundBeforeMid);
+        if (middleChild)
+            this.shapeTree(middleChild, level + 1, properties)
+        else // only update the space left bound
+            properties.spaceLeftBound = properties.spaceLeftBound + this.NODE_SEPARATION + curNode.getWidth();
+
+        var leftBoundAfterMid = properties.spaceLeftBound;
+        console.log('bound after mid', leftBoundAfterMid);
+        var width = leftBoundAfterMid - leftBoundBeforeMid;
+        console.log('width', width);
+
+        // calculate X-value for current node using width from
+        // max(currentNodeWidth, middleSubTreeWidth)
+        var xValue =leftBoundBeforeMid + this.NODE_SEPARATION + width/2;
+
+        // IF NOT VISITED BEFORE
+        // Assign X-value for current node and mark as visited
+        // Assign X-value for middle child node and mark as visited
+        console.log('visited mark', this.visitedMark);
+        if (curNode.isVisited() != this.visitedMark){
+            curNode.setX(xValue);
+            curNode.setY(level*40);
+            curNode.visited(true);
         }
+
+        // Go through the right children if they exist
+        var rightChildren = curNode.getRightChildren();
+        if (rightChildren)
+            rightChildren.map(child=>{
+                this.shapeTree(child, level + 1, properties);
+            });
+    }
+
+    centerTree(curNode, xShamt, yShamt){
+        // shift self
+        curNode.setX(curNode.getX() + xShamt);
+        curNode.setY(curNode.getY() + yShamt);
+
+        // visit all children and shift
+        curNode.getChildren().map(child=>{
+            this.centerTree(child, xShamt, yShamt);
+        });
     }
 }
 

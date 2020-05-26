@@ -15,6 +15,7 @@ class GenericNode {
         this.y = y;
         this.width = 25; // The base width (for 1 digit item)
         this.BaseWidth = 25; // Constant (Read ONLY)
+        this.nodeVisited = false;   // Not visited initially
         this.updateWidth();
     }
 
@@ -225,6 +226,50 @@ class GenericNode {
      */
     isEmpty(){
         return this.values.length == 0;
+    }
+
+    visited(nodeVisited){
+        this.nodeVisited = nodeVisited;
+    }
+
+    isVisited(){
+        return this.nodeVisited;
+    }
+
+    getWidth(){
+        this.updateWidth();
+        return this.width;
+    }
+
+    getLeftChildren(){
+        if(this.children.length == 1)
+            return null;
+
+        let startingIndex = 0;
+        let endingIndex = Math.floor((1/2)*this.children.length);
+
+        return this.children.slice(startingIndex, endingIndex);
+    }
+
+    getMiddleChild(){
+        if (this.children.length % 2 == 0)
+            return null;
+
+        if (this.children.length == 1)
+            return this.children[0];
+
+        let middleIndex = Math.floor((1/2)*this.children.length);
+        return this.children[middleIndex];
+    }
+
+    getRightChildren(){
+        if(this.children.length == 1)
+            return null;
+
+        let startingIndex = Math.ceil((1/2)*this.children.length);
+        let endingIndex = this.children.length;
+        
+        return this.children.slice(startingIndex, endingIndex);
     }
 }
 

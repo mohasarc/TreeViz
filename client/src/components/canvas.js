@@ -36,6 +36,7 @@ class Canvas extends React.Component{
         this.copyTreeString = this.copyTreeString.bind(this);
         this.treeToCenter = this.treeToCenter.bind(this);
         this.popTreeEnable = true;
+        this.isCalled = false;
     }
 
     update(){
@@ -112,7 +113,12 @@ class Canvas extends React.Component{
 
     treeToCenter(e){
         this.setState(prevState=>{
-            prevState.tree.center(prevState.width);
+            if (!this.isCalled){
+                prevState.tree.center(prevState.width);
+                this.isCalled = true;
+            } else {
+                this.isCalled = false;
+            }
         });
         e.preventDefault();
     }
