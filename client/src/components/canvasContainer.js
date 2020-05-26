@@ -164,8 +164,10 @@ class CanvasContainer extends React.Component{
                 <br/>
                 <Row>
                     <Col>
-                        <a href='#'   onClick={this.viewNewerTrees}>
-                            <span className='icon icon-back' ></span>
+                        <a  href='#' className='badge badge-warning' 
+                            style={{'border-radius' : '100%'}} 
+                            onClick={this.viewNewerTrees}>
+                                <div className='icon icon-back' ></div>
                         </a>
                     </Col>
                     <Col className='d-none d-sm-block'> {/* Block from view on smalland medium devices*/}
@@ -175,8 +177,10 @@ class CanvasContainer extends React.Component{
                         />
                     </Col>
                     <Col>
-                        <a href='#'  onClick={this.viewOlderTrees}>
-                            <span className='icon icon-next' ></span>
+                        <a  href='#' className='badge badge-warning' 
+                            style={{'border-radius' : '100%'}} 
+                            onClick={this.viewOlderTrees}>
+                                <div className='icon icon-next' ></div>
                         </a>
                     </Col>
                 </Row>
