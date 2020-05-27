@@ -53,6 +53,7 @@ class CanvasContainer extends React.Component{
    
         p.draw = () => {
             p.background('#34495e');
+            // p.scale(5);
             if (p.tree){
                 p.tree.draw(p, p.width);
             }
