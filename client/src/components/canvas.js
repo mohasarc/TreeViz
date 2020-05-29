@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col'
 import Canvasno from './canvasno'
 import Badge from 'react-bootstrap/Badge'
 import Button from 'react-bootstrap/Button'
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Slider from '@material-ui/core/Slider';
 import p5 from 'p5'
 
 /**
@@ -35,6 +37,7 @@ class Canvas extends React.Component{
         this.popTree = this.popTree.bind(this);
         this.copyTreeString = this.copyTreeString.bind(this);
         this.treeToCenter = this.treeToCenter.bind(this);
+        this.handleZoom = this.handleZoom.bind(this);
         this.popTreeEnable = true;
         this.isCalled = false;
     }
@@ -125,6 +128,16 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
+    handleZoom(e, value){
+        // console.log(value);
+        // this.state.myP5.scaleValue = value/50;
+        if (e.ctrlKey){
+            e.preventDefault();
+            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+        }
+
+    }
+
     render(){
         return  (
         <Container>
@@ -169,7 +182,7 @@ class Canvas extends React.Component{
                         <div id={this.state.canvasNo} onTouchStart={this.pressed} onMouseDown={this.pressed} 
                              onTouchMove={this.dragged} onMouseMove={this.dragged} 
                              onTouchEnd={this.released} onMouseUp={this.released} 
-                             ref={this.state.canvasRef} 
+                             ref={this.state.canvasRef} onWheel={this.handleZoom}
                         />
                     </Col>
                 </Row>

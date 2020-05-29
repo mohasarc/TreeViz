@@ -255,6 +255,13 @@ class GenericTree{
     }
 
     /**
+     * Returns the tree height in pixels
+     */
+    getHeight(){
+        return this.height * 45 + 10;
+    }
+
+    /**
      * 
      * @param {The type of the tree} treeType 
      */
@@ -282,6 +289,7 @@ class GenericTree{
     }
 
     center(width){
+        this.setScale(1);
         var properties = {
             spaceLeftBound : 0
         };
@@ -346,6 +354,14 @@ class GenericTree{
         curNode.getChildren().map(child=>{
             this.moveTreeRec(child, xShamt, yShamt);
         });
+    }
+
+    setScale(scale){
+        this.scale = scale;
+    }
+
+    getScale(){
+        return this.scale;
     }
 }
 

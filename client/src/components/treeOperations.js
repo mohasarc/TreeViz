@@ -67,6 +67,7 @@ class TreeOperations extends React.Component{
                         // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
+                        tmpTree.setScale(1);
                         this.state.trees.unshift(tmpTree);
 
                         this.triggerUpdate();
@@ -113,6 +114,7 @@ class TreeOperations extends React.Component{
                         // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
+                        tmpTree.setScale(1);
                         this.state.trees.unshift(tmpTree);
 
                         this.triggerUpdate();
@@ -153,6 +155,7 @@ class TreeOperations extends React.Component{
                         // tmpTree.organizeTreeMatrix();
                         tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
                         tmpTree.setId(this.state.treesStrs.length);
+                        tmpTree.setScale(1);
                         this.state.trees.unshift(tmpTree);
 
                         this.triggerUpdate();
