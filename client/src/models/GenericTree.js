@@ -356,21 +356,6 @@ class GenericTree{
         });
     }
 
-    moveTreeTo(xDist){
-        this.moveTreeToRec(this.root, xDist, 40 - this.root.getY() * 0.5 * (1 / this.scale));
-    }
-
-    moveTreeToRec(curNode, xDist, yShamt){
-        // shift self
-        curNode.setX((curNode.getX() - xDist) * 0.0001);
-        curNode.setY(curNode.getY() + yShamt);
-
-        // visit all children and shift
-        curNode.getChildren().map(child=>{
-            this.moveTreeRec(child, xDist, yShamt);
-        });
-    }
-
     setScale(scale){
         this.scale = scale;
     }
