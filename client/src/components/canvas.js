@@ -132,6 +132,7 @@ class Canvas extends React.Component{
     treeToCenter(e){
         this.setState(prevState=>{
             if (!this.isCalled){
+                prevState.tree.setScale(1);
                 prevState.tree.center(prevState.width/2);
                 this.isCalled = true;
             } else {
