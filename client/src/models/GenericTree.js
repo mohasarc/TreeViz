@@ -251,14 +251,14 @@ class GenericTree{
         if (isNaN(width))
             return;
         
-        this.center(width);
+        this.center(width/2);
     }
 
     /**
      * Returns the tree height in pixels
      */
     getHeight(){
-        return this.height * 45 + 10;
+        return (this.height * 45 + 10) * this.scale;
     }
 
     /**
@@ -277,7 +277,7 @@ class GenericTree{
     }
 
     moveTree(xAmount, yAmount){
-        this.moveTreeRec(this.root, xAmount * 0.5, yAmount * 0.5);
+        this.moveTreeRec(this.root, xAmount * 0.5 * (1 / this.scale), yAmount * 0.5 * (1 / this.scale));
     }
 
     setId(id){
@@ -288,14 +288,14 @@ class GenericTree{
         return this.id;
     }
 
-    center(width){
-        this.setScale(1);
+    center(theCenterX){
+
         var properties = {
             spaceLeftBound : 0
         };
         this.shapeTree(this.root, 1, properties);
         this.visitedMark = !this.visitedMark;
-        var xShamt = width/2 - this.root.getX();
+        var xShamt = (theCenterX) * (1 / this.scale) - this.root.getX();
         var yShamt = 40 - this.root.getY();
         this.moveTreeRec(this.root, xShamt, yShamt);
     }
@@ -353,6 +353,21 @@ class GenericTree{
         // visit all children and shift
         curNode.getChildren().map(child=>{
             this.moveTreeRec(child, xShamt, yShamt);
+        });
+    }
+
+    moveTreeTo(xDist){
+        this.moveTreeToRec(this.root, xDist, 40 - this.root.getY() * 0.5 * (1 / this.scale));
+    }
+
+    moveTreeToRec(curNode, xDist, yShamt){
+        // shift self
+        curNode.setX((curNode.getX() - xDist) * 0.0001);
+        curNode.setY(curNode.getY() + yShamt);
+
+        // visit all children and shift
+        curNode.getChildren().map(child=>{
+            this.moveTreeRec(child, xDist, yShamt);
         });
     }
 

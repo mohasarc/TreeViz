@@ -40,6 +40,7 @@ class Canvas extends React.Component{
         this.handleZoom = this.handleZoom.bind(this);
         this.popTreeEnable = true;
         this.isCalled = false;
+        this.disableScrolling = true;
     }
 
     update(){
@@ -59,7 +60,7 @@ class Canvas extends React.Component{
         this.state.myP5.width = this.state.width;
         this.state.myP5.height = this.state.height;
         this.state.myP5.tree = this.state.tree;
-        this.state.myP5.tree.center(newWidth);
+        this.state.myP5.tree.center(newWidth/2);
         this.setState({
             height : this.state.tree.getHeight() + 40,
             width : newWidth
@@ -67,7 +68,12 @@ class Canvas extends React.Component{
 
         this.state.myP5.windowResized(newWidth, this.state.tree.getHeight());
         window.addEventListener("resize", this.update);
+        window.addEventListener("resize", ()=>{console.log('more info', this.state.canvasRef.current.offsetLeft);});
+
+        
+
         window.addEventListener("orientationchange", ()=>{setTimeout(this.update, 20)}, false);
+        window.addEventListener('touchmove', (e)=>{if(!this.disableScrolling){e.preventDefault()}}, false);
     }
 
     pressed(e){
@@ -79,13 +85,19 @@ class Canvas extends React.Component{
             this.initialX = e.clientX;
             this.initialY = e.clientY;
         }
+
+        e.preventDefault();
     }
 
     released(e){
         this.mousePressed = false;
+        
+        e.preventDefault();
     }
 
     dragged(e){
+        e.preventDefault();
+
         if (this.mousePressed){
             // update initial values
             if (e.touches){
@@ -98,6 +110,7 @@ class Canvas extends React.Component{
                 this.initialX = e.clientX;
                 this.initialY = e.clientY;
             }
+
         }
     }
 
@@ -119,7 +132,7 @@ class Canvas extends React.Component{
     treeToCenter(e){
         this.setState(prevState=>{
             if (!this.isCalled){
-                prevState.tree.center(prevState.width);
+                prevState.tree.center(prevState.width/2);
                 this.isCalled = true;
             } else {
                 this.isCalled = false;
@@ -129,11 +142,12 @@ class Canvas extends React.Component{
     }
 
     handleZoom(e, value){
-        // console.log(value);
+        var rect = e.target.getBoundingClientRect();
         // this.state.myP5.scaleValue = value/50;
         if (e.ctrlKey){
             e.preventDefault();
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+            this.state.tree.center(this.state.width / 2);
         }
 
     }
