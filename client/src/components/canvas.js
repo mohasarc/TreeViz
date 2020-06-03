@@ -156,6 +156,11 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
+    saveAsImage = (e) => {
+        this.state.myP5.createImage();
+        e.preventDefault();
+    }
+
     handleZoom(e, value){
         console.log('width', this.state.tree.getWidth());
         var rect = e.target.getBoundingClientRect();
@@ -195,6 +200,10 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={5} md={5} lg={5}>
                         <div className='float-right'>
+                            <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
+                               style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
+                                <div className='save'>.</div>
+                            </a>
                             <a href='#' className='badge badge-light'  onClick={this.treeDetach}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
                                 <div className='detach' style={{'color' : '#FFFFFF'}} >.</div>

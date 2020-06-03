@@ -25,3 +25,12 @@
     transition: 0.3s;
     background-image: url(../resources/detach.svg);
 }
+
+.save{
+    /* display: inline-block; */
+    width: 12px;
+    height: 12px;
+    background-size: cover;
+    transition: 0.3s;
+    background-image: url(../resources/save.svg);
+}

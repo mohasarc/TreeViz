@@ -12,6 +12,7 @@ import Form from 'react-bootstrap/Form'
 import ReactDOM from 'react-dom'
 import Switch from '@material-ui/core/Switch';
 import p5 from 'p5'
+import GenericTree from '../models/GenericTree'
 
 class CanvasContainer extends React.Component{
     constructor(props){
@@ -57,6 +58,33 @@ class CanvasContainer extends React.Component{
                 p.scale(p.tree.getScale());
                 p.tree.draw(p, p.width);
             }
+        }
+
+        p.createImage = () => {
+            var tree = new GenericTree();
+            tree.construct(p.tree.treeString);
+            tree.setTreeType(p.tree.treeType);
+            tree.setId(p.tree.id);
+            tree.setScale(p.tree.scale);
+            tree.resize(tree.getWidth() + 0.2 * tree.getWidth(), true);
+            tree.putInView((tree.getWidth() + 0.2 * tree.getWidth())/2);
+
+            var scaleUp = 7000 / tree.getWidth();
+            tree.setScale(tree.getScale() * scaleUp);
+            var image = p.createGraphics(tree.getWidth() + 0.2 * tree.getWidth(), tree.getHeight());
+            image.background('#34495e');
+            image.scale(tree.getScale());
+            tree.draw(image, p.width);
+
+            // Adding copywrites to the image
+            image.scale(1/tree.getScale() * 2);
+            image.fill('#FFFFF');
+            image.textAlign(p.LEFT, p.TOP);
+            image.textSize(20);
+            image.text('created by TreeViz.tech', 50, 50);
+            
+            // Saving the image
+            image.save( tree.getTreeType() + '.png');
         }
 
         p.scaleValue = 1;

@@ -53,6 +53,13 @@ class DetachedCanvas extends React.Component{
             image.scale(tree.getScale());
             tree.draw(image, p.width);
 
+            // Adding copywrites to the image
+            image.scale(1/tree.getScale() * 2);
+            image.fill('#FFFFF');
+            image.textAlign(p.LEFT, p.TOP);
+            image.textSize(20);
+            image.text('created by TreeViz.tech', 50, 50);
+
             // Saving the image
             image.save( tree.getTreeType() + '.png');
         }
