@@ -197,7 +197,7 @@ class CanvasContainer extends React.Component{
                                 key={this.state.trees[this.state.leftTreeIndex].getId()} ref={this.state.child1}
                                 tree={this.state.trees[this.state.leftTreeIndex]} canvasNo={this.state.trees[this.state.leftTreeIndex].getId()} treeType={this.state.trees[this.state.leftTreeIndex].getTreeType()}
                                 updateTreeOperations={this.props.updateTreeOperations}
-                                p5={this.myP5_1} theNode={this.node1}/> 
+                                p5={this.myP5_1} theNode={this.node1} detached={false}/> 
                                 <br/>
                          </Col>
                         : <Col/>
@@ -210,8 +210,7 @@ class CanvasContainer extends React.Component{
                                 key={this.state.trees[this.state.rightTreeIndex].getId()} ref={this.state.child1}
                                 tree={this.state.trees[this.state.rightTreeIndex]} canvasNo={this.state.trees[this.state.rightTreeIndex].getId()} treeType={this.state.trees[this.state.rightTreeIndex].getTreeType()}
                                 updateTreeOperations={this.props.updateTreeOperations}
-                                theNode={this.node2}
-                                p5={this.myP5_2}/>
+                                theNode={this.node2} p5={this.myP5_2} detached={false}/>
                                 <br/>
                          </Col>
                         : <Col/>
@@ -226,8 +225,7 @@ class CanvasContainer extends React.Component{
                                 canvasNo={this.state.trees[this.state.fullScreenTreeIndex].getId()} 
                                 treeType={this.state.trees[this.state.fullScreenTreeIndex].getTreeType()}
                                 updateTreeOperations={this.props.updateTreeOperations}
-                                theNode={this.node3}
-                                p5={this.myP5_3}/>
+                                theNode={this.node3} p5={this.myP5_3} detached={false}/>
                                 <br/>
                          </Col>
                         : <Col/>

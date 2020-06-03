@@ -57,6 +57,7 @@ class Canvas extends React.Component{
     componentDidMount() {
         window.document.getElementById(this.state.canvasNo).appendChild(this.node);
         var newWidth = this.state.canvasRef.current.offsetWidth;
+
         this.state.myP5.width = this.state.width;
         this.state.myP5.height = this.state.height;
         this.state.myP5.tree = this.state.tree;
@@ -125,7 +126,8 @@ class Canvas extends React.Component{
     }
 
     copyTreeString(e){
-        this.state.updateTreeOperations(this.state.tree.getTreeString());
+        if (this.state.updateTreeOperations)
+            this.state.updateTreeOperations(this.state.tree.getTreeString());
         e.preventDefault();
     }
 
@@ -142,7 +144,24 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
+    treeDetach = (e) => {
+        // opening a new window
+        var popup = window.open('./fullTreeView');
+
+        // sending a message for the new window
+        var interval = setInterval(() => {
+            if (popup.document.readyState == 'complete'){
+                console.log('sending', this.state.tree);
+                popup.postMessage({'tree':this.state.tree}, window.location.href);
+                clearInterval(interval);
+            }
+        }, 300);
+
+        e.preventDefault();
+    }
+
     handleZoom(e, value){
+        console.log('width', this.state.tree.getWidth());
         var rect = e.target.getBoundingClientRect();
         // this.state.myP5.scaleValue = value/50;
         if (e.ctrlKey){
@@ -150,13 +169,12 @@ class Canvas extends React.Component{
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
             this.state.tree.center(this.state.width / 2);
         }
-
     }
 
     render(){
         return  (
         <Container>
-            <Container className='canvas' style={{'height' : this.state.height }}>
+            <Container className='canvas' style={{'height' : this.state.height}}>
                 <Row xs={12} md={12} lg={12} noGutters={true} className='justify-content-xs-left'>
                     <Col xs={1} md={1} lg={1}>
                         {
@@ -181,9 +199,13 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={5} md={5} lg={5}>
                         <div className='float-right'>
+                            <a href='#' className='badge badge-light'  onClick={this.treeDetach}
+                               style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
+                                <div className='detach' style={{'color' : '#FFFFFF'}} >.</div>
+                            </a>
                             <a href='#' className='badge badge-light'  onClick={this.treeToCenter}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
-                                <div className='center' >.</div>
+                                <div className='center' style={{'color' : '#FFFFFF'}} >.</div>
                             </a>
                             <a  href="#" onClick={this.copyTreeString} 
                                 className='badge badge-secondary'>
