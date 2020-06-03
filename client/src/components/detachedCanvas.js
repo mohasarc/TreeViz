@@ -13,14 +13,13 @@ class DetachedCanvas extends React.Component{
         this.recieveMessage = this.recieveMessage.bind(this);
         this.node = document.createElement('div');
         this.myP5 = new p5(this.Sketch, this.node);
-        this.resize = this.resize.bind(this);
         this.handleZoom = this.handleZoom.bind(this);
     }
 
     
     Sketch = (p) => {
-        p.width = 0;
-        p.height = 0;
+        p.width = window.innerWidth;
+        p.height = window.innerHeight;
         p.tree = null;
 
         var cnv;
@@ -33,24 +32,29 @@ class DetachedCanvas extends React.Component{
         p.draw = () => {
             p.background('#34495e');
             if (p.tree){
-                console.log('drawing the tree');
                 p.scale(p.tree.getScale());
                 p.tree.draw(p, p.width);
             }
         }
 
         p.createImage = () => {
-            console.log('width', p.tree.getWidth(), 'height', p.tree.getHeight());
-            var image = p.createGraphics(p.width, p.height);
-            image.background('#34495e');
-            image.scale(p.tree.getScale());
-            p.tree.putInView(p.width/2);
-            p.tree.draw(image,  p.width);
-            image.save('img.png');
-        }
+            var tree = new GenericTree();
+            tree.construct(p.tree.treeString);
+            tree.setTreeType(p.tree.treeType);
+            tree.setId(p.tree.id);
+            tree.setScale(p.tree.scale);
+            tree.resize(tree.getWidth());
+            tree.putInView((tree.getWidth() + 0.2 * tree.getWidth())/2);
 
-        p.save = () => {
-            p.saveCanvas(cnv, 'theTree', 'jpg');
+            var scaleUp = 7000 / tree.getWidth();
+            tree.setScale(tree.getScale() * scaleUp);
+            var image = p.createGraphics(tree.getWidth() + 0.2 * tree.getWidth(), tree.getHeight());
+            image.background('#34495e');
+            image.scale(tree.getScale());
+            tree.draw(image, p.width);
+
+            // Saving the image
+            image.save( tree.getTreeType() + '.png');
         }
 
         p.scaleValue = 1;
@@ -66,69 +70,57 @@ class DetachedCanvas extends React.Component{
     componentDidMount(){
         window.addEventListener('message', this.recieveMessage, false);
         window.document.getElementById(this.state.msg).appendChild(this.node);
-        window.addEventListener("resize", this.resize);
-        // window.addEventListener('message', (e)=>{console.log(e)}, false);
     }
 
-    resize(e){
-        e.preventDefault();
-        console.log(window.document);
-        var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
-        this.myP5.windowResized(treeWidth > window.innerWidth ? treeWidth : window.innerWidth  , window.innerHeight);
-    }
-
-    recieveMessage(e){
-        console.log(e.data);
-        console.log(e.source);
-        console.log(e);
+    recieveMessage(e){;
         this.setState((prevState)=>{
-            console.log('set state called');
+            // Using the recieved message to build the tree
             prevState.tree.construct(e.data.tree.treeString);
             prevState.tree.setTreeType(e.data.tree.treeType);
             prevState.tree.setId(e.data.tree.id);
             prevState.tree.setScale(e.data.tree.scale);
 
-            this.myP5.height = prevState.tree.getHeight();
+            // Updatng the p5 object
             this.myP5.tree = prevState.tree;
-            var treeWidth = prevState.tree.getWidth() + 0.2 * prevState.tree.getWidth();
-            var treeHeight = prevState.tree.getHeight();
-            this.myP5.width = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
-            this.myP5.tree.center((treeWidth > window.innerWidth ? treeWidth : window.innerWidth)/2);
-            this.myP5.windowResized(treeWidth > window.innerWidth ? treeWidth : window.innerWidth , treeHeight > window.innerHeight ? treeHeight : window.innerHeight);
+
+            // deciding on height and width
+            var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
+            var treeHeight = this.state.tree.getHeight();
+            treeWidth = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
+            treeHeight = treeHeight > window.innerHeight ? treeHeight : window.innerHeight;
+
+            // resizing
+            this.myP5.tree.putInView(treeWidth/2);
+            this.myP5.windowResized(treeWidth, treeHeight);
 
             return {msg : e.data}
         });
     }
 
     handleZoom(e, value){
-        console.log('width', this.state.tree.getWidth());
         var rect = e.target.getBoundingClientRect();
-        // this.state.myP5.scaleValue = value/50;
         if (e.ctrlKey){
             e.preventDefault();
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+
+            // deciding on height and width
             var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
             var treeHeight = this.state.tree.getHeight();
-            this.myP5.width = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
-            this.myP5.windowResized(treeWidth > window.innerWidth ? treeWidth : window.innerWidth , treeHeight > window.innerHeight ? treeHeight : window.innerHeight);
+            treeWidth = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
+            treeHeight = treeHeight > window.innerHeight ? treeHeight : window.innerHeight;
+
+            // resizing
+            this.myP5.windowResized(treeWidth, treeHeight);
         }
     }
 
     render(){
         return (
-            <div id={this.state.msg} onWheel={this.handleZoom} onClick={this.myP5.createImage}/>
-            // this.state.tree.getTreeString() != '' 
-            // ? <div id="theDiv" style={{'width':'9000'}}>
-            //     {/* <Canvas
-            //         topTree={false} popTree={null}
-            //         key={this.state.tree.getId()} ref={this.state.child}
-            //         tree={this.state.tree} 
-            //         canvasNo={this.state.tree.getId()} 
-            //         treeType={this.state.tree.getTreeType()}
-            //         updateTreeOperations={null}
-            //         theNode={this.node} p5={this.myP5} detached={true}/>  */}
-            //     </div>
-            // : <p>{'Loading...'}</p>
+            <div style={{'background-color' : '#34495e' , 'height' : window.innerHeight}} 
+                 id={this.state.msg}
+                 onWheel={this.handleZoom} 
+                 onClick={this.myP5.createImage}
+            />
         );
     }
 }
