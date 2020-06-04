@@ -221,7 +221,8 @@ class Canvas extends React.Component{
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
                     <Col>
-                        <div id={this.state.canvasNo} onTouchStart={this.pressed} onMouseDown={this.pressed} 
+                        <div id={this.state.canvasNo} 
+                             onTouchStart={this.pressed} onMouseDown={this.pressed} 
                              onTouchMove={this.dragged} onMouseMove={this.dragged} 
                              onTouchEnd={this.released} onMouseUp={this.released} 
                              ref={this.state.canvasRef} onWheel={this.handleZoom}

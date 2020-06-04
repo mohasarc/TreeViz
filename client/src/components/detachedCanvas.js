@@ -37,33 +37,6 @@ class DetachedCanvas extends React.Component{
             }
         }
 
-        p.createImage = () => {
-            var tree = new GenericTree();
-            tree.construct(p.tree.treeString);
-            tree.setTreeType(p.tree.treeType);
-            tree.setId(p.tree.id);
-            tree.setScale(p.tree.scale);
-            tree.resize(tree.getWidth());
-            tree.putInView((tree.getWidth() + 0.2 * tree.getWidth())/2);
-
-            var scaleUp = 7000 / tree.getWidth();
-            tree.setScale(tree.getScale() * scaleUp);
-            var image = p.createGraphics(tree.getWidth() + 0.2 * tree.getWidth(), tree.getHeight());
-            image.background('#34495e');
-            image.scale(tree.getScale());
-            tree.draw(image, p.width);
-
-            // Adding copywrites to the image
-            image.scale(1/tree.getScale() * 2);
-            image.fill('#FFFFF');
-            image.textAlign(p.LEFT, p.TOP);
-            image.textSize(20);
-            image.text('created by TreeViz.tech', 50, 50);
-
-            // Saving the image
-            image.save( tree.getTreeType() + '.png');
-        }
-
         p.scaleValue = 1;
 
         p.windowResized = (width, height) => {
@@ -79,7 +52,7 @@ class DetachedCanvas extends React.Component{
         window.document.getElementById(this.state.msg).appendChild(this.node);
     }
 
-    recieveMessage(e){;
+    recieveMessage(e){
         this.setState((prevState)=>{
             // Using the recieved message to build the tree
             prevState.tree.construct(e.data.tree.treeString);
@@ -93,8 +66,8 @@ class DetachedCanvas extends React.Component{
             // deciding on height and width
             var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
             var treeHeight = this.state.tree.getHeight();
-            treeWidth = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
-            treeHeight = treeHeight > window.innerHeight ? treeHeight : window.innerHeight;
+            treeWidth = /*treeWidth > window.innerWidth - 5 ? treeWidth :*/ window.innerWidth - 5;
+            treeHeight = /*treeHeight > window.innerHeight - 5 ? treeHeight :*/ window.innerHeight - 5;
 
             // resizing
             this.myP5.tree.putInView(treeWidth/2);
@@ -102,6 +75,44 @@ class DetachedCanvas extends React.Component{
 
             return {msg : e.data}
         });
+    }
+
+    pressed = (e) => {
+        this.mousePressed = true;
+        if (e.touches){
+            this.initialX = e.touches[0].clientX;
+            this.initialY = e.touches[0].clientY;
+        } else {
+            this.initialX = e.clientX;
+            this.initialY = e.clientY;
+        }
+
+        e.preventDefault();
+    }
+
+    released = (e) => {
+        this.mousePressed = false;
+        
+        e.preventDefault();
+    }
+
+    dragged = (e) => {
+        e.preventDefault();
+
+        if (this.mousePressed){
+            // update initial values
+            if (e.touches){
+                this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, 
+                                         e.changedTouches[0].clientY - this.initialY);
+                this.initialX = e.touches[0].clientX;
+                this.initialY = e.touches[0].clientY;
+            } else {
+                this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+                this.initialX = e.clientX;
+                this.initialY = e.clientY;
+            }
+
+        }
     }
 
     handleZoom(e, value){
@@ -113,8 +124,8 @@ class DetachedCanvas extends React.Component{
             // deciding on height and width
             var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
             var treeHeight = this.state.tree.getHeight();
-            treeWidth = treeWidth > window.innerWidth ? treeWidth : window.innerWidth;
-            treeHeight = treeHeight > window.innerHeight ? treeHeight : window.innerHeight;
+            treeWidth = /*treeWidth > window.innerWidth - 5 ? treeWidth :*/ window.innerWidth - 5;
+            treeHeight = /*treeHeight > window.innerHeight - 5 ? treeHeight :*/ window.innerHeight - 5;
 
             // resizing
             this.myP5.windowResized(treeWidth, treeHeight);
@@ -125,8 +136,10 @@ class DetachedCanvas extends React.Component{
         return (
             <div style={{'background-color' : '#34495e' , 'height' : window.innerHeight}} 
                  id={this.state.msg}
+                 onTouchStart={this.pressed} onMouseDown={this.pressed} 
+                 onTouchMove={this.dragged} onMouseMove={this.dragged} 
+                 onTouchEnd={this.released} onMouseUp={this.released}
                  onWheel={this.handleZoom} 
-                 onClick={this.myP5.createImage}
             />
         );
     }
