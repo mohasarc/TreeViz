@@ -109,10 +109,12 @@ template <class T>
 void BSTree<T>::insert(TreeNode<T>* root, T &anItem){
     // Base case -- if leaf node insert at it
     if (root->isLeaf()){
+        TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
+        tmpNode->setNewlyInserted(true);
         if (anItem < root->getItem()){
-            root->setLeftChildPtr(new TreeNode<T>(anItem));
+            root->setLeftChildPtr(tmpNode);
         } else {
-            root->setRightChildPtr(new TreeNode<T>(anItem));
+            root->setRightChildPtr(tmpNode);
         }
 
         return;
@@ -120,20 +122,29 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem){
 
     // cout << "left child : " << (root->getLeftChildPtr() != NULL ? root->getLeftChildPtr()->getItem() : 0) 
     //      << "  rightChild   " << (root->getRightChildPtr() != NULL? root->getRightChildPtr()->getItem() : 0)  << endl; 
+    
+    // Reset newlyInserted of all other nodes to false
+    root->setNewlyInserted(false);
 
     // Either go left or make new node there
     if (anItem < root->getItem()){
         if (root->getLeftChildPtr() != NULL)
             insert(root->getLeftChildPtr(), anItem);
-        else
-            root->setLeftChildPtr(new TreeNode<T>(anItem));
+        else{
+            TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
+            tmpNode->setNewlyInserted(true);
+            root->setLeftChildPtr(tmpNode);
+        }
     }
     // Either go right or make new node there
     else {
         if (root->getRightChildPtr() != NULL)
             insert(root->getRightChildPtr(), anItem);
-        else
-            root->setRightChildPtr(new TreeNode<T>(anItem));
+        else{
+            TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
+            tmpNode->setNewlyInserted(true);
+            root->setRightChildPtr(tmpNode);
+        }
     }
 }
 
@@ -203,7 +214,8 @@ void BSTree<T>::toTreeString(TreeNode<T>* root, string &output){
     // Base Case 2
     if (root->isLeaf()){
         // wrap its contents with {}
-        oss << "{";
+        // oss << "{";
+        oss << (root->getNewlyInserted() ? "{*" : "{");
         oss << root->getItem();
         oss << "}";
         output += oss.str();
@@ -214,7 +226,8 @@ void BSTree<T>::toTreeString(TreeNode<T>* root, string &output){
 
     // Not a leaf
     // *** add self ***
-    oss << "{";
+    // oss << "{";
+    oss << (root->getNewlyInserted() ? "{*" : "{");
     oss << root->getItem();
     oss << "}";
 

@@ -5,6 +5,7 @@ TreeNode<T>::TreeNode(){
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
     this->leftChildExists = false;
+    this->newlyInserted = false;
 }
 
 template <class T>
@@ -13,6 +14,7 @@ TreeNode<T>::TreeNode( const T& anItem){
     this->leftChildPtr = NULL;
     this->rightChildPtr = NULL;
     this->leftChildExists = false;
+    this->newlyInserted = false;
 }
 
 template <class T>
@@ -21,6 +23,7 @@ TreeNode<T>::TreeNode( const T& anItem, TreeNode<T>* leftPtr, TreeNode<T>* right
     this->leftChildPtr = leftPtr;
     this->rightChildPtr = rightPtr;
     this->leftChildExists = false;
+    this->newlyInserted = false;
 }
 
 template <class T>
@@ -58,6 +61,16 @@ void TreeNode<T>::setRightChildPtr(TreeNode<T>* rightPtr){
     this->rightChildPtr = rightPtr;
 }
 
+template <class T>
+void TreeNode<T>::setNewlyInserted(bool newlyInserted){
+    this->newlyInserted = newlyInserted;
+}
+
+template <class T>
+bool TreeNode<T>::getNewlyInserted(){
+    return this->newlyInserted;
+}
+
 // int getHeight() const ;
 template <class T>// void setHeight(const int h);
 void TreeNode<T>::NodeStringParser(string nodeString, T* Values, int &numValues){
@@ -73,7 +86,7 @@ void TreeNode<T>::NodeStringParser(string nodeString, T* Values, int &numValues)
             aVal = "";
             numValues ++;
         } else {
-            if (aChar != '{' && aChar != '}'){
+            if (aChar != '{' && aChar != '}' && aChar != '*'){
                 aVal += aChar;
             }
         }

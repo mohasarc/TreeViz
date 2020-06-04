@@ -29,15 +29,19 @@ class GenericNode {
         var values = [];
         var aVal = '';
         var nodeFilled = false;
+        var theColor = '';
 
         // If empty node
         if (nodeStr.substring(0, 2) == '{}')
             return [];
 
         nodeStr.split('').map(char => {
+            if (char == '*' && !nodeFilled){
+                theColor = '#ffc107';
+            }
             // , means reached the end of one value
             // } means reached the end of the last value
-            if ((char == ',' || char == '}') && !nodeFilled){
+            else if ((char == ',' || char == '}') && !nodeFilled){
                 values.push(aVal);
                 aVal = '';
             }
@@ -48,11 +52,16 @@ class GenericNode {
                 }
             }
 
-            if (char == '}')
+            if (char == '}'){
                 nodeFilled = true;
+                if (theColor == ''){
+                    theColor = '#FFFFF';
+                }
+            }
         });
 
         // console.log('values from parser', values);
+        this.color = theColor;
         return values;
     }
 
@@ -186,7 +195,7 @@ class GenericNode {
 
         // Draw circles
         p.rectMode(p.CENTER)
-        p.fill(255);
+        p.fill(this.color);
         p.rect(this.x, this.y, this.width, 25, 20);
 
         // Draw the node's text

@@ -12,7 +12,7 @@ private :
     TreeNode<T>* leftChildPtr; // Left-child pointer
     TreeNode<T>* rightChildPtr; // Right-child pointer
     bool leftChildExists;
-
+    bool newlyInserted;
 public :
     TreeNode();
     TreeNode( const T& anItem);
@@ -28,6 +28,8 @@ public :
     bool construct(const string& nodeString );
     void leftChildExistance(bool leftChildExists);
     bool doesLeftChildExist();
+    void setNewlyInserted(bool newlyInserted);
+    bool getNewlyInserted();
 };
 
 #endif

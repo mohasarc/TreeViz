@@ -61,6 +61,7 @@ class Canvas extends React.Component{
         this.state.myP5.width = this.state.width;
         this.state.myP5.height = this.state.height;
         this.state.myP5.tree = this.state.tree;
+        console.log('tree just mounted', this.state.tree);
         this.state.myP5.tree.center(newWidth/2);
         this.setState({
             height : this.state.tree.getHeight() + 40,
