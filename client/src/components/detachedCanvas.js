@@ -50,6 +50,7 @@ class DetachedCanvas extends React.Component{
     componentDidMount(){
         window.addEventListener('message', this.recieveMessage, false);
         window.document.getElementById(this.state.msg).appendChild(this.node);
+        window.addEventListener("resize", this.resize);     
     }
 
     recieveMessage(e){
@@ -113,6 +114,10 @@ class DetachedCanvas extends React.Component{
             }
 
         }
+    }
+
+    resize = () => {
+        this.myP5.windowResized(window.innerWidth - 20, window.innerHeight - 20);
     }
 
     handleZoom(e, value){
