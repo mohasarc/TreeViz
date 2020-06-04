@@ -188,7 +188,7 @@ class Canvas extends React.Component{
                             :<div/>
                         }
                     </Col>
-                    <Col xs={4} md={4} lg={4}>
+                    <Col xs={3} md={4} lg={4}>
                         <div className='float-left'>
                             <Badge variant='warning'>
                                 {this.state.treeType}
@@ -198,7 +198,7 @@ class Canvas extends React.Component{
                     <Col xs={2} md={2} lg={2}>
                         <Canvasno no={this.state.canvasNo}/>
                     </Col>
-                    <Col xs={5} md={5} lg={5}>
+                    <Col xs={6} md={5} lg={5}>
                         <div className='float-right'>
                             <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
