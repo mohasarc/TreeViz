@@ -122,7 +122,7 @@ string BTree<type>::toTreeString(){
 template <class type>
 bool BTree<type>::insertSequence(string sequence){
     // Check if a valid number sequence
-    static CRegexpT <char> regexp(R"(\d(,?(?R))*)");
+    static CRegexpT <char> regexp(R"(\d(,?-?(?R))*)");
     // test
     MatchResult result = regexp.MatchExact(sequence.c_str());
     // matched or not
@@ -135,6 +135,13 @@ bool BTree<type>::insertSequence(string sequence){
         string tmpNumStr;
         if (!getline( ss, tmpNumStr, ',' )) break;
         record.push_back( tmpNumStr );
+        }
+        // Make sure that there are no repetitions
+        for (int i = 0; i < record.size(); i++){
+            for (int j = i + 1; j < record.size(); j++){
+                if (record[i] == record[j])
+                    return false;
+            }
         }
 
         // Parse all string numbers as integers and add them to the tree
@@ -223,6 +230,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
             if (key < curNode->getKey(i)) {
                 // insert at it
                 curNode->addKey(key, i);
+                break;
             } else if ( i ==  curNode->getKeyNo() - 1) {
                 // insert at it
                 cout << "inserting " << key << " at " << i+1 << endl;
@@ -249,6 +257,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
         if (key < curNode->getKey(i)) {
             // insert in the tree just before the key greater than it
             insert(key, curNode->getChild(i), curNode);
+            break;
         }
         else if (i == curNode->getKeyNo() - 1) {
             // Greater than the last key
@@ -383,6 +392,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
                 // insert at i so stays before the one greater than it
                 parent->addKey(childMidKey, i);
                 midKeyinsertIndex = i;
+                break;
             } else if ( i == parent->getKeyNo() - 1) {
                 // not less than the last node, insert at the end
                 parent->addKey(childMidKey, i + 1);
@@ -523,6 +533,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         if (key < curNode->getKey(i)) {
             // continue with the tree just before the key greater than it
             remove(key, curNode->getChild(i), curNode);
+            break;
         }
         else if (i == curNode->getKeyNo() - 1) {
             // Greater than the last key
@@ -901,8 +912,15 @@ int main(){
     int open;
     int close;
     // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
-    cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,10") << endl;
+    // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
     // tree1->constructFromTreeString("{8}({1})");
+    
+    
+    tree1->insert(1);  
+    tree1->insert(2);  
+    tree1->insert(3);  
+    tree1->insert(5);  
+    tree1->insert(4);  
 
     // cout << "before" << endl;
     tree1->traverse();
