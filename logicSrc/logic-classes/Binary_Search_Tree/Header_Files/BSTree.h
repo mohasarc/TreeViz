@@ -1,6 +1,7 @@
 #ifndef BSTree_H
 #define BSTree_H
 #include "TreeNode.h"
+#include "../../../3rd-Party/deelx.h"
 #include <iostream>
 #include <sstream>
 #include <stack>
@@ -20,6 +21,7 @@ bool removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent);
 void toTreeString(TreeNode<T>* root, string &output);
 void insert(TreeNode<T> *child, TreeNode<T> *parent);
 TreeNode<T>* getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent);
+bool isValidBSTreeString(string bsTreeString);
 
 public:
 BSTree();
@@ -30,6 +32,8 @@ bool remove(T anItem, char type);
 bool isEmpty();
 void constructFromTreeString(const string treeString);
 string toTreeString();
+bool insertSequence(string sequence);
+
 };
 
 #endif

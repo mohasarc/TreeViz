@@ -330,4 +330,13 @@ TreeNode<T>* BSTree<T>::getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent){
     return getMostLeft(root->getLeftChildPtr(), parent);
 }
 
+template <class T>
+bool BSTree<T>::isValidBSTreeString(string bsTreeString){
+    static CRegexpT<char> regexp(R"(\{\*?\d*\}(\(((?R)(,(?R))?)?\))*)");
+
+    MatchResult result = regexp.MatchExact(bsTreeString.c_str());
+
+    return result.IsMatched();
+}
+
 template class BSTree<int>;
