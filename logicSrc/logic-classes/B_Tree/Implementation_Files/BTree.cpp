@@ -67,7 +67,50 @@ void BTree<type>::traverse(){
     this->traverse(this->root, 0);
 }
 
+template <class type>
+void BTree<type>::setOrder(int order){
+    this->degree = order;
+}
 
+template <class type>
+int BTree<type>::getOrder(){
+    return this->degree;
+}
+
+template <class type>
+void BTree<type>::setPropagateS(bool propagateS){
+    this->propagateS = propagateS;
+}
+
+template <class type>
+bool BTree<type>::getPropagateS(){
+    return this->propagateS;
+}
+
+template <class type>
+void BTree<type>::setPrioritizeInorderPredecessor(bool prioritizeInorderPredecessor){
+    this->prioritizeInorderPredecessor = prioritizeInorderPredecessor;
+}
+
+template <class type>
+bool BTree<type>::getPrioritizeInorderPredecessor(){
+    return this->prioritizeInorderPredecessor;
+}
+
+template <class type>
+void BTree<type>::setPrioritizeRotateLeft(bool prioritizeRotatingLeft){
+    this->prioritizeRotatingLeft = prioritizeRotatingLeft;
+}
+
+template <class type>
+bool BTree<type>::getPrioritizeRotateLeft(){
+    return this->prioritizeRotatingLeft;
+}
+
+
+/**
+ * 
+ * */
 template <class type>
 string BTree<type>::toTreeString(){
     string output = "";

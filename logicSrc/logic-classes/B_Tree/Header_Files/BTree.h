@@ -45,6 +45,14 @@ public:
     void remove(type key);
     bool find(type key);
     void traverse();
+    void setOrder(int order);
+    int getOrder();
+    void setPropagateS(bool propagateS);
+    bool getPropagateS();
+    void setPrioritizeInorderPredecessor(bool prioritizeInorderPredecessor);
+    bool getPrioritizeInorderPredecessor();
+    void setPrioritizeRotateLeft(bool prioritizeRotatingLeft);
+    bool getPrioritizeRotateLeft();
     // TreeViz specific functions
     string toTreeString();
     void constructFromTreeString(string treeString);
