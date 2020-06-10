@@ -735,8 +735,12 @@ bool BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<t
 }
 
 template <class type>
-bool BTree<type>::isValidBTreeString(string bTreeString){
+bool BTree<type>::isValidBTreeString(string bTreeString, int openParanthesisCount, int closingParanthesisCount){
+    static CRegexpT<char> regexp(R"(\{\d+(,\d+)*\}(\(((?R),?)+\))*)");
 
+    MatchResult result = regexp.MatchExact(bTreeString.c_str());
+
+    return result.IsMatched();
 }
 
 
@@ -854,17 +858,20 @@ int main(){
     // // cout << node1->getChild(2)->getKey(0) << endl;
 
     BTree<int>* tree1 = new BTree<int>(70);
-    for (int i = 0; i < 1700 ; i++){
-        tree1->insert(i);  
-    }
-
+    // for (int i = 0; i < 1700 ; i++){
+    //     tree1->insert(i);  
+    // }
+    int open;
+    int close;
     // tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))");
+    cout << "is bTree string " << tree1->isValidBTreeString("{1,2,3,3,5}({2,3}({3}({3})),{7},{9})", open, close) << endl;
+    // tree1->constructFromTreeString("{8}({1})");
 
-    cout << "before" << endl;
-    tree1->traverse();
+    // cout << "before" << endl;
+    // tree1->traverse();
 
-    cout << endl;
-    cout << tree1->toTreeString() << endl;
+    // cout << endl;
+    // cout << tree1->toTreeString() << endl;
     // tree1->remove(15);
     // // tree1->insert(15);
 
