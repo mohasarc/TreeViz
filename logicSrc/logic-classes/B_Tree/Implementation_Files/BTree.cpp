@@ -119,16 +119,51 @@ string BTree<type>::toTreeString(){
     return output;
 }
 
+template <class type>
+bool BTree<type>::insertSequence(string sequence){
+    // Check if a valid number sequence
+    static CRegexpT <char> regexp(R"(\d(,?(?R))*)");
+    // test
+    MatchResult result = regexp.MatchExact(sequence.c_str());
+    // matched or not
+    if (result.IsMatched()){
+        // Get all numbers as strings
+        istringstream ss( sequence );
+        vector <string> record;
+        while (ss)
+        {
+        string tmpNumStr;
+        if (!getline( ss, tmpNumStr, ',' )) break;
+        record.push_back( tmpNumStr );
+        }
+
+        // Parse all string numbers as integers and add them to the tree
+        for (string numStr : record){
+            insert(stoi(numStr));
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * Builds the tree out of a tree string
  * @param treeString The treeString describig the tree
  * */
 template <class type>
-void BTree<type>::constructFromTreeString(string treeString){
+bool BTree<type>::constructFromTreeString(string treeString){
     cout << "at construct" << endl;
     stack<BNode<type>*> parentsStack;
     BNode<type>* tmpNode;
     int childCount = 0;
+
+    // Validate the tree string
+    if (!isValidBTreeString(treeString)){
+        // if not valid
+        return false;
+    }
 
     for (int i = 0; i < treeString.length(); i++){
         switch (treeString.at(i))
@@ -169,6 +204,8 @@ void BTree<type>::constructFromTreeString(string treeString){
             break;
         }
     }
+
+    return true;
 }
 
 // Private functions implementations
@@ -735,7 +772,7 @@ bool BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<t
 }
 
 template <class type>
-bool BTree<type>::isValidBTreeString(string bTreeString, int openParanthesisCount, int closingParanthesisCount){
+bool BTree<type>::isValidBTreeString(string bTreeString){
     static CRegexpT<char> regexp(R"(\{\d+(,\d+)*\}(\(((?R),?)+\))*)");
 
     MatchResult result = regexp.MatchExact(bTreeString.c_str());
@@ -857,18 +894,18 @@ int main(){
     // cout << node1->getChild(1)->getKey(0) << endl;
     // // cout << node1->getChild(2)->getKey(0) << endl;
 
-    BTree<int>* tree1 = new BTree<int>(70);
+    BTree<int>* tree1 = new BTree<int>(3);
     // for (int i = 0; i < 1700 ; i++){
     //     tree1->insert(i);  
     // }
     int open;
     int close;
-    // tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))");
-    cout << "is bTree string " << tree1->isValidBTreeString("{1,2,3,3,5}({2,3}({3}({3})),{7},{9})", open, close) << endl;
+    // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
+    cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,10") << endl;
     // tree1->constructFromTreeString("{8}({1})");
 
     // cout << "before" << endl;
-    // tree1->traverse();
+    tree1->traverse();
 
     // cout << endl;
     // cout << tree1->toTreeString() << endl;
