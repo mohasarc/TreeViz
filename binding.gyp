@@ -51,5 +51,24 @@
             "<!(node -p \"require('node-addon-api').gyp\")"
         ],
         'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
+    },
+    {
+        "target_name": "BTree",
+        "cflags!": [ "-fno-exceptions" ],
+        "cflags_cc!": [ "-fno-exceptions" ],
+        "sources": [
+            "logicSrc/logic-classes/B_Tree/Implementation_Files/BNode.cpp",
+            "logicSrc/logic-classes/B_Tree/Implementation_Files/BTree.cpp",
+            "logicSrc/logic-classes/B_Tree/Implementation_Files/BTreeWrapper.cpp",
+            "logicSrc/3rd-Party/deelx.h"
+        ],
+        'include_dirs': [
+            "<!@(node -p \"require('node-addon-api').include\")"
+        ],
+        'libraries': [],
+        'dependencies': [
+            "<!(node -p \"require('node-addon-api').gyp\")"
+        ],
+        'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ]
     }]
 }

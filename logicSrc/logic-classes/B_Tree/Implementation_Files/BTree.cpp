@@ -34,7 +34,7 @@ BTree<type>::~BTree(){
 template <class type>
 void BTree<type>::insert(type key){
     if (this->root == NULL){
-        cout << "creating root" << endl;
+        // cout << "creating root" << endl;
         this->root = new BNode<type>();
         this->root->setLeaf(true);
     }
@@ -47,7 +47,7 @@ void BTree<type>::insert(type key){
  * */
 template <class type>
 void BTree<type>::remove(type key){
-    cout << "remove called" << endl;
+    // cout << "remove called" << endl;
     remove(key, this->root, NULL);
 }
 
@@ -221,11 +221,11 @@ bool BTree<type>::constructFromTreeString(string treeString){
  * */
 template <class type>
 void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode){
-    cout << "in recursive insert" << endl;
+    // cout << "in recursive insert" << endl;
     // Base case
     // -- If leaf insert at it --
     if (curNode->isLeaf()){
-        cout << "it is leaf & trying to insert " << key << endl;
+        // cout << "it is leaf & trying to insert " << key << endl;
         for (int i = 0; i < curNode->getKeyNo(); i++) {
             if (key < curNode->getKey(i)) {
                 // insert at it
@@ -233,7 +233,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
                 break;
             } else if ( i ==  curNode->getKeyNo() - 1) {
                 // insert at it
-                cout << "inserting " << key << " at " << i+1 << endl;
+                // cout << "inserting " << key << " at " << i+1 << endl;
                 curNode->addKey(key, i + 1);
                 break;
             }
@@ -248,7 +248,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
         return;
     }
     
-    cout << "not a leaf" << endl;
+    // cout << "not a leaf" << endl;
 
     // Not leaf
     // Go through current node's children and decide to 
@@ -283,12 +283,12 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
     int childKeyNo = child->getKeyNo();
     bool rotateSuccessful = false;
 
-    cout << "at balance with " << childKeyNo << " keys " << endl;
+    // cout << "at balance with " << childKeyNo << " keys " << endl;
 
     // if the child has more than or equal to degree number of keys it is not balanced
     // (overFull)
     if (childKeyNo > this->degree - 1){
-        cout << "not balanced" << endl;
+        // cout << "not balanced" << endl;
         // Need to perform a split
         // ## calculate the index at which split is performed ##
         // case 1 : having even keys (2 items at the middle)
@@ -312,7 +312,7 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
 
     // If the child is underfull
     else if (childKeyNo < ( ceil((double)this->degree/2) - 1 ) ){
-        cout << "under-full" << endl;
+        // cout << "under-full" << endl;
         if (parent){
             // Sol 1. Try borrowing from left or right sbling
             rotateSuccessful = rotate(child, parent);
@@ -324,7 +324,7 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
         }
         // Parent is null means child is the root
         else {
-            cout << "parent is null at root" << endl;
+            // cout << "parent is null at root" << endl;
             // if root is empty make its child the root
             if (child->getKeyNo() < 1){
                 // If there is a child, it'll be the root
@@ -347,7 +347,7 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
  * */
 template <class type>
 void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex){
-    cout << "at split with split index " << splitIndex << endl;
+    // cout << "at split with split index " << splitIndex << endl;
     // Local variables
     BNode<type>* tmpL;
     BNode<type>* tmpR;
@@ -361,7 +361,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
     tmpL->setLeaf(child->isLeaf());
     tmpR->setLeaf(child->isLeaf());
 
-    cout << "created new nodes" << endl;
+    // cout << "created new nodes" << endl;
 
     // 2. Populate the 2 nodes with keys
     for (int i = 0; i < child->getKeyNo(); i++){
@@ -374,7 +374,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         }
     }
 
-    cout << "populated with keys" << endl;
+    // cout << "populated with keys" << endl;
 
     // 3. Populate the 2 nodes with children
     for (int i = 0; i < child->getChildNo(); i++){
@@ -403,7 +403,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
     } 
     // 4.b. If parent is null, make a new parent and insert child middle key into it
     else {
-        cout << "creating a new parent " << endl;
+        // cout << "creating a new parent " << endl;
         parent = new BNode<type>();
         parent->setLeaf(false);
         parent->addKey(childMidKey, 0);
@@ -413,11 +413,11 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         this->root = parent;
     }
 
-    cout << "removing the child from parent" << endl;
+    // cout << "removing the child from parent" << endl;
     // 5. Remove the old child from parent and delete it
     parent->removeChild(child);
 
-    cout << "removed the child from parent" << endl;
+    // cout << "removed the child from parent" << endl;
 
     // 6. Insert the two new nodes to parent
     parent->addChild(tmpL, midKeyinsertIndex);
@@ -459,7 +459,7 @@ void BTree<type>::traverse(BNode<type>* curNode, int level){
  * */
 template <class type>
 void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode){
-    cout << "recursive remove" << endl;
+    // cout << "recursive remove" << endl;
     // Local variables
     BNode<type>* curNodeRight = NULL;
     BNode<type>* curNodeLeft = NULL;
@@ -468,7 +468,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
 
     // Base case - Leaf node -
     if (curNode->isLeaf()){
-        cout << "at leaf" << endl;
+        // cout << "at leaf" << endl;
         for (int i = 0; i < curNode->getKeyNo(); i++){
             if (curNode->getKey(i) == key){
                 // The key found.. delete it
@@ -515,7 +515,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
                 }
             }
 
-            cout << "got replacement " << inorderReplacementKey << endl;
+            // cout << "got replacement " << inorderReplacementKey << endl;
 
             // Now a replacement is obtained, so replace key in current node with it
             curNode->removeKey(i);
@@ -549,7 +549,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
 
 template <class type>
 bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
-    cout << "performing rotation" << endl;
+    // cout << "performing rotation" << endl;
     // Local variables
     BNode<type>* sbling = NULL;
     BNode<type>* rightSbling = NULL;
@@ -590,11 +590,11 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
         && leftSbling 
         && leftSbling->getKeyNo() > this->minNumKeys
         ){  
-            cout << "min key nums : " << this->minNumKeys << endl;
-            cout << "parent kids : " << endl;
+            // cout << "min key nums : " << this->minNumKeys << endl;
+            // cout << "parent kids : " << endl;
             for ( int i = 0; i < parent->getChildNo(); i++)
-                cout << parent->getChild(i) << "  ";
-            cout << "\n left sblinbg and child " << leftSbling << " " << child << endl;
+                // cout << parent->getChild(i) << "  ";
+            // cout << "\n left sblinbg and child " << leftSbling << " " << child << endl;
         rotateSuccessful = rotateR(leftSbling, child, parent);
     }
 
@@ -603,7 +603,7 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
 
 template <class type>
 bool BTree<type>::rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent){
-    cout << "rotating left" << endl;
+    // // cout << "rotating left" << endl;
     // Local variables
     int keyIndex;
 
@@ -633,7 +633,7 @@ bool BTree<type>::rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>*
 
 template <class type>
 bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent){
-    cout << "rotating right" << endl;
+    // cout << "rotating right" << endl;
     // Local variable 
     int keyIndex;
 
@@ -643,11 +643,11 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
         if (parent->getChild(i) == childL)
             keyIndex = i;
 
-    cout << "keyIndex : " << keyIndex << endl;
+    // cout << "keyIndex : " << keyIndex << endl;
     // Add the key to the child
     childR->addKey(parent->getKey(keyIndex), 0);
 
-    cout << "key added to right child" << endl;
+    // cout << "key added to right child" << endl;
 
     // 2.a. Move first key from child donating (left child) to parent at same
     // location of key moved to left child
@@ -656,7 +656,7 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     // 2.b. remove the first key from right child
     childL->removeKey(childL->getKeyNo() - 1);
 
-    cout << "key added to parent" << endl;
+    // cout << "key added to parent" << endl;
 
     // 3. move last child of left child to be first of right child
     if (childL->getChildNo() > 0){
@@ -664,14 +664,14 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
         childL->removeChild(childL->getChild(childL->getChildNo() - 1));
     }
 
-    cout << "rotating right finidhed without problems" << endl;
+    // cout << "rotating right finidhed without problems" << endl;
 
     return true;
 }
 
 template <class type>
 void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
-    cout << "at merge" << endl;
+    // cout << "at merge" << endl;
     // Local variables
     BNode<type>* leftSbling = NULL;
     BNode<type>* rightSbling = NULL;
@@ -693,12 +693,12 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // Set up the variables
     // Merge with right if available and is prioritized or left is unavailable
     if ((prioritizeRotatingLeft || !leftSbling) && rightSbling){
-        cout << "setting left sbling to child" << endl;
+        // cout << "setting left sbling to child" << endl;
         leftSbling = child;
     }
     // Merge with left if available and is prioritized or right 
     else if ((!prioritizeRotatingLeft || !rightSbling) && leftSbling){
-        cout << "setting right sbling to child" << endl;
+        // cout << "setting right sbling to child" << endl;
         leftSblingIndex --;
         rightSbling = child;
     }
@@ -710,18 +710,18 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // Add keys from child 1
     for (int i = 0; i < leftSbling->getKeyNo(); i++)
         tmpMergedNode->addKey(leftSbling->getKey(i), tmpMergedNode->getKeyNo());
-    cout << "keys added from child 1" << endl;
+    // cout << "keys added from child 1" << endl;
 
     // Add the middle key from parent btwn child 1 and 2 and remove it
-    cout << "left sbling index : " << leftSblingIndex << "  self : " << parent->getKey(leftSblingIndex) << endl;
+    // cout << "left sbling index : " << leftSblingIndex << "  self : " << parent->getKey(leftSblingIndex) << endl;
     tmpMergedNode->addKey(parent->getKey(leftSblingIndex), tmpMergedNode->getKeyNo());
     parent->removeKey(leftSblingIndex);
-    cout << "keys added from parent" << endl;
+    // cout << "keys added from parent" << endl;
 
     // Add keys from child 2
     for (int i = 0; i < rightSbling->getKeyNo(); i++)
         tmpMergedNode->addKey(rightSbling->getKey(i), tmpMergedNode->getKeyNo());
-    cout << "keys added from child 2" << endl;
+    // cout << "keys added from child 2" << endl;
 
     // Add children from child 1 and 2
     if (leftSbling->getChildNo() > 0){
@@ -747,10 +747,10 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
 
 template <class type>
 bool BTree<type>::findInorderSuccessor(type key, type &successorKey, BNode<type>* curNode, bool forceExtraction){
-    cout << "finding inorder successor with node : " << curNode << endl;
+    // cout << "finding inorder successor with node : " << curNode << endl;
     // Base case - reached a leaf node
     if (curNode->isLeaf()){
-        cout << "is leaf" << endl;
+        // cout << "is leaf" << endl;
         // check if it cannot donate, return
         if (!forceExtraction && curNode->getKeyNo() <= this->minNumKeys)
             return false;
@@ -766,7 +766,7 @@ bool BTree<type>::findInorderSuccessor(type key, type &successorKey, BNode<type>
 
 template <class type>
 bool BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<type>* curNode, bool forceExtraction){
-    cout << "finding inorder predecessor " << endl;
+    // cout << "finding inorder predecessor " << endl;
     // Base case - reached a leaf node
     if (curNode->isLeaf()){
         // check if it cannot donate, return
@@ -858,164 +858,164 @@ void BTree<type>::toTreeString(BNode<type>* curNode, string &output){
 
 template <class type>
 void BTree<type>::insert(BNode<type>* child, BNode<type>* parent){
-    cout << "at insert" << endl;
+    // cout << "at insert" << endl;
 
     if (parent == NULL){
-        cout << "a new root " << child << endl;
+        // cout << "a new root " << child << endl;
         root = child;
         return;
     }
 
-    cout << "adding a child " << child << " to parent " << parent << endl;
+    // cout << "adding a child " << child << " to parent " << parent << endl;
     parent->addChild(child, parent->getChildNo());
 }
 
 
-// template class BTree<int>;
+template class BTree<int>;
 
 
-int main(){
-    // BNode<int>* node1 = new BNode<int>();
-    // BNode<int>* node2 = new BNode<int>();
-    // BNode<int>* node3 = new BNode<int>();
-    // BNode<int>* node4 = new BNode<int>();
-    // BNode<int>* node5 = new BNode<int>();
+// int main(){
+//     // BNode<int>* node1 = new BNode<int>();
+//     // BNode<int>* node2 = new BNode<int>();
+//     // BNode<int>* node3 = new BNode<int>();
+//     // BNode<int>* node4 = new BNode<int>();
+//     // BNode<int>* node5 = new BNode<int>();
 
-    // node1->addKey(1, 0);
-    // node1->addKey(2, 0);
-    // node1->addKey(3, 0);
-    // node1->addKey(4, 0);
+//     // node1->addKey(1, 0);
+//     // node1->addKey(2, 0);
+//     // node1->addKey(3, 0);
+//     // node1->addKey(4, 0);
 
-    // node2->addKey(22, 0);
-    // node3->addKey(33, 0);
-    // node4->addKey(44, 0);
+//     // node2->addKey(22, 0);
+//     // node3->addKey(33, 0);
+//     // node4->addKey(44, 0);
 
 
-    // cout << node1->getKey(0) << endl;
-    // cout << node1->getKey(1) << endl;
-    // cout << node1->getKey(2) << endl;
-    // cout << node1->getKey(3) << endl;
+//     // cout << node1->getKey(0) << endl;
+//     // cout << node1->getKey(1) << endl;
+//     // cout << node1->getKey(2) << endl;
+//     // cout << node1->getKey(3) << endl;
 
-    // // node1->addChild(node2, 0);
-    // // node1->addChild(node3, 0);
-    // // node1->addChild(node4, 1);
-    // // node1->removeChild(node3);
+//     // // node1->addChild(node2, 0);
+//     // // node1->addChild(node3, 0);
+//     // // node1->addChild(node4, 1);
+//     // // node1->removeChild(node3);
 
-    // cout << node1->getChild(0)->getKey(0) << endl;
-    // cout << node1->getChild(1)->getKey(0) << endl;
-    // // cout << node1->getChild(2)->getKey(0) << endl;
+//     // cout << node1->getChild(0)->getKey(0) << endl;
+//     // cout << node1->getChild(1)->getKey(0) << endl;
+//     // // cout << node1->getChild(2)->getKey(0) << endl;
 
-    BTree<int>* tree1 = new BTree<int>(3);
-    // for (int i = 0; i < 1700 ; i++){
-    //     tree1->insert(i);  
-    // }
-    int open;
-    int close;
-    // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
-    // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
-    // tree1->constructFromTreeString("{8}({1})");
+//     BTree<int>* tree1 = new BTree<int>(3);
+//     // for (int i = 0; i < 1700 ; i++){
+//     //     tree1->insert(i);  
+//     // }
+
+//     // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
+//     // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
+//     // tree1->constructFromTreeString("{8}({1})");
     
     
-    tree1->insert(1);  
-    tree1->insert(2);  
-    tree1->insert(3);  
-    tree1->insert(5);  
-    tree1->insert(4);  
+//     tree1->insert(1);  
+//     tree1->insert(2);  
+//     tree1->insert(3);  
+//     tree1->insert(5);  
+//     tree1->insert(4);  
+//     tree1->insert(4);  
 
-    // cout << "before" << endl;
-    tree1->traverse();
+//     // cout << "before" << endl;
+//     tree1->traverse();
 
-    // cout << endl;
-    // cout << tree1->toTreeString() << endl;
-    // tree1->remove(15);
-    // // tree1->insert(15);
+//     // cout << endl;
+//     // cout << tree1->toTreeString() << endl;
+//     // tree1->remove(15);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    // tree1->remove(2);
-    // // tree1->insert(15);
+//     // tree1->remove(2);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    // tree1->remove(8);
-    // // tree1->insert(15);
+//     // tree1->remove(8);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    // tree1->remove(1);
-    // // tree1->insert(15);
+//     // tree1->remove(1);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(3);
-    // // tree1->insert(15);
+//     //     tree1->remove(3);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(4);
-    // // tree1->insert(15);
+//     //     tree1->remove(4);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    // tree1->remove(5);
-    // // tree1->insert(15);
+//     // tree1->remove(5);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(6);
-    // // tree1->insert(15);
+//     //     tree1->remove(6);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(7);
-    // // tree1->insert(15);
+//     //     tree1->remove(7);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(9);
-    // // tree1->insert(15);
+//     //     tree1->remove(9);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //         tree1->remove(10);
-    // // tree1->insert(15);
+//     //         tree1->remove(10);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //         tree1->remove(11);
-    // // tree1->insert(15);
+//     //         tree1->remove(11);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(12);
-    // // tree1->insert(15);
+//     //     tree1->remove(12);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //     tree1->remove(13);
-    // // tree1->insert(15);
+//     //     tree1->remove(13);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    //         tree1->remove(14);
-    // // tree1->insert(15);
+//     //         tree1->remove(14);
+//     // // tree1->insert(15);
 
-    // cout << "after" << endl;
-    // tree1->traverse();
+//     // cout << "after" << endl;
+//     // tree1->traverse();
 
-    return 0;
-}
+//     return 0;
+// }

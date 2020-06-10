@@ -9,6 +9,7 @@
 #include <sstream>
 #include <stack>
 #include <cmath>
+#include "../../../3rd-Party/deelx.h"
 
 template <class type>
 class BTree{
@@ -33,8 +34,8 @@ private:
     void merge(BNode<type>* child, BNode<type>* parent);
     bool findInorderSuccessor(type key, type &successorKey, BNode<type>* curNode, bool forceExtraction);
     bool findInorderPredecessor(type key, type &predecessorKey, BNode<type>* curNode, bool forceExtraction);
-    bool isValidBTreeString(string bTreeString);
     // TreeViz specific functions
+    bool isValidBTreeString(string bTreeString);
     void toTreeString(BNode<type>* curNode, string &output);
     void insert(BNode<type>* child, BNode<type>* parent);
 
@@ -53,8 +54,10 @@ public:
     bool getPrioritizeInorderPredecessor();
     void setPrioritizeRotateLeft(bool prioritizeRotatingLeft);
     bool getPrioritizeRotateLeft();
+
     // TreeViz specific functions
     string toTreeString();
-    void constructFromTreeString(string treeString);
+    bool insertSequence(string sequence);
+    bool constructFromTreeString(string treeString);
 };
 #endif

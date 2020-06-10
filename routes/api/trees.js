@@ -2,6 +2,7 @@
 const {AVLTree} = require('../../build/Release/AVLTree.node');
 const {Tree23} = require('../../build/Release/Tree23.node');
 const {BSTree} = require('../../build/Release/BSTree.node');
+const {BTree} = require('../../build/Release/BTree.node');
 const session = require('express-session');
 const express = require('express');
 const router = express.Router();
@@ -91,23 +92,27 @@ router.post('/buildRandomTree', (req, res) => {
     // Creating a new tree object & initializing it from tree string recieved
     req.session.treeBinary = new BSTree();
     req.session.tree23 = new Tree23();
+    req.session.bTree = new BTree(3);
 
     // construct the tree
     req.session.treeBinary.constructFromTreeString('');
     req.session.tree23.constructFromTreeString('');
+    req.session.bTree.constructFromTreeString('');
 
     // insert random values into the trees
     for (let i = 0; i < numNodes; i++){
         let randomValue = Math.random() * (maxRange - minRange) + minRange;
         req.session.treeBinary.insert(parseInt( randomValue));
         req.session.tree23.insert(parseInt( randomValue ));
+        req.session.bTree.insert(parseInt(randomValue));
     }
 
 
     // Send back the tree just recieved after adding it to json formatted object
     treeObj = {'id': 0, 'treeStrings': {}};
     treeObj.id = 0; // will be fixed later
-    treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
+    // treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
+    treeObj.treeStrings['23'] = req.session.bTree.toTreeString();
     treeObj.treeStrings['binary'] = req.session.treeBinary.toTreeString();
 
     res.send(treeObj);
