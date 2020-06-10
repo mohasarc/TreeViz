@@ -11,8 +11,9 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("insert", &BSTWrapper::insert),
         InstanceMethod("toTreeString", &BSTWrapper::toTreeString),
         InstanceMethod("constructFromTreeString", &BSTWrapper::constructFromTreeString),
+        InstanceMethod("insertSequence", &BSTWrapper::insertSequence),
         // InstanceMethod("search", &BSTWrapper::search),
-        // InstanceMethod("remove", &BSTWrapper::remove)
+        InstanceMethod("remove", &BSTWrapper::remove)
     });
 
     constructor = Napi::Persistent(func);
@@ -87,13 +88,48 @@ Napi::Value BSTWrapper::constructFromTreeString(const Napi::CallbackInfo& info){
     return Napi::Boolean::New(info.Env(), env.Undefined());
 }
 
+Napi::Value BSTWrapper::insertSequence(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() != 1 || !info[0].IsString()){
+        Napi::TypeError::New(env, "String expected").ThrowAsJavaScriptException();
+    }
+
+    Napi::String sequence = info[0].As<Napi::String>();
+    bool success = this->theBSTTree->insertSequence(sequence);
+
+    if (!success){
+        Napi::TypeError::New(env, "Not a valid sequence : " + sequence).ThrowAsJavaScriptException();
+    }
+
+    return Napi::Boolean::New(info.Env(), env.Undefined());
+}
+
 // Napi::Boolean BSTWrapper::search(const Napi::CallbackInfo& info){
 
 // }
 
-// Napi::Boolean BSTWrapper::remove(const Napi::CallbackInfo& info){
+Napi::Boolean BSTWrapper::remove(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
 
-// }
+    if (info.Length() > 0 && info[0].IsNumber()){
+        int val = info[0].As<Napi::Number>();
+        this->theBSTTree->remove(val);
+        bool result = true;
+        return Napi::Boolean::New(info.Env(), result);
+    } 
+    // else if (info[0].IsString()){
+    //     string val = info[0].As<Napi::String>();
+    //     bool result = this->theBSTTree->insert(val);
+    //     return Napi::Boolean::New(info.Env(), result);
+    // }
+     else {
+        Napi::Error::New(env, "unhandeled type to be removed").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(info.Env(), env.Undefined());
+    }
+}
 
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {

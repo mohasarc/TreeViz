@@ -15,6 +15,7 @@ private:
     Napi::Value insert(const Napi::CallbackInfo& info);
     Napi::Value toTreeString(const Napi::CallbackInfo& info);
     Napi::Value constructFromTreeString(const Napi::CallbackInfo& info);
+    Napi::Value insertSequence(const Napi::CallbackInfo& info);
     Napi::Boolean search(const Napi::CallbackInfo& info);
     Napi::Boolean remove(const Napi::CallbackInfo& info);
 
