@@ -65,6 +65,42 @@ string BSTree<T>::toTreeString(){
     return treeStr;
 }
 
+template <class T>
+bool BSTree<T>::insertSequence(string sequence){
+    // Check if a valid number sequence
+    static CRegexpT <char> regexp(R"(\d(,?-?(?R))*)");
+    // test
+    MatchResult result = regexp.MatchExact(sequence.c_str());
+    // matched or not
+    if (result.IsMatched()){
+        // Get all numbers as strings
+        istringstream ss( sequence );
+        vector <string> record;
+        while (ss)
+        {
+        string tmpNumStr;
+        if (!getline( ss, tmpNumStr, ',' )) break;
+        record.push_back( tmpNumStr );
+        }
+        // Make sure that there are no repetitions
+        for (int i = 0; i < record.size(); i++){
+            for (int j = i + 1; j < record.size(); j++){
+                if (record[i] == record[j])
+                    return false;
+            }
+        }
+
+        // Parse all string numbers as integers and add them to the tree
+        for (string numStr : record){
+            insert(stoi(numStr));
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 // Private Methods
 template <class T>
 void BSTree<T>::traverse(TreeNode<T>* root, string &outStr){
@@ -271,6 +307,12 @@ void BSTree<T>::constructFromTreeString(const string treeString){
     stack<TreeNode<T>*> parentsStack;
     TreeNode<T>* tmpNode;
     bool treeNodeConstructed = false;
+
+    // Validate the tree string
+    if (!isValidBSTreeString(treeString)){
+        // Not valid
+        return;
+    }
     
     for (int i = 0; i < treeString.length(); i++){
         switch (treeString.at(i))

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <vector>
 using namespace std;
 
 template <class T> 
