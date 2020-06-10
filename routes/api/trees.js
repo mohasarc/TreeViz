@@ -98,13 +98,25 @@ router.post('/buildRandomTree', (req, res) => {
     req.session.treeBinary.constructFromTreeString('');
     req.session.tree23.constructFromTreeString('');
     req.session.bTree.constructFromTreeString('');
+    // Generate ranfom numbers list
+    var numbers = [];
+    for (var i = minRange; i <= maxRange; i++){
+        numbers.push(i);
+    }
+
+    function shuffle(o) {
+        for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+        return o;
+    };
+    
+    var random = shuffle(numbers);
 
     // insert random values into the trees
-    for (let i = 0; i < numNodes; i++){
-        let randomValue = Math.random() * (maxRange - minRange) + minRange;
-        req.session.treeBinary.insert(parseInt( randomValue));
-        req.session.tree23.insert(parseInt( randomValue ));
-        req.session.bTree.insert(parseInt(randomValue));
+    for (let i = 0; i < numNodes && i < random.length; i++){
+        // let randomValue = Math.random() * (maxRange - minRange) + minRange;
+        req.session.treeBinary.insert(parseInt( random[i]));
+        req.session.tree23.insert(parseInt( random[i] ));
+        req.session.bTree.insert(parseInt(random[i]));
     }
 
 
