@@ -19,6 +19,20 @@ private:
     // Napi::Boolean search(const Napi::CallbackInfo& info);
     Napi::Value remove(const Napi::CallbackInfo& info);
 
+    Napi::Value setOrder(const Napi::CallbackInfo& info);
+    Napi::Value getOrder(const Napi::CallbackInfo& info);
+    Napi::Value setPropagateS(const Napi::CallbackInfo& info);
+    Napi::Value getPropagateS(const Napi::CallbackInfo& info);
+    Napi::Value setPrioritizeInorderPredecessor(const Napi::CallbackInfo& info);
+    Napi::Value getPrioritizeInorderPredecessor(const Napi::CallbackInfo& info);
+    Napi::Value setPrioritizeRotateLeft(const Napi::CallbackInfo& info);
+    Napi::Value getPrioritizeRotateLeft(const Napi::CallbackInfo& info);
+
+    Napi::Value insertSequence(const Napi::CallbackInfo& info);
+    Napi::Value setSequence(const Napi::CallbackInfo& info);
+    Napi::Value getSequence(const Napi::CallbackInfo& info);
+    Napi::Value generateInorderSequence(const Napi::CallbackInfo& info);
+
     BTree<int> *theBTree;
 };
 

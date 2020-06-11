@@ -19,6 +19,11 @@ private:
     Napi::Boolean search(const Napi::CallbackInfo& info);
     Napi::Value remove(const Napi::CallbackInfo& info);
 
+    Napi::Value isEmpty(const Napi::CallbackInfo& info);
+    Napi::Value setSequence(const Napi::CallbackInfo& info);
+    Napi::Value getSequence(const Napi::CallbackInfo& info);
+    Napi::Value generateInorderSequence(const Napi::CallbackInfo& info);
+
     BSTree<int>* theBSTTree;
 };
 

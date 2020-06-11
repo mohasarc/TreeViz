@@ -45,10 +45,10 @@ private:
 public:
     BTree(int degree);
     ~BTree();
-    void insert(type key);
-    void remove(type key);
+    void insert(type key); // DONE
+    void remove(type key); // DONE
     bool find(type key);
-    void traverse();
+    void traverse();  // DONE
     void setOrder(int order);
     int getOrder();
     void setPropagateS(bool propagateS);
@@ -59,11 +59,11 @@ public:
     bool getPrioritizeRotateLeft();
 
     // TreeViz specific functions
-    string toTreeString();
+    string toTreeString(); // DONE
     bool insertSequence(string sequence);
     void setSequence(string sequence);
     string getSequence();
     string generateInorderSequence();
-    bool constructFromTreeString(string treeString);
+    bool constructFromTreeString(string treeString); // DONE
 };
 #endif

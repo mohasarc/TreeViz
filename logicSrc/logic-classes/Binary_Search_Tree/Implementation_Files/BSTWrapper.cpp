@@ -132,6 +132,43 @@ Napi::Value BSTWrapper::remove(const Napi::CallbackInfo& info){
     }
 }
 
+Napi::Value BSTWrapper::isEmpty(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    bool empty = this->theBSTTree->isEmpty();
+    return Napi::Boolean::New(info.Env(), empty);
+}
+
+Napi::Value BSTWrapper::setSequence(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() > 0 && info[0].IsString())
+        theBSTTree->setSequence(info[0].As<Napi::String>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::Boolean::New(info.Env(), env.Undefined());
+}
+
+Napi::Value BSTWrapper::getSequence(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    string sequence = this->theBSTTree->getSequence();
+    return Napi::String::New(info.Env(), sequence);
+}
+
+Napi::Value BSTWrapper::generateInorderSequence(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    string generatedSequence = this->theBSTTree->generateInorderSequence();
+    return Napi::String::New(info.Env(), generatedSequence);
+}
+
+
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
     BSTWrapper::Init(env, exports);
