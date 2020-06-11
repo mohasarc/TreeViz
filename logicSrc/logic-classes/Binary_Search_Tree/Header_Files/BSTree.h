@@ -1,11 +1,12 @@
 #ifndef BSTree_H
 #define BSTree_H
 #include "TreeNode.h"
-#include "../../../3rd-Party/deelx.h"
 #include <iostream>
 #include <sstream>
 #include <stack>
 #include <vector>
+#include "../../../3rd-Party/deelx.h"
+
 using namespace std;
 
 template <class T> 
@@ -13,16 +14,20 @@ class BSTree{
 private:
 // Properties
 TreeNode<T>* root;
+string sequence;
 
 // Functions
 void traverse(TreeNode<T>* root, string &outStr);
-TreeNode<T>* search(TreeNode<T>* root, TreeNode<T>* &parent, T anItem);
-void insert(TreeNode<T>* root, T &anItem);
+void search(TreeNode<T>* &root, TreeNode<T>* &parent, T anItem);
+void insert(TreeNode<T>* root, T &anItem, bool &success);
 bool removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent);
 void toTreeString(TreeNode<T>* root, string &output);
-void insert(TreeNode<T> *child, TreeNode<T> *parent);
 TreeNode<T>* getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent);
+string keyToString(T key);
+// TreeViz specific functions
+void insert(TreeNode<T> *child, TreeNode<T> *parent);
 bool isValidBSTreeString(string bsTreeString);
+void generateInorderSequence(TreeNode<T>* curNode, string &sequence);
 
 public:
 BSTree();
@@ -31,10 +36,13 @@ bool search(T anItem);
 bool insert(T anItem);
 bool remove(T anItem, char type);
 bool isEmpty();
+// TreeViz specific functions
 void constructFromTreeString(const string treeString);
 string toTreeString();
 bool insertSequence(string sequence);
-
+void setSequence(string sequence);
+string getSequence();
+string generateInorderSequence();
 };
 
 #endif

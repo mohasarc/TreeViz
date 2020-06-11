@@ -3,6 +3,7 @@
 template <class T>
 BSTree<T>::BSTree(){
     this->root = NULL;
+    this->sequence = "";
 }
 
 template <class T>
@@ -15,31 +16,50 @@ string BSTree<T>::traverse(){
 template <class T>
 bool BSTree<T>::search(T anItem){
     TreeNode<T>* notUsed;
-    return this->search(root, notUsed, anItem);
+    this->search(root, notUsed, anItem);
+
+    return root;
 }
 
 template <class T>
 bool BSTree<T>::insert(T anItem){
+    bool success = false;
     if (this->root == NULL){
         this->root = new TreeNode<T>(anItem);
-        return true;
+        success = true;
     }
     else {
-        this->insert(this->root, anItem);
-        return true;
+        this->insert(this->root, anItem, success);
     }
+
+    if (success){
+        // add key to the sequence
+        if (this->sequence.size() > 0)
+            sequence += "," + keyToString(anItem);
+        else
+            sequence += keyToString(anItem);
+    }
+
+    return success;
 }
 
 template <class T>
 bool BSTree<T>::remove(T anItem, char type){
+    bool success = false;
+
     switch (type)
     {
     case 's':
     case 'S':
         TreeNode<T>* toBeDeleted;
         TreeNode<T>* toBeDeletedParent;
-        toBeDeleted = search(this->root, toBeDeletedParent, anItem);
-        return this->removeWithSuccessor(toBeDeleted, toBeDeletedParent);
+        toBeDeleted = this->root;
+        search(toBeDeleted, toBeDeletedParent, anItem);
+        success = this->removeWithSuccessor(toBeDeleted, toBeDeletedParent);
+        if (success)
+            this->sequence += ",d" + keyToString(anItem);
+
+        return success;
     break;
     
     case 'p':
@@ -68,7 +88,7 @@ string BSTree<T>::toTreeString(){
 template <class T>
 bool BSTree<T>::insertSequence(string sequence){
     // Check if a valid number sequence
-    static CRegexpT <char> regexp(R"(\d(,?-?(?R))*)");
+    static CRegexpT <char> regexp(R"(\d(,?d?-?(?R))*)");
     // test
     MatchResult result = regexp.MatchExact(sequence.c_str());
     // matched or not
@@ -82,17 +102,22 @@ bool BSTree<T>::insertSequence(string sequence){
         if (!getline( ss, tmpNumStr, ',' )) break;
         record.push_back( tmpNumStr );
         }
-        // Make sure that there are no repetitions
-        for (int i = 0; i < record.size(); i++){
-            for (int j = i + 1; j < record.size(); j++){
-                if (record[i] == record[j])
-                    return false;
-            }
-        }
+
+        // THERE CAN BE MULTIPLE DELETIONS / INSERTIONS
+        // // Make sure that there are no repetitions
+        // for (int i = 0; i < record.size(); i++){
+        //     for (int j = i + 1; j < record.size(); j++){
+        //         if (record[i] == record[j])
+        //             return false;
+        //     }
+        // }
 
         // Parse all string numbers as integers and add them to the tree
         for (string numStr : record){
-            insert(stoi(numStr));
+            if (numStr.at(0) == 'd')
+                remove(stoi(numStr.substr(1)), 's');
+            else
+                insert(stoi(numStr));
         }
 
         return true;
@@ -100,6 +125,24 @@ bool BSTree<T>::insertSequence(string sequence){
 
     return false;
 }
+
+template <class T>
+void BSTree<T>::setSequence(string sequence){
+    this->sequence = sequence;
+}
+
+template <class T>
+string BSTree<T>::getSequence(){
+    return this->sequence;
+}
+
+template <class T>
+string BSTree<T>::generateInorderSequence(){
+    string theSequence;
+    this->generateInorderSequence(this->root, theSequence);
+    return theSequence;
+}
+
 
 // Private Methods
 template <class T>
@@ -124,25 +167,31 @@ void BSTree<T>::traverse(TreeNode<T>* root, string &outStr){
 }
 
 template <class T>
-TreeNode<T>* BSTree<T>::search(TreeNode<T>* root, TreeNode<T>* &parent, T anItem){
+void BSTree<T>::search(TreeNode<T>* &root, TreeNode<T>* &parent, T anItem){
+    // Base case 1 - not found return
     if (root == NULL)
-        return NULL;
+        return;
 
+    // Base case 2 - if found return
     if (anItem == root->getItem())
-        return root;
+        return;
 
     parent = root;
-    if (anItem < root->getItem())
-        search(root->getLeftChildPtr(), parent, anItem);
-    else 
-        search(root->getRightChildPtr(), parent, anItem);
-
-    // For compiler to be happy
-    return NULL;
+    if (anItem < root->getItem()){
+        root = root->getLeftChildPtr();
+        search(root, parent, anItem);
+    }
+    else{
+        root = root->getRightChildPtr();
+        search(root, parent, anItem);
+    }
 }
 
 template <class T>
-void BSTree<T>::insert(TreeNode<T>* root, T &anItem){
+void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
+    // Reset newlyInserted of all other nodes to false
+    root->setNewlyInserted(false);
+
     // Base case -- if leaf node insert at it
     if (root->isLeaf()){
         TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
@@ -153,33 +202,39 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem){
             root->setRightChildPtr(tmpNode);
         }
 
+        // Give feedback
+        success = true;
+
         return;
     }
 
     // cout << "left child : " << (root->getLeftChildPtr() != NULL ? root->getLeftChildPtr()->getItem() : 0) 
     //      << "  rightChild   " << (root->getRightChildPtr() != NULL? root->getRightChildPtr()->getItem() : 0)  << endl; 
-    
-    // Reset newlyInserted of all other nodes to false
-    root->setNewlyInserted(false);
 
     // Either go left or make new node there
     if (anItem < root->getItem()){
         if (root->getLeftChildPtr() != NULL)
-            insert(root->getLeftChildPtr(), anItem);
+            insert(root->getLeftChildPtr(), anItem, success);
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
             root->setLeftChildPtr(tmpNode);
+
+            // Give feedback
+            success = true;
         }
     }
     // Either go right or make new node there
     else {
         if (root->getRightChildPtr() != NULL)
-            insert(root->getRightChildPtr(), anItem);
+            insert(root->getRightChildPtr(), anItem, success);
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
             root->setRightChildPtr(tmpNode);
+
+            // Give feedback
+            success = true;
         }
     }
 }
@@ -188,7 +243,6 @@ template <class T>
 bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
     // if leaf just remove it
     if (root->isLeaf()){
-        delete root;
         if (parent->getLeftChildPtr() == root){
             // delete the child to the left
             parent->setLeftChildPtr(NULL);
@@ -196,10 +250,11 @@ bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
             // delete the child to the left
             parent->setRightChildPtr(NULL);
         }
+        delete root;
         return true;
     }
 
-    // if has one child, make parent point to child
+    // if has one child, make parent point to child's child
     if (root->getLeftChildPtr() == NULL || root->getRightChildPtr() == NULL){
         TreeNode<T>* tmp = root;
         if (parent->getLeftChildPtr() == root){
@@ -213,10 +268,12 @@ bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
                                     ? root->getLeftChildPtr() 
                                     : root->getRightChildPtr()));
         }
+
+        delete root;
         return true;
     }
 
-    // if has both children, replace with inorder successor
+    // if root has both children, replace with inorder successor
     // and delete it from there leaf node
     TreeNode<T>* inSuccParent = NULL;
     TreeNode<T>* inorderSuccessor = root->getRightChildPtr()->getLeftChildPtr() == NULL 
@@ -373,6 +430,17 @@ TreeNode<T>* BSTree<T>::getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent){
 }
 
 template <class T>
+string BSTree<T>::keyToString(T key){
+    string keyString = "";
+    ostringstream oss;
+    oss.str("");
+    oss.clear();
+    oss << key;
+    keyString += oss.str();
+    return keyString;
+}
+
+template <class T>
 bool BSTree<T>::isValidBSTreeString(string bsTreeString){
     static CRegexpT<char> regexp(R"(\{\*?\d*\}(\(((?R)(,(?R))?)?\))*)");
 
@@ -381,4 +449,43 @@ bool BSTree<T>::isValidBSTreeString(string bsTreeString){
     return result.IsMatched();
 }
 
+template <class T>
+void BSTree<T>::generateInorderSequence(TreeNode<T>* curNode, string &sequence){
+    // Base case - NULL, return
+    if (curNode == NULL)
+        return;
+
+    // add left child
+    generateInorderSequence(curNode->getLeftChildPtr(), sequence);
+
+    // add self
+    if(sequence.size() > 0)
+        sequence += "," + keyToString(curNode->getItem());
+    else
+        sequence += keyToString(curNode->getItem());
+
+    // add right child
+    generateInorderSequence(curNode->getRightChildPtr(), sequence);
+}
+
 template class BSTree<int>;
+
+// int main(){
+//     BSTree<int> tree;
+
+//     // tree.insert(1);
+//     // tree.insert(2);
+//     // tree.insert(3);
+//     // tree.insert(4);
+//     // tree.insert(5);
+
+//     tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
+//     // tree.remove(6,'s');
+//     // tree.remove(7,'s');
+
+//     cout << tree.getSequence() << endl;
+//     cout << tree.generateInorderSequence() << endl;
+//     cout << tree.toTreeString() << endl;
+//     // cout << tree.traverse() << endl;
+//     return 0;
+// }

@@ -121,7 +121,10 @@ router.post('/buildRandomTree', (req, res) => {
 
 
     // Send back the tree just recieved after adding it to json formatted object
-    treeObj = {'id': 0, 'treeStrings': {}};
+    treeObj = { 'id': 0, 
+                'treeStrings': {},
+                'treeSequence': '',
+                };
     treeObj.id = 0; // will be fixed later
     // treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
     treeObj.treeStrings['23'] = req.session.bTree.toTreeString();

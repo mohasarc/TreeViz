@@ -41,7 +41,8 @@
         "sources": [
             "logicSrc/logic-classes/Binary_Search_Tree/Implementation_Files/BSTree.cpp",
             "logicSrc/logic-classes/Binary_Search_Tree/Implementation_Files/BSTWrapper.cpp",
-            "logicSrc/logic-classes/Binary_Search_Tree/Implementation_Files/TreeNode.cpp"
+            "logicSrc/logic-classes/Binary_Search_Tree/Implementation_Files/TreeNode.cpp",
+            "logicSrc/3rd-Party/deelx.h"
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")"

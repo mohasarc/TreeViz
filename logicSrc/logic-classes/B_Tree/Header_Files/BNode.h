@@ -25,7 +25,7 @@ public:
     BNode* getChild(int index);
     int getChildNo();
     void addKey(Type key, int index);
-    void removeKey(int index);
+    Type removeKey(int index);
     Type getKey(int index);
     int getKeyNo();
     void setLeaf(bool leaf);

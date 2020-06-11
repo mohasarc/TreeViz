@@ -17,7 +17,7 @@ private:
     Napi::Value constructFromTreeString(const Napi::CallbackInfo& info);
     Napi::Value insertSequence(const Napi::CallbackInfo& info);
     Napi::Boolean search(const Napi::CallbackInfo& info);
-    Napi::Boolean remove(const Napi::CallbackInfo& info);
+    Napi::Value remove(const Napi::CallbackInfo& info);
 
     BSTree<int>* theBSTTree;
 };

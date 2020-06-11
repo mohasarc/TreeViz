@@ -77,8 +77,10 @@ void BNode<Type>::addKey(Type key, int index){
  * @param index The index of the key to be deleted
  * */
 template <class Type>
-void BNode<Type>::removeKey(int index){
+Type BNode<Type>::removeKey(int index){
+    Type theKey = this->keys[index];
     this->keys.erase(this->keys.begin() + index);
+    return theKey;
 }
 
 /**

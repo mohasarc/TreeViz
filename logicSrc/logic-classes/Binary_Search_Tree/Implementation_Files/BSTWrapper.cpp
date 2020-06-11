@@ -100,7 +100,7 @@ Napi::Value BSTWrapper::insertSequence(const Napi::CallbackInfo& info){
     bool success = this->theBSTTree->insertSequence(sequence);
 
     if (!success){
-        Napi::TypeError::New(env, "Not a valid sequence : " + sequence).ThrowAsJavaScriptException();
+        Napi::TypeError::New(env, "Not a valid sequence").ThrowAsJavaScriptException();
     }
 
     return Napi::Boolean::New(info.Env(), env.Undefined());
@@ -110,13 +110,14 @@ Napi::Value BSTWrapper::insertSequence(const Napi::CallbackInfo& info){
 
 // }
 
-Napi::Boolean BSTWrapper::remove(const Napi::CallbackInfo& info){
+Napi::Value BSTWrapper::remove(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (info.Length() > 0 && info[0].IsNumber()){
+    if (info.Length() > 1 && info[0].IsNumber()){
         int val = info[0].As<Napi::Number>();
-        this->theBSTTree->remove(val);
+        string type = info[1].As<Napi::String>();
+        this->theBSTTree->remove(val, type[0]);
         bool result = true;
         return Napi::Boolean::New(info.Env(), result);
     } 

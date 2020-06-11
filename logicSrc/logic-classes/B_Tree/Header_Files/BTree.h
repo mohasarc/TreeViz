@@ -15,6 +15,7 @@ template <class type>
 class BTree{
 private:
     BNode<type>* root;
+    string sequence;
     int degree;
     bool propagateS;
     bool prioritizeInorderPredecessor;
@@ -23,22 +24,24 @@ private:
     int maxNumKeys;
 
     // Private functions
-    void insert(type key, BNode<type>* curNode, BNode<type>* parentNode);
+    void insert(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success);
     void balance(BNode<type>* child, BNode<type>* parent);
     void split(BNode<type>* child, BNode<type>* parent, int splitIndex);
     void traverse(BNode<type>* curNode, int level);
-    void remove(type key, BNode<type>* curNode, BNode<type>* parentNode);
+    void remove(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success);
     bool rotate(BNode<type>* child, BNode<type>* parent);
     bool rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent);
     bool rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent);
     void merge(BNode<type>* child, BNode<type>* parent);
     bool findInorderSuccessor(type key, type &successorKey, BNode<type>* curNode, bool forceExtraction);
     bool findInorderPredecessor(type key, type &predecessorKey, BNode<type>* curNode, bool forceExtraction);
+    string keyToString(type key);
     // TreeViz specific functions
     bool isValidBTreeString(string bTreeString);
     void toTreeString(BNode<type>* curNode, string &output);
     void insert(BNode<type>* child, BNode<type>* parent);
-
+    void generateInorderSequence(BNode<type>* curNode, string &sequence);
+ 
 public:
     BTree(int degree);
     ~BTree();
@@ -58,6 +61,9 @@ public:
     // TreeViz specific functions
     string toTreeString();
     bool insertSequence(string sequence);
+    void setSequence(string sequence);
+    string getSequence();
+    string generateInorderSequence();
     bool constructFromTreeString(string treeString);
 };
 #endif

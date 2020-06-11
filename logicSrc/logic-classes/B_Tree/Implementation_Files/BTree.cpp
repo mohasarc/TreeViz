@@ -18,6 +18,7 @@ BTree<type>::BTree(int degree){
     this->prioritizeRotatingLeft = false;
     this->minNumKeys = ceil((double)degree/2) - 1;
     this->maxNumKeys = degree - 1;
+    this->sequence = "";
 }
 
 /**
@@ -33,13 +34,25 @@ BTree<type>::~BTree(){
  * */
 template <class type>
 void BTree<type>::insert(type key){
+    // Local variables
+    bool success = false;
+
     if (this->root == NULL){
         // cout << "creating root" << endl;
         this->root = new BNode<type>();
         this->root->setLeaf(true);
     }
+    
+    // add key to the tree
+    this->insert(key, this->root, NULL, success);
 
-    this->insert(key, this->root, NULL);
+    if (success){
+        // add key to the sequence
+        if (this->sequence.size() > 0)
+            sequence += "," + keyToString(key);
+        else
+            sequence += keyToString(key);
+    }
 }
 
 /**
@@ -48,7 +61,11 @@ void BTree<type>::insert(type key){
 template <class type>
 void BTree<type>::remove(type key){
     // cout << "remove called" << endl;
-    remove(key, this->root, NULL);
+    bool success = false;
+    remove(key, this->root, NULL, success);
+
+    if (success)
+        this->sequence += ",d" + keyToString(key);
 }
 
 /**
@@ -122,7 +139,7 @@ string BTree<type>::toTreeString(){
 template <class type>
 bool BTree<type>::insertSequence(string sequence){
     // Check if a valid number sequence
-    static CRegexpT <char> regexp(R"(\d(,?-?(?R))*)");
+    static CRegexpT <char> regexp(R"(\d(,?d?-?(?R))*)");
     // test
     MatchResult result = regexp.MatchExact(sequence.c_str());
     // matched or not
@@ -136,17 +153,25 @@ bool BTree<type>::insertSequence(string sequence){
         if (!getline( ss, tmpNumStr, ',' )) break;
         record.push_back( tmpNumStr );
         }
-        // Make sure that there are no repetitions
-        for (int i = 0; i < record.size(); i++){
-            for (int j = i + 1; j < record.size(); j++){
-                if (record[i] == record[j])
-                    return false;
-            }
-        }
+
+        // THERE CAN BE MULTIPLE DELETIONS / INSERTIONS
+        // // Make sure that there are no repetitions
+        // for (int i = 0; i < record.size(); i++){
+        //     for (int j = i + 1; j < record.size(); j++){
+        //         if (record[i] == record[j])
+        //             return false;
+        //     }
+        // }
+
+        // store the sequence
+        this->sequence = sequence;
 
         // Parse all string numbers as integers and add them to the tree
         for (string numStr : record){
-            insert(stoi(numStr));
+            if (numStr.at(0) == 'd')
+                remove(stoi(numStr.substr(1)));
+            else
+                insert(stoi(numStr));
         }
 
         return true;
@@ -155,13 +180,31 @@ bool BTree<type>::insertSequence(string sequence){
     return false;
 }
 
+template <class type>
+void BTree<type>::setSequence(string sequence){
+    this->sequence = sequence;
+}
+
+template <class type>
+string BTree<type>::getSequence(){
+    return this->sequence;
+}
+
+template <class type>
+string BTree<type>::generateInorderSequence(){
+    string inorderSequence = "";
+    this->generateInorderSequence(this->root, inorderSequence);
+    return inorderSequence;
+}
+
+
 /**
  * Builds the tree out of a tree string
  * @param treeString The treeString describig the tree
  * */
 template <class type>
 bool BTree<type>::constructFromTreeString(string treeString){
-    cout << "at construct" << endl;
+    // cout << "at construct" << endl;
     stack<BNode<type>*> parentsStack;
     BNode<type>* tmpNode;
     int childCount = 0;
@@ -173,6 +216,7 @@ bool BTree<type>::constructFromTreeString(string treeString){
     }
 
     for (int i = 0; i < treeString.length(); i++){
+        // cout << "at char " << treeString.at(i) << endl;
         switch (treeString.at(i))
         {
         case '{':
@@ -220,7 +264,7 @@ bool BTree<type>::constructFromTreeString(string treeString){
  * 
  * */
 template <class type>
-void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode){
+void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success){
     // cout << "in recursive insert" << endl;
     // Base case
     // -- If leaf insert at it --
@@ -230,17 +274,21 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
             if (key < curNode->getKey(i)) {
                 // insert at it
                 curNode->addKey(key, i);
+                success = true;
                 break;
             } else if ( i ==  curNode->getKeyNo() - 1) {
                 // insert at it
                 // cout << "inserting " << key << " at " << i+1 << endl;
                 curNode->addKey(key, i + 1);
+                success + true;
                 break;
             }
         }
 
-        if (curNode->getKeyNo() == 0)
+        if (curNode->getKeyNo() == 0){
             curNode->addKey(key, 0);
+            success = true;
+        }
 
         // May become unbalanced so check balance
         this->balance(curNode, parentNode);
@@ -256,12 +304,12 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
     for (int i = 0; i < curNode->getKeyNo(); i++) {
         if (key < curNode->getKey(i)) {
             // insert in the tree just before the key greater than it
-            insert(key, curNode->getChild(i), curNode);
+            insert(key, curNode->getChild(i), curNode, success);
             break;
         }
         else if (i == curNode->getKeyNo() - 1) {
             // Greater than the last key
-            insert(key, curNode->getChild(i+1), curNode);
+            insert(key, curNode->getChild(i+1), curNode, success);
             break;
         }
     }
@@ -458,7 +506,7 @@ void BTree<type>::traverse(BNode<type>* curNode, int level){
  * @param parentNode The parent of the current node
  * */
 template <class type>
-void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode){
+void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success){
     // cout << "recursive remove" << endl;
     // Local variables
     BNode<type>* curNodeRight = NULL;
@@ -473,6 +521,9 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             if (curNode->getKey(i) == key){
                 // The key found.. delete it
                 curNode->removeKey(i);
+
+                // feedback
+                success = true;
 
                 // Now tree might lost balance, so balance it
                 balance(curNode, parentNode);
@@ -521,6 +572,9 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             curNode->removeKey(i);
             curNode->addKey(inorderReplacementKey, i);
 
+            // feedback
+            success = true;
+
             // Replace they key to be deleted with the replacement key
             // so they algorithm keeps going till the bottom of the tree
             // to delete it and balance tree in the way back
@@ -532,12 +586,12 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     for (int i = 0; i < curNode->getKeyNo(); i++) {
         if (key < curNode->getKey(i)) {
             // continue with the tree just before the key greater than it
-            remove(key, curNode->getChild(i), curNode);
+            remove(key, curNode->getChild(i), curNode, success);
             break;
         }
         else if (i == curNode->getKeyNo() - 1) {
             // Greater than the last key
-            remove(key, curNode->getChild(i+1), curNode);
+            remove(key, curNode->getChild(i+1), curNode, success);
             break;
         }
     }
@@ -783,6 +837,17 @@ bool BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<t
 }
 
 template <class type>
+string BTree<type>::keyToString(type key){
+    string keyString = "";
+    ostringstream oss;
+    oss.str("");
+    oss.clear();
+    oss << key;
+    keyString += oss.str();
+    return keyString;
+}
+
+template <class type>
 bool BTree<type>::isValidBTreeString(string bTreeString){
     static CRegexpT<char> regexp(R"(\{\d+(,\d+)*\}(\(((?R),?)+\))*)");
 
@@ -859,6 +924,11 @@ void BTree<type>::toTreeString(BNode<type>* curNode, string &output){
 template <class type>
 void BTree<type>::insert(BNode<type>* child, BNode<type>* parent){
     // cout << "at insert" << endl;
+    // set leaf status
+    if (parent)
+        parent->setLeaf(false);
+    if (child)
+        child->setLeaf(true);
 
     if (parent == NULL){
         // cout << "a new root " << child << endl;
@@ -867,43 +937,36 @@ void BTree<type>::insert(BNode<type>* child, BNode<type>* parent){
     }
 
     // cout << "adding a child " << child << " to parent " << parent << endl;
+    // cout << "child no " << parent->getChildNo() << endl;
     parent->addChild(child, parent->getChildNo());
+    // cout << "child pushed" << endl;
 }
 
+template <class type>
+void BTree<type>::generateInorderSequence(BNode<type>* curNode, string &sequence){
+    // Base case - leaf - print keys only
+    if (curNode->isLeaf()){
+        for (int i = 0; i < curNode->getKeyNo(); i++){
+            if(sequence.size() > 0)
+                sequence += "," + keyToString(curNode->getKey(i));
+            else
+                sequence += keyToString(curNode->getKey(i));
+        }
+        return;
+    }
+
+    // add children
+    for (int i = 0; i < curNode->getChildNo(); i++){
+        generateInorderSequence(curNode->getChild(i), sequence);
+        if (i < curNode->getKeyNo())
+            sequence += "," + keyToString(curNode->getKey(i));
+    }
+}
 
 template class BTree<int>;
 
 
 // int main(){
-//     // BNode<int>* node1 = new BNode<int>();
-//     // BNode<int>* node2 = new BNode<int>();
-//     // BNode<int>* node3 = new BNode<int>();
-//     // BNode<int>* node4 = new BNode<int>();
-//     // BNode<int>* node5 = new BNode<int>();
-
-//     // node1->addKey(1, 0);
-//     // node1->addKey(2, 0);
-//     // node1->addKey(3, 0);
-//     // node1->addKey(4, 0);
-
-//     // node2->addKey(22, 0);
-//     // node3->addKey(33, 0);
-//     // node4->addKey(44, 0);
-
-
-//     // cout << node1->getKey(0) << endl;
-//     // cout << node1->getKey(1) << endl;
-//     // cout << node1->getKey(2) << endl;
-//     // cout << node1->getKey(3) << endl;
-
-//     // // node1->addChild(node2, 0);
-//     // // node1->addChild(node3, 0);
-//     // // node1->addChild(node4, 1);
-//     // // node1->removeChild(node3);
-
-//     // cout << node1->getChild(0)->getKey(0) << endl;
-//     // cout << node1->getChild(1)->getKey(0) << endl;
-//     // // cout << node1->getChild(2)->getKey(0) << endl;
 
 //     BTree<int>* tree1 = new BTree<int>(3);
 //     // for (int i = 0; i < 1700 ; i++){
@@ -914,108 +977,25 @@ template class BTree<int>;
 //     // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
 //     // tree1->constructFromTreeString("{8}({1})");
     
-    
-//     tree1->insert(1);  
+//     tree1->constructFromTreeString("{50}({1}{2,3}{3}{4})");
+//     tree1->setSequence(tree1->generateInorderSequence());
+
+//     tree1->insert(12);  
+//     tree1->insert(33);  
+//     tree1->insert(42); 
+//     tree1->insert(42); 
+//     tree1->insert(-3);  
+//     tree1->insert(1);
+//     // tree1->remove(1);
 //     tree1->insert(2);  
-//     tree1->insert(3);  
-//     tree1->insert(5);  
-//     tree1->insert(4);  
-//     tree1->insert(4);  
+//     tree1->remove(3);
+//     tree1->remove(-3);
+
+//     cout << "sequence : " << tree1->getSequence() << endl;
+//     cout << "sequence : " << tree1->generateInorderSequence() << endl;
 
 //     // cout << "before" << endl;
 //     tree1->traverse();
-
-//     // cout << endl;
-//     // cout << tree1->toTreeString() << endl;
-//     // tree1->remove(15);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     // tree1->remove(2);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     // tree1->remove(8);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     // tree1->remove(1);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(3);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(4);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     // tree1->remove(5);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(6);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(7);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(9);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //         tree1->remove(10);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //         tree1->remove(11);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(12);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //     tree1->remove(13);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
-
-//     //         tree1->remove(14);
-//     // // tree1->insert(15);
-
-//     // cout << "after" << endl;
-//     // tree1->traverse();
 
 //     return 0;
 // }
