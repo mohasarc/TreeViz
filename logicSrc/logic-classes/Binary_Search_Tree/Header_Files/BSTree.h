@@ -20,7 +20,7 @@ string sequence;
 void traverse(TreeNode<T>* root, string &outStr);
 void search(TreeNode<T>* &root, TreeNode<T>* &parent, T anItem);
 void insert(TreeNode<T>* root, T &anItem, bool &success);
-bool removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent);
+void removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent, bool &success);
 void toTreeString(TreeNode<T>* root, string &output);
 TreeNode<T>* getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent);
 string keyToString(T key);

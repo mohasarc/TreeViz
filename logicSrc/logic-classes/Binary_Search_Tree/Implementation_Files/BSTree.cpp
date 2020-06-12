@@ -55,7 +55,10 @@ bool BSTree<T>::remove(T anItem, char type){
         TreeNode<T>* toBeDeletedParent;
         toBeDeleted = this->root;
         search(toBeDeleted, toBeDeletedParent, anItem);
-        success = this->removeWithSuccessor(toBeDeleted, toBeDeletedParent);
+
+        if (toBeDeleted)
+            this->removeWithSuccessor(toBeDeleted, toBeDeletedParent, success);
+
         if (success)
             this->sequence += ",d" + keyToString(anItem);
 
@@ -240,7 +243,7 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
 }
 
 template <class T>
-bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
+void BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent, bool &success){
     // if leaf just remove it
     if (root->isLeaf()){
         if (parent->getLeftChildPtr() == root){
@@ -250,8 +253,10 @@ bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
             // delete the child to the left
             parent->setRightChildPtr(NULL);
         }
+
         delete root;
-        return true;
+        success = true;
+        return;
     }
 
     // if has one child, make parent point to child's child
@@ -270,7 +275,8 @@ bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
         }
 
         delete root;
-        return true;
+        success = true;
+        return;
     }
 
     // if root has both children, replace with inorder successor
@@ -284,10 +290,7 @@ bool BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent){
     // replace with inorder successor
     T tmpItem = root->getItem();
     root->setItem(inorderSuccessor->getItem());
-    removeWithSuccessor(inorderSuccessor, inSuccParent);
-
-    // for compiler to be happy
-    return false;
+    removeWithSuccessor(inorderSuccessor, inSuccParent, success);
 }
 
 template <class T>
@@ -389,7 +392,6 @@ void BSTree<T>::constructFromTreeString(const string treeString){
         }
 
         // update stack
-        cout << "pushing father " << tmpNode->getItem() << endl;
         parentsStack.push(tmpNode);
         break;
 
@@ -470,22 +472,26 @@ void BSTree<T>::generateInorderSequence(TreeNode<T>* curNode, string &sequence){
 
 template class BSTree<int>;
 
-// int main(){
-//     BSTree<int> tree;
+int main(){
+    BSTree<int> tree;
 
-//     // tree.insert(1);
-//     // tree.insert(2);
-//     // tree.insert(3);
-//     // tree.insert(4);
-//     // tree.insert(5);
+    // tree.insert(1);
+    // tree.insert(2);
+    // tree.insert(3);
+    // tree.insert(4);
+    // tree.insert(5);
 
-//     tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
-//     // tree.remove(6,'s');
-//     // tree.remove(7,'s');
+    // tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
+    tree.constructFromTreeString("{35}({26}({24}({19}({},{*20}),{}),{29}({},{*34})),{89}({68}({53}({50}({46}({},{*49}),{}),{}),{}),{92}({},{*95})))");
+    
+    tree.setSequence(tree.generateInorderSequence());
+    cout << endl;
+    tree.remove(35,'s');
+    tree.remove(7,'s');
 
-//     cout << tree.getSequence() << endl;
-//     cout << tree.generateInorderSequence() << endl;
-//     cout << tree.toTreeString() << endl;
-//     // cout << tree.traverse() << endl;
-//     return 0;
-// }
+    cout << tree.getSequence() << endl;
+    cout << tree.generateInorderSequence() << endl;
+    cout << tree.toTreeString() << endl;
+    // cout << tree.traverse() << endl;
+    return 0;
+}

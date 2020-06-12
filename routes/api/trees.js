@@ -13,6 +13,66 @@ router.use(session({
     saveUninitialized : false,
 }));
 
+router.post('/performOperation', (req, res) => {
+    var operationType = req.operation.type;
+    var value = req.operation.value;
+    var treeContent = req.treeContent;
+    var targetTreeInfo = req.targetTreeInfo;
+
+    // Create the tree
+    switch (targetTreeInfo.type) {
+        case 'binary-tree':
+            req.session.theTree = new BSTree();
+        break;
+        
+        case 'B-tree':
+            req.session.theTree = new BTree(targetTreeInfo.preferences.order);
+        break;
+    
+        default:
+        break;
+    }
+
+    // Perform the operation
+    switch (operationType) {
+        case 'insert':
+            if (treeContent.treeSequence != '')
+                req.session.theTree.insertSequence(treeContent.treeSequence);
+            else{
+                req.session.theTree.constructFromTreeString(treeContent.treeString);
+                res.session.theTree.setSequence(req.session.theTree.generateInorderSequence());
+            }
+
+            req.session.theTree.insert(value);
+        break;
+
+        case 'remove':
+        
+        break;
+
+        case 'build':
+        
+        break;
+
+        case 'buildRandom':
+    
+        break;
+
+        default:
+            break;
+    }
+
+    // Send back the final product
+    var responseObj = {
+        type : targetTreeInfo.type,
+        treeString : req.session.theTree.toTreeString(),
+        treeSequence : req.session.theTree.getSequence(),
+        preferences : targetTreeInfo.preferences,
+    }
+
+    res.send(responseObj);
+});
+
 // @route  GET api/trees/getTree
 // @desc   get the current tree
 // @access public
@@ -33,7 +93,7 @@ router.post('/sendTree', (req, res) => {
     console.log(req.body);
     if (req.body.treeString){
         req.session.treeBinary.constructFromTreeString(req.body.treeString);
-        req.session.tree23.constructFromTreeString(req.body.treeString);
+        // req.session.tree23.constructFromTreeString(req.body.treeString);
     } else {
         req.session.treeBinary.constructFromTreeString('');
         req.session.tree23.constructFromTreeString('');
@@ -42,7 +102,7 @@ router.post('/sendTree', (req, res) => {
     // Send back the tree just recieved after adding it to json formatted object
     treeObj = {'id': 0, 'treeStrings': {}};
     treeObj.id = 0; // will be fixed later
-    treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
+    // treeObj.treeStrings['23'] = req.session.tree23.toTreeString();
     treeObj.treeStrings['binary'] = req.session.treeBinary.toTreeString();
 
     res.send(treeObj);
