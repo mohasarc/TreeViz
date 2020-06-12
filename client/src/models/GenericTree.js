@@ -22,6 +22,9 @@ class GenericTree{
         this.visitedMark = true;
         this.treeLeftBound = 0;
         this.treeRightBound = 0;
+
+        this.sequence = '';
+        this.preferences = {};
     }
 
     /**
@@ -414,6 +417,22 @@ class GenericTree{
 
     getScale(){
         return this.scale;
+    }
+    
+    setTreeSequence(sequence){
+        this.sequence = sequence;
+    }
+
+    getTreeSequence(){
+        return this.sequence;
+    }
+
+    setPreferences(preferences){
+        this.preferences = preferences;
+    }
+
+    getPreferences(){
+        return this.preferences;
     }
 }
 

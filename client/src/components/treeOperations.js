@@ -172,6 +172,85 @@ class TreeOperations extends React.Component{
         e.preventDefault();
     }
 
+    performOperation = (e) => {
+        // get the operation required
+        var operation = e.target.attributes.operation.value;
+        var operationObj = {
+            'treeContent' : {
+                            'treeString' : this.state.trees.length > 0? this.state.trees[0].getTreeString() : '',
+                            'treeSequence' : this.state.trees.length > 0? this.state.trees[0].getTreeSequence() : '',
+                            },
+            'targetTreeInfo' : {
+                                'type' : this.props.treeChoice[0],
+                                'preferences' : {
+                                    'order' : 3,
+                                },
+                               },
+            'operation' : {
+                            'type' : '',
+                            'value' : this.state.reference.current.value,
+                            'preferences' : {},
+                          }
+        }
+
+        switch (operation) {
+            case 'insert':               
+                operationObj.operation.type = 'insert';
+            break;
+    
+            case 'remove':
+                operationObj.operation.type = 'remove';
+            break;
+    
+            case 'build':
+                operationObj.operation.type = 'build';
+            break;
+    
+            case 'buildRandom':
+                operationObj.treeContent.treeString = '';
+                operationObj.treeContent.treeSequence = '';
+                operationObj.operation.type = 'buildRandom';
+            break;
+    
+            default:
+            break;
+        }
+
+
+        this.setState(state => {
+            if (!this.isCalled){
+                axios.post('/api/trees/performOperation', operationObj).then((response) => {
+                    // Processing data came from backend
+                    var responseObj = response.data;
+
+                    if (responseObj){
+                        // add the tree read into the trees array
+                        var tmpTree = new GenericTree();
+                        tmpTree.construct(responseObj.treeString);
+                        tmpTree.setTreeSequence(responseObj.treeSequence);
+                        tmpTree.setPreferences(responseObj.preferences);
+
+                        tmpTree.setTreeType(responseObj.type);
+                        tmpTree.setScale(1);
+                        this.state.trees.unshift(tmpTree);
+                        tmpTree.setId(this.state.trees.length);
+
+                        this.triggerUpdate();
+                    }
+                });
+
+                this.isCalled = true;
+            } else {
+                this.isCalled = false;
+            }
+        });
+        
+        this.isCalled = false;
+        console.log(e.target.attributes.operation);
+
+        e.preventDefault();
+    }
+
     typeIdToTreeTypeName(id){
         switch (id) {
             case 'binary':
@@ -238,8 +317,8 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Append>
-                            <Button variant="outline-secondary" onClick={this.addToArray}>+</Button>
-                            <Button variant="outline-secondary" onClick={this.removeFromArray}>-</Button>
+                            <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
+                            <Button operation='remove' variant="outline-secondary" onClick={this.removeFromArray}>-</Button>
                             </InputGroup.Append>
                         </InputGroup>
                         <InputGroup className="mb-3">
@@ -250,7 +329,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Append>
-                                <Button variant="outline-secondary" onClick={this.buildTree}>Go</Button>
+                                <Button operation='build' variant="outline-secondary" onClick={this.buildTree}>Go</Button>
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>
@@ -289,7 +368,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>
-                                <Button variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
+                                <Button operation='buildRandom' variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
                             </InputGroup.Prepend>
                         </InputGroup>
                     </Col>

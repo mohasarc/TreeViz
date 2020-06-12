@@ -36,6 +36,8 @@ template <class type>
 void BTree<type>::insert(type key){
     // Local variables
     bool success = false;
+    type insertedKey = key;
+    cout << "key to be inserted " << key << endl;
 
     if (this->root == NULL){
         // cout << "creating root" << endl;
@@ -46,12 +48,14 @@ void BTree<type>::insert(type key){
     // add key to the tree
     this->insert(key, this->root, NULL, success);
 
+    cout << "inserting " << key << " was " << success << endl;
     if (success){
+        cout << "success adding key " << key << endl;
         // add key to the sequence
         if (this->sequence.size() > 0)
-            sequence += "," + keyToString(key);
+            sequence += "," + keyToString(insertedKey);
         else
-            sequence += keyToString(key);
+            sequence += keyToString(insertedKey);
     }
 }
 
@@ -162,9 +166,6 @@ bool BTree<type>::insertSequence(string sequence){
         //             return false;
         //     }
         // }
-
-        // store the sequence
-        this->sequence = sequence;
 
         // Parse all string numbers as integers and add them to the tree
         for (string numStr : record){
@@ -280,7 +281,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
                 // insert at it
                 // cout << "inserting " << key << " at " << i+1 << endl;
                 curNode->addKey(key, i + 1);
-                success + true;
+                success = true;
                 break;
             }
         }
@@ -944,7 +945,11 @@ void BTree<type>::insert(BNode<type>* child, BNode<type>* parent){
 
 template <class type>
 void BTree<type>::generateInorderSequence(BNode<type>* curNode, string &sequence){
-    // Base case - leaf - print keys only
+    // Base case 1
+    if (curNode == NULL)
+        return;
+
+    // Base case 2 - leaf - print keys only
     if (curNode->isLeaf()){
         for (int i = 0; i < curNode->getKeyNo(); i++){
             if(sequence.size() > 0)
@@ -977,19 +982,20 @@ template class BTree<int>;
 //     // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
 //     // tree1->constructFromTreeString("{8}({1})");
     
-//     tree1->constructFromTreeString("{50}({1}{2,3}{3}{4})");
-//     tree1->setSequence(tree1->generateInorderSequence());
-
-//     tree1->insert(12);  
-//     tree1->insert(33);  
-//     tree1->insert(42); 
-//     tree1->insert(42); 
-//     tree1->insert(-3);  
-//     tree1->insert(1);
-//     // tree1->remove(1);
+//     // tree1->constructFromTreeString("{50}({1}{2,3}{3}{4})");
+//     // tree1->setSequence(tree1->generateInorderSequence());
+//     tree1->insertSequence("1");
 //     tree1->insert(2);  
-//     tree1->remove(3);
-//     tree1->remove(-3);
+
+//     // tree1->insert(33);  
+//     // tree1->insert(42); 
+//     // tree1->insert(42); 
+//     // tree1->insert(-3);  
+//     // tree1->insert(1);
+//     // // tree1->remove(1);
+//     // tree1->insert(2);  
+//     // tree1->remove(3);
+//     // tree1->remove(-3);
 
 //     cout << "sequence : " << tree1->getSequence() << endl;
 //     cout << "sequence : " << tree1->generateInorderSequence() << endl;

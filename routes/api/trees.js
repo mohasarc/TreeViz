@@ -14,48 +14,80 @@ router.use(session({
 }));
 
 router.post('/performOperation', (req, res) => {
-    var operationType = req.operation.type;
-    var value = req.operation.value;
-    var treeContent = req.treeContent;
-    var targetTreeInfo = req.targetTreeInfo;
+    var operationType = req.body.operation.type;
+    var operationPreferences = req.body.operation.preferences;
+    var value = req.body.operation.value;
+    var treeContent = req.body.treeContent;
+    var targetTreeInfo = req.body.targetTreeInfo;
 
     // Create the tree
     switch (targetTreeInfo.type) {
-        case 'binary-tree':
+        case 'binary':
             req.session.theTree = new BSTree();
         break;
         
-        case 'B-tree':
+        case '23':
             req.session.theTree = new BTree(targetTreeInfo.preferences.order);
         break;
-    
+
+        case 'avl-tree':
+        break;
+
+        case 'red-black-tree':
+        break;
+        
         default:
         break;
+    }
+
+    // Populate tree
+    if (treeContent.treeSequence != ''){
+        req.session.theTree.insertSequence(treeContent.treeSequence);
+    }
+    else{
+        req.session.theTree.constructFromTreeString(treeContent.treeString);
+        var treeSequence = req.session.theTree.generateInorderSequence();
+        req.session.theTree.setSequence(treeSequence);
     }
 
     // Perform the operation
     switch (operationType) {
         case 'insert':
-            if (treeContent.treeSequence != '')
-                req.session.theTree.insertSequence(treeContent.treeSequence);
-            else{
-                req.session.theTree.constructFromTreeString(treeContent.treeString);
-                res.session.theTree.setSequence(req.session.theTree.generateInorderSequence());
-            }
-
-            req.session.theTree.insert(value);
+            req.session.theTree.insert(parseInt(value));
         break;
 
         case 'remove':
-        
+            req.session.theTree.remove(parseInt(value));
         break;
 
-        case 'build':
-        
-        break;
+        // case 'build':
+
+        // break;
 
         case 'buildRandom':
-    
+            // utility function
+            function shuffle(o) {
+                for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+                return o;
+            };
+
+            // get values from request
+            var minRange = parseInt(operationPreferences.range.min);
+            var maxRange = parseInt(operationPreferences.range.max);
+            var numNodes = parseInt(operationPreferences.numNodes);
+
+            // Generate random numbers list
+            var numbers = [];
+            for (var i = minRange; i <= maxRange; i++){
+                numbers.push(i);
+            }
+            
+            // shuffle the list
+            var random = shuffle(numbers);
+
+            // insert random values into the tree
+            for (let i = 0; i < numNodes && i < random.length; i++)
+                req.session.theTree.insert(parseInt( random[i]));
         break;
 
         default:
