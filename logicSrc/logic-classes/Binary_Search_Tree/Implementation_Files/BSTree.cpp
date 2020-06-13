@@ -26,6 +26,10 @@ bool BSTree<T>::insert(T anItem){
     bool success = false;
     if (this->root == NULL){
         this->root = new TreeNode<T>(anItem);
+        this->root->setColor("success");
+        recordStep("Root is null, insert at it");
+        this->root->setColor("");
+
         success = true;
     }
     else {
@@ -146,6 +150,30 @@ string BSTree<T>::generateInorderSequence(){
     return theSequence;
 }
 
+template <class T>
+vector<Step> BSTree<T>::getSteps(){
+    return this->steps;
+}
+
+template <class T>
+int BSTree<T>::getStepsNo(){
+    return this->steps.size();
+}
+
+template <class T>
+string BSTree<T>::getStepText(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].text;
+    return "";
+}
+
+template <class T>
+string BSTree<T>::getStepTreeStr(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].treeStr;
+    return "";
+}
+
 
 // Private Methods
 template <class T>
@@ -197,13 +225,22 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
 
     // Base case -- if leaf node insert at it
     if (root->isLeaf()){
+        // set the node to be selected, record step, then unselect it
+        root->setColor("select");
+        recordStep("Reached a leaf node, insert at it");
+        root->setColor("");
+
         TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
         tmpNode->setNewlyInserted(true);
+        tmpNode->setColor("success");
         if (anItem < root->getItem()){
             root->setLeftChildPtr(tmpNode);
+            recordStep("Item is less than item in the leaf, so insert at left");
         } else {
             root->setRightChildPtr(tmpNode);
+            recordStep("Item is greater than item in the leaf, so insert at right");
         }
+        tmpNode->setColor("");
 
         // Give feedback
         success = true;
@@ -216,12 +253,23 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
 
     // Either go left or make new node there
     if (anItem < root->getItem()){
-        if (root->getLeftChildPtr() != NULL)
+        // Record a step
+        root->setColor("select");
+        recordStep("Key to be inserted < key being checked, check left");
+        root->setColor("");
+
+        if (root->getLeftChildPtr() != NULL){
             insert(root->getLeftChildPtr(), anItem, success);
+        }
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
             root->setLeftChildPtr(tmpNode);
+            
+            // Record a step
+            tmpNode->setColor("success");
+            recordStep("The is no left child, insert here");
+            tmpNode->setColor("");
 
             // Give feedback
             success = true;
@@ -229,12 +277,22 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
     }
     // Either go right or make new node there
     else {
+        // Record a step
+        root->setColor("select");
+        recordStep("Key to be inserted >= key being checked, check right");
+        root->setColor("");
+
         if (root->getRightChildPtr() != NULL)
             insert(root->getRightChildPtr(), anItem, success);
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
             root->setRightChildPtr(tmpNode);
+
+            // Record a step
+            tmpNode->setColor("success");
+            recordStep("The is no right child, insert here");
+            tmpNode->setColor("");
 
             // Give feedback
             success = true;
@@ -310,8 +368,10 @@ void BSTree<T>::toTreeString(TreeNode<T>* root, string &output){
     // Base Case 2
     if (root->isLeaf()){
         // wrap its contents with {}
-        // oss << "{";
-        oss << (root->getNewlyInserted() ? "{*" : "{");
+        oss << "{";
+        if (root->getColor() != "")
+            oss << "*" << root->getColor() << "*";
+        // oss << (root->getNewlyInserted() ? "{*" : "{");
         oss << root->getItem();
         oss << "}";
         output += oss.str();
@@ -323,7 +383,10 @@ void BSTree<T>::toTreeString(TreeNode<T>* root, string &output){
     // Not a leaf
     // *** add self ***
     // oss << "{";
-    oss << (root->getNewlyInserted() ? "{*" : "{");
+    // oss << (root->getNewlyInserted() ? "{*" : "{");
+    oss << "{";
+    if (root->getColor() != "")
+        oss << "*" << root->getColor() << "*";
     oss << root->getItem();
     oss << "}";
 
@@ -470,6 +533,15 @@ void BSTree<T>::generateInorderSequence(TreeNode<T>* curNode, string &sequence){
     generateInorderSequence(curNode->getRightChildPtr(), sequence);
 }
 
+template <class T>
+void BSTree<T>::recordStep(string stepText){
+    Step step;
+    step.treeStr = toTreeString();
+    step.text = stepText;
+
+    this->steps.push_back(step);
+}
+
 template class BSTree<int>;
 
 int main(){
@@ -481,17 +553,27 @@ int main(){
     // tree.insert(4);
     // tree.insert(5);
 
-    // tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
-    tree.constructFromTreeString("{35}({26}({24}({19}({},{*20}),{}),{29}({},{*34})),{89}({68}({53}({50}({46}({},{*49}),{}),{}),{}),{92}({},{*95})))");
+    tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
+    // tree.constructFromTreeString("{35}({26}({24}({19}({},{*20}),{}),{29}({},{*34})),{89}({68}({53}({50}({46}({},{*49}),{}),{}),{}),{92}({},{*95})))");
     
-    tree.setSequence(tree.generateInorderSequence());
+    // tree.setSequence(tree.generateInorderSequence());
     cout << endl;
-    tree.remove(35,'s');
-    tree.remove(7,'s');
+    // tree.remove(35,'s');
+    // tree.insert(7);
+    // tree.insert(6);
+    // tree.remove(7,'s');
 
     cout << tree.getSequence() << endl;
     cout << tree.generateInorderSequence() << endl;
     cout << tree.toTreeString() << endl;
+
+    vector<Step> myVector = tree.getSteps();
+    cout << "size " << myVector.size() << endl;
+    for (Step step : myVector){
+        cout << "text : " << step.text << endl;
+        cout << "tree : " << step.treeStr << endl;
+    }
+
     // cout << tree.traverse() << endl;
     return 0;
 }

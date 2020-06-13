@@ -9,12 +9,19 @@
 
 using namespace std;
 
-template <class T> 
+struct Step
+{
+    string text;
+    string treeStr;
+};
+
+template <class T>
 class BSTree{
 private:
 // Properties
 TreeNode<T>* root;
 string sequence;
+vector<Step> steps;
 
 // Functions
 void traverse(TreeNode<T>* root, string &outStr);
@@ -28,6 +35,7 @@ string keyToString(T key);
 void insert(TreeNode<T> *child, TreeNode<T> *parent);
 bool isValidBSTreeString(string bsTreeString);
 void generateInorderSequence(TreeNode<T>* curNode, string &sequence);
+void recordStep(string stepText);
 
 public:
 BSTree();
@@ -43,6 +51,11 @@ bool insertSequence(string sequence);
 void setSequence(string sequence);
 string getSequence();
 string generateInorderSequence();
+vector<Step> getSteps();
+int getStepsNo();
+string getStepText(int index);
+string getStepTreeStr(int index);
+
 };
 
 #endif
