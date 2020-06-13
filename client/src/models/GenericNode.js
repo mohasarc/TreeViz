@@ -30,23 +30,26 @@ class GenericNode {
         var aVal = '';
         var nodeFilled = false;
         var theColor = '';
-
+        var readColor = false;
         // If empty node
         if (nodeStr.substring(0, 2) == '{}')
             return [];
 
         nodeStr.split('').map(char => {
             if (char == '*' && !nodeFilled){
-                theColor = '#ffc107';
+                readColor = !readColor;
+            }
+            else if (readColor){
+                theColor += char;
             }
             // , means reached the end of one value
             // } means reached the end of the last value
-            else if ((char == ',' || char == '}') && !nodeFilled){
+            else if ((char == ',' || char == '}') && !nodeFilled && !readColor){
                 values.push(aVal);
                 aVal = '';
             }
             else {
-                if (char != '{' && char != '}' && !nodeFilled){
+                if (char != '{' && char != '}' && !nodeFilled && !readColor){
                     aVal += char;
                     // console.log('adding to val', char, aVal);
                 }
@@ -61,6 +64,16 @@ class GenericNode {
         });
 
         // console.log('values from parser', values);
+        // Find value of the color
+        switch (theColor) {
+            case 'select': theColor = '#33b5e5'; break;
+            case 'success': theColor = '#00C851'; break;
+            case 'danger': theColor = '#ff4444'; break;
+            case 'alert': theColor = '#ffc107'; break;
+        
+            default:
+                break;
+        }
         this.color = theColor;
         return values;
     }

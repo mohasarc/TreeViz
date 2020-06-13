@@ -9,6 +9,12 @@ import Button from 'react-bootstrap/Button'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import p5 from 'p5'
+import { withSnackbar } from 'notistack';
+import IconButton from '@material-ui/core/IconButton';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import CenterFocusStrongRoundedIcon from '@material-ui/icons/CenterFocusStrongRounded';
+import AspectRatioRoundedIcon from '@material-ui/icons/AspectRatioRounded';
+import SaveRoundedIcon from '@material-ui/icons/SaveRounded';
 
 /**
  * The canvas component
@@ -25,7 +31,6 @@ class Canvas extends React.Component{
             tree : props.tree,
             myP5 : null,
             updateTreeOperations : props.updateTreeOperations,
-
         }
         this.node = props.theNode;
         this.state.myP5 = this.props.p5;
@@ -61,7 +66,7 @@ class Canvas extends React.Component{
         this.state.myP5.width = this.state.width;
         this.state.myP5.height = this.state.height;
         this.state.myP5.tree = this.state.tree;
-        console.log('tree just mounted', this.state.tree);
+        // console.log('tree just mounted', this.state.tree);
         this.state.myP5.tree.center(newWidth/2);
         this.setState({
             height : this.state.tree.getHeight() + 40,
@@ -179,6 +184,29 @@ class Canvas extends React.Component{
         }
     }
 
+    playSteps = (e) => {
+        var i = 0;
+        var enqueueSnackbar = this.props.enqueueSnackbar;
+
+        var tree = this.state.tree;
+        var width = this.state.width;
+        var p5 = this.state.myP5;
+
+        var steps = this.state.tree.getSteps();
+        (function loop() {
+            enqueueSnackbar(steps[i].text);
+            tree.construct(steps[i].treeStr);
+            p5.windowResized(width, tree.getHeight());
+            p5.tree.center(width/2);
+
+            if (++i < steps.length) {
+                setTimeout(loop, 1500);  // call myself in 1 seconds time if required
+            }
+        })(); // above function expression is called immediately to start it off
+
+        e.preventDefault();
+    }
+
     render(){
         return  (
         <Container>
@@ -207,9 +235,13 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={6} md={5} lg={5}>
                         <div className='float-right'>
+                            <a href='#' className='badge badge-light'  onClick={this.playSteps}
+                               style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
+                                <div className='play' style={{'color' : '#FFFFFF'}}>.</div>
+                            </a>
                             <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
-                                <div className='save'>.</div>
+                                <div className='save' >.</div>
                             </a>
                             <a href='#' className='badge badge-light'  onClick={this.treeDetach}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
@@ -242,4 +274,5 @@ class Canvas extends React.Component{
     }
 }
 
-export default Canvas;
+// export default Canvas;
+export default withSnackbar(Canvas);

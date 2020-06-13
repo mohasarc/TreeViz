@@ -25,6 +25,7 @@ class GenericTree{
 
         this.sequence = '';
         this.preferences = {};
+        this.steps = [];
     }
 
     /**
@@ -433,6 +434,14 @@ class GenericTree{
 
     getPreferences(){
         return this.preferences;
+    }
+
+    setSteps(steps){
+        this.steps = steps;
+    }
+
+    getSteps(){
+        return this.steps;
     }
 }
 
