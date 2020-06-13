@@ -23,6 +23,9 @@ private:
     Napi::Value setSequence(const Napi::CallbackInfo& info);
     Napi::Value getSequence(const Napi::CallbackInfo& info);
     Napi::Value generateInorderSequence(const Napi::CallbackInfo& info);
+    Napi::Value getStepsNo(const Napi::CallbackInfo& info);
+    Napi::Value getStepText(const Napi::CallbackInfo& info);
+    Napi::Value getStepTreeStr(const Napi::CallbackInfo& info);
 
     BSTree<int>* theBSTTree;
 };

@@ -20,20 +20,24 @@ router.post('/performOperation', (req, res) => {
     var treeContent = req.body.treeContent;
     var targetTreeInfo = req.body.targetTreeInfo;
 
+    console.log(req.body);
+
     // Create the tree
-    switch (targetTreeInfo.type) {
-        case 'binary':
+    switch (targetTreeInfo.type.value) {
+        case 'BST':
             req.session.theTree = new BSTree();
         break;
         
-        case '23':
+        case '234':
+        case 'B-T':
+        case '23T':
             req.session.theTree = new BTree(targetTreeInfo.preferences.order);
         break;
 
-        case 'avl-tree':
+        case 'AVL':
         break;
 
-        case 'red-black-tree':
+        case 'RBT':
         break;
         
         default:
@@ -57,7 +61,7 @@ router.post('/performOperation', (req, res) => {
         break;
 
         case 'remove':
-            req.session.theTree.remove(parseInt(value));
+            req.session.theTree.remove(parseInt(value), 's');
         break;
 
         // case 'build':
@@ -95,11 +99,28 @@ router.post('/performOperation', (req, res) => {
     }
 
     // Send back the final product
+    // Special naming for B-trees
+    var treeName = targetTreeInfo.type.name;
+    if (targetTreeInfo.type.value == 'B-T'){
+        treeName = targetTreeInfo.preferences.order + targetTreeInfo.type.name.substr(1);
+    }
+
+    steps = [];
+    // Retrieving steps
+    if (targetTreeInfo.type.value == 'BST')
+        for (var i = 0; i < req.session.theTree.getStepsNo(); i++){
+            steps.push({
+                'text' : req.session.theTree.getStepText(i),
+                'treeStr' : req.session.theTree.getStepTreeStr(i),
+            });
+        }
+
     var responseObj = {
-        type : targetTreeInfo.type,
-        treeString : req.session.theTree.toTreeString(),
-        treeSequence : req.session.theTree.getSequence(),
-        preferences : targetTreeInfo.preferences,
+        'type' : treeName,
+        'treeString' : req.session.theTree.toTreeString(),
+        'treeSequence' : req.session.theTree.getSequence(),
+        'preferences' : targetTreeInfo.preferences,
+        'steps' : steps
     }
 
     res.send(responseObj);

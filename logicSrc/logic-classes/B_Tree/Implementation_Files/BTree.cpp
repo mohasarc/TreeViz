@@ -36,9 +36,6 @@ template <class type>
 void BTree<type>::insert(type key){
     // Local variables
     bool success = false;
-    type insertedKey = key;
-    cout << "key to be inserted " << key << endl;
-
     if (this->root == NULL){
         // cout << "creating root" << endl;
         this->root = new BNode<type>();
@@ -48,14 +45,12 @@ void BTree<type>::insert(type key){
     // add key to the tree
     this->insert(key, this->root, NULL, success);
 
-    cout << "inserting " << key << " was " << success << endl;
     if (success){
-        cout << "success adding key " << key << endl;
         // add key to the sequence
         if (this->sequence.size() > 0)
-            sequence += "," + keyToString(insertedKey);
+            sequence += "," + keyToString(key);
         else
-            sequence += keyToString(insertedKey);
+            sequence += keyToString(key);
     }
 }
 

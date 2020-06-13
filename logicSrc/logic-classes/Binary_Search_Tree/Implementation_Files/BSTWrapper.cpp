@@ -17,6 +17,9 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("setSequence", &BSTWrapper::setSequence),
         InstanceMethod("getSequence", &BSTWrapper::getSequence),
         InstanceMethod("generateInorderSequence", &BSTWrapper::generateInorderSequence),
+        InstanceMethod("getStepsNo", &BSTWrapper::getStepsNo),
+        InstanceMethod("getStepText", &BSTWrapper::getStepText),
+        InstanceMethod("getStepTreeStr", &BSTWrapper::getStepTreeStr),
     });
 
     constructor = Napi::Persistent(func);
@@ -171,6 +174,39 @@ Napi::Value BSTWrapper::generateInorderSequence(const Napi::CallbackInfo& info){
     return Napi::String::New(info.Env(), generatedSequence);
 }
 
+Napi::Value BSTWrapper::getStepsNo(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    int stepsNo = this->theBSTTree->getStepsNo();
+    return Napi::Number::New(info.Env(), stepsNo);
+}
+
+Napi::Value BSTWrapper::getStepText(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    string stepText;
+
+    if (info.Length() > 0 && info[0].IsNumber())
+        stepText = theBSTTree->getStepText(info[0].As<Napi::Number>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::String::New(info.Env(), stepText);
+}
+
+Napi::Value BSTWrapper::getStepTreeStr(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    string stepTreeStr;
+
+    if (info.Length() > 0 && info[0].IsNumber())
+        stepTreeStr = theBSTTree->getStepTreeStr(info[0].As<Napi::Number>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::String::New(info.Env(), stepTreeStr);
+}
 
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
