@@ -10,13 +10,19 @@ class Home extends React.Component{
         super(props);
         this.TreeOperationsRef = React.createRef();
         this.canvasContainerRef = React.createRef();
-        this.treeChoicesRef = React.createRef();
         this.trees = [];
         this.treesStrs = [];
         this.treeChoice = [];
         this.treeChoice[0] = '23';
+        this.preferences = {
+            'type' : {'name' : '2-3 tree'      , 'value' : '23T'},
+            'order' : 3,
+            'propagateSmallerValue' : false,
+            'prioritizeInorderPredecessor' : false,
+            'prioritizeRotateLeft' : false,
+            'replaceWithPredecessor' : false
+        };
         this.update = this.update.bind(this);
-        this.updateTreeChoice = this.updateTreeChoice.bind(this);
         this.updateTreeOperations = this.updateTreeOperations.bind(this);
     }
 
@@ -24,10 +30,6 @@ class Home extends React.Component{
         this.canvasContainerRef.current.update();
         // console.log('all data stored so far **********');
         // console.log(this.trees, this.treesStrs);
-    }
-
-    updateTreeChoice(){
-        this.treeChoice[0] = this.treeChoicesRef.current.treeChoice;
     }
 
     updateTreeOperations(treeDescription){
@@ -39,11 +41,10 @@ class Home extends React.Component{
             <div>
                 <Header/>
                 <Jumbotron>
-                    <br/>
-                    <h3>Choose a tree type</h3>
-                    <TreeChoices triggerUpdate={this.updateTreeChoice} ref={this.treeChoicesRef}/>
+                    {/* <h3>Choose a tree type</h3> */}
+                    <TreeChoices preferences={this.preferences}/>
                     <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} 
-                                    trees={this.trees} treeChoice={this.treeChoice} 
+                                    trees={this.trees} preferences={this.preferences} 
                                     ref={this.TreeOperationsRef}/>
                     <CanvasContainer updateTreeOperations={this.updateTreeOperations} 
                                      ref={this.canvasContainerRef} treesStrs={this.treesStrs} 

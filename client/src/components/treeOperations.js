@@ -28,149 +28,149 @@ class TreeOperations extends React.Component{
         }
         this.triggerUpdate = props.triggerUpdate;
         this.isCalled = false;
-        this.addToArray = this.addToArray.bind(this);
-        this.removeFromArray = this.removeFromArray.bind(this);
-        this.buildTree = this.buildTree.bind(this);
-        this.buildRandonTree = this.buildRandonTree.bind(this);
+        // this.addToArray = this.addToArray.bind(this);
+        // this.removeFromArray = this.removeFromArray.bind(this);
+        // this.buildTree = this.buildTree.bind(this);
+        // this.buildRandonTree = this.buildRandonTree.bind(this);
         this.minChanged = this.minChanged.bind(this);
         this.maxChanged = this.maxChanged.bind(this);
         this.numNodesChanged = this.numNodesChanged.bind(this);
         this.counter = 0;
     }
 
-    addToArray(e){
-        this.setState(state => {
-            if (!this.isCalled){
-                // this.state.tree.insert(this.state.reference.current.value);
-                var curTreeStrings;
-                this.state.treesStrs.length >= 1 
-                ? curTreeStrings = this.state.treesStrs[this.state.treesStrs.length-1]
-                : curTreeStrings = '';
+    // addToArray(e){
+    //     this.setState(state => {
+    //         if (!this.isCalled){
+    //             // this.state.tree.insert(this.state.reference.current.value);
+    //             var curTreeStrings;
+    //             this.state.treesStrs.length >= 1 
+    //             ? curTreeStrings = this.state.treesStrs[this.state.treesStrs.length-1]
+    //             : curTreeStrings = '';
 
-                axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
-                                         treeStrings : curTreeStrings
-                                        }
-                            ).then((response) => {
-                    // Processing data came from backend
-                    var treeStrings = response.data.treeStrings;
-                    if (treeStrings){
-                        // add the tree strings into the treeStr array
-                        this.state.treesStrs.push(treeStrings);
-                        // pop a tree from trees
-                        // if (this.state.trees.length > 1)
-                        //     this.state.trees.pop();
+    //             axios.post('/api/trees/addValue', {value : this.state.reference.current.value,
+    //                                      treeStrings : curTreeStrings
+    //                                     }
+    //                         ).then((response) => {
+    //                 // Processing data came from backend
+    //                 var treeStrings = response.data.treeStrings;
+    //                 if (treeStrings){
+    //                     // add the tree strings into the treeStr array
+    //                     this.state.treesStrs.push(treeStrings);
+    //                     // pop a tree from trees
+    //                     // if (this.state.trees.length > 1)
+    //                     //     this.state.trees.pop();
 
-                        // add the tree read into the trees array
-                        var tmpTree = new GenericTree();
-                        tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        // tmpTree.buildTreeMatrixCaller();
-                        // tmpTree.organizeTreeMatrix();
-                        tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
-                        tmpTree.setId(this.state.treesStrs.length);
-                        tmpTree.setScale(1);
-                        this.state.trees.unshift(tmpTree);
+    //                     // add the tree read into the trees array
+    //                     var tmpTree = new GenericTree();
+    //                     tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
+    //                     // tmpTree.buildTreeMatrixCaller();
+    //                     // tmpTree.organizeTreeMatrix();
+    //                     tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
+    //                     tmpTree.setId(this.state.treesStrs.length);
+    //                     tmpTree.setScale(1);
+    //                     this.state.trees.unshift(tmpTree);
 
-                        this.triggerUpdate();
-                    }
-                });
+    //                     this.triggerUpdate();
+    //                 }
+    //             });
 
-                this.isCalled = true;
-            } else {
-                this.isCalled = false;
-            }
-        });
+    //             this.isCalled = true;
+    //         } else {
+    //             this.isCalled = false;
+    //         }
+    //     });
         
-        this.isCalled = false;
-        e.preventDefault();
-    }
+    //     this.isCalled = false;
+    //     e.preventDefault();
+    // }
 
-    removeFromArray(e){
-        e.preventDefault();
+    // removeFromArray(e){
+    //     e.preventDefault();
 
-        this.setState(state => {
-            // console.log('remove called', this.state.reference.current.value);
-            // return {};
-        })
-    }
+    //     this.setState(state => {
+    //         // console.log('remove called', this.state.reference.current.value);
+    //         // return {};
+    //     })
+    // }
 
-    buildTree(e){   
-        this.setState((prevState)=>{
-            if (!this.isCalled){
-                axios.post('/api/trees/sendTree', {treeString : this.state.description.current.value,
-                                                   treeChoice : this.props.treeChoice[0]}).then((response) => {
-                    // Processing data came from backend
-                    var treeStrings = response.data.treeStrings;
-                    if (treeStrings){
-                        // add the tree strings into the treeStr array
-                        this.state.treesStrs.push(treeStrings);
-                        // pop a tree from trees
-                        // if (this.state.trees.length > 1)
-                        //     this.state.trees.pop();
+    // buildTree(e){   
+    //     this.setState((prevState)=>{
+    //         if (!this.isCalled){
+    //             axios.post('/api/trees/sendTree', {treeString : this.state.description.current.value,
+    //                                                treeChoice : this.props.treeChoice[0]}).then((response) => {
+    //                 // Processing data came from backend
+    //                 var treeStrings = response.data.treeStrings;
+    //                 if (treeStrings){
+    //                     // add the tree strings into the treeStr array
+    //                     this.state.treesStrs.push(treeStrings);
+    //                     // pop a tree from trees
+    //                     // if (this.state.trees.length > 1)
+    //                     //     this.state.trees.pop();
 
-                        // add the tree read into the trees array
-                        var tmpTree = new GenericTree();
-                        tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        // tmpTree.buildTreeMatrixCaller();
-                        // tmpTree.organizeTreeMatrix();
-                        tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
-                        tmpTree.setId(this.state.treesStrs.length);
-                        tmpTree.setScale(1);
-                        this.state.trees.unshift(tmpTree);
+    //                     // add the tree read into the trees array
+    //                     var tmpTree = new GenericTree();
+    //                     tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
+    //                     // tmpTree.buildTreeMatrixCaller();
+    //                     // tmpTree.organizeTreeMatrix();
+    //                     tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
+    //                     tmpTree.setId(this.state.treesStrs.length);
+    //                     tmpTree.setScale(1);
+    //                     this.state.trees.unshift(tmpTree);
 
-                        this.triggerUpdate();
-                    }
-                });
+    //                     this.triggerUpdate();
+    //                 }
+    //             });
 
-                this.isCalled = true;
-            } else {
-                this.isCalled = false;
-            }
-        });
+    //             this.isCalled = true;
+    //         } else {
+    //             this.isCalled = false;
+    //         }
+    //     });
 
-        e.preventDefault();
-    }
+    //     e.preventDefault();
+    // }
 
-    buildRandonTree(e){
-        this.setState(state => {
-            if (!this.isCalled){
+    // buildRandonTree(e){
+    //     this.setState(state => {
+    //         if (!this.isCalled){
 
-                axios.post('/api/trees/buildRandomTree', {range: {min : this.state.rangeMin.current.value, 
-                                                                  max : this.state.rangeMax.current.value},
-                                                          numNodes : this.state.numNodes.current.value
-                                                        }
-                            ).then((response) => {
-                    // Processing data came from backend
-                    var treeStrings = response.data.treeStrings;
-                    if (treeStrings){
-                        // add the tree strings into the treeStr array
-                        this.state.treesStrs.push(treeStrings);
-                        // pop a tree from trees
-                        // if (this.state.trees.length > 1)
-                        //     this.state.trees.pop();
+    //             axios.post('/api/trees/buildRandomTree', {range: {min : this.state.rangeMin.current.value, 
+    //                                                               max : this.state.rangeMax.current.value},
+    //                                                       numNodes : this.state.numNodes.current.value
+    //                                                     }
+    //                         ).then((response) => {
+    //                 // Processing data came from backend
+    //                 var treeStrings = response.data.treeStrings;
+    //                 if (treeStrings){
+    //                     // add the tree strings into the treeStr array
+    //                     this.state.treesStrs.push(treeStrings);
+    //                     // pop a tree from trees
+    //                     // if (this.state.trees.length > 1)
+    //                     //     this.state.trees.pop();
 
-                        // add the tree read into the trees array
-                        var tmpTree = new GenericTree();
-                        tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
-                        // tmpTree.buildTreeMatrixCaller();
-                        // tmpTree.organizeTreeMatrix();
-                        tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
-                        tmpTree.setId(this.state.treesStrs.length);
-                        tmpTree.setScale(1);
-                        this.state.trees.unshift(tmpTree);
+    //                     // add the tree read into the trees array
+    //                     var tmpTree = new GenericTree();
+    //                     tmpTree.construct(treeStrings[this.props.treeChoice[0]]);
+    //                     // tmpTree.buildTreeMatrixCaller();
+    //                     // tmpTree.organizeTreeMatrix();
+    //                     tmpTree.setTreeType(this.typeIdToTreeTypeName(this.props.treeChoice[0]));
+    //                     tmpTree.setId(this.state.treesStrs.length);
+    //                     tmpTree.setScale(1);
+    //                     this.state.trees.unshift(tmpTree);
 
-                        this.triggerUpdate();
-                    }
-                });
+    //                     this.triggerUpdate();
+    //                 }
+    //             });
 
-                this.isCalled = true;
-            } else {
-                this.isCalled = false;
-            }
-        });
+    //             this.isCalled = true;
+    //         } else {
+    //             this.isCalled = false;
+    //         }
+    //     });
         
-        this.isCalled = false;
-        e.preventDefault();
-    }
+    //     this.isCalled = false;
+    //     e.preventDefault();
+    // }
 
     performOperation = (e) => {
         // get the operation required
@@ -181,17 +181,20 @@ class TreeOperations extends React.Component{
                             'treeSequence' : this.state.trees.length > 0? this.state.trees[0].getTreeSequence() : '',
                             },
             'targetTreeInfo' : {
-                                'type' : this.props.treeChoice[0],
-                                'preferences' : {
-                                    'order' : 3,
-                                },
+                                'type' : this.props.preferences.type,
+                                'preferences' : this.props.preferences,
                                },
             'operation' : {
                             'type' : '',
                             'value' : this.state.reference.current.value,
-                            'preferences' : {},
+                            'preferences' : {
+                                'range' : { 'min' : 0, 'max' : 0},
+                                'numNodes' : 0, 
+                            },
                           }
         }
+
+        console.log('sending ', operationObj)
 
         switch (operation) {
             case 'insert':               
@@ -203,12 +206,31 @@ class TreeOperations extends React.Component{
             break;
     
             case 'build':
+                var description = this.state.description.current.value;
+                var delimIndex = description.indexOf(':');
+                var treeString = '';
+                var treeSequence = '';
+
+                if (delimIndex > 0){
+                    treeString = description.substr(0, delimIndex);
+                    treeSequence = description.substr(delimIndex + 1);
+                } else {
+                    treeString = description;
+                    treeSequence = '';
+                }
+
+                operationObj.treeContent.treeString = treeString;
+                operationObj.treeContent.treeSequence = treeSequence;
                 operationObj.operation.type = 'build';
             break;
     
             case 'buildRandom':
                 operationObj.treeContent.treeString = '';
                 operationObj.treeContent.treeSequence = '';
+                operationObj.operation.preferences.range.min = this.state.rangeMin.current.value;
+                operationObj.operation.preferences.range.max = this.state.rangeMax.current.value;
+                operationObj.operation.preferences.numNodes = this.state.numNodes.current.value;
+
                 operationObj.operation.type = 'buildRandom';
             break;
     
@@ -216,63 +238,58 @@ class TreeOperations extends React.Component{
             break;
         }
 
+        if (!this.isCalled){
+            axios.post('/api/trees/performOperation', operationObj).then((response) => {
+                // Processing data came from backend
+                var responseObj = response.data;
 
-        this.setState(state => {
-            if (!this.isCalled){
-                axios.post('/api/trees/performOperation', operationObj).then((response) => {
-                    // Processing data came from backend
-                    var responseObj = response.data;
+                if (responseObj){
+                    // add the tree read into the trees array
+                    var tmpTree = new GenericTree();
+                    tmpTree.construct(responseObj.treeString);
+                    tmpTree.setTreeSequence(responseObj.treeSequence);
+                    tmpTree.setPreferences(responseObj.preferences);
 
-                    if (responseObj){
-                        // add the tree read into the trees array
-                        var tmpTree = new GenericTree();
-                        tmpTree.construct(responseObj.treeString);
-                        tmpTree.setTreeSequence(responseObj.treeSequence);
-                        tmpTree.setPreferences(responseObj.preferences);
+                    tmpTree.setTreeType(responseObj.type);
+                    tmpTree.setScale(1);
+                    this.state.trees.unshift(tmpTree);
+                    tmpTree.setId(this.state.trees.length);
 
-                        tmpTree.setTreeType(responseObj.type);
-                        tmpTree.setScale(1);
-                        this.state.trees.unshift(tmpTree);
-                        tmpTree.setId(this.state.trees.length);
+                    this.triggerUpdate();
+                }
+            });
 
-                        this.triggerUpdate();
-                    }
-                });
-
-                this.isCalled = true;
-            } else {
-                this.isCalled = false;
-            }
-        });
+            this.isCalled = true;
+        } else {
+            this.isCalled = false;
+        }
         
         this.isCalled = false;
-        console.log(e.target.attributes.operation);
-
         e.preventDefault();
     }
 
-    typeIdToTreeTypeName(id){
-        switch (id) {
-            case 'binary':
-                return 'Binary Tree';
-            break;
-            case '23':
-                return '2-3 Tree';
-            break;
-            case '234':
-                return '2-3-4 Tree';
-            break;
-            case 'avl':
-                return 'AVL Tree';
-            break;
-            case 'redblack':
-                return 'Red-Black Tree';
-            break;
+    // typeIdToTreeTypeName(id){
+    //     switch (id) {
+    //         case 'binary':
+    //             return 'Binary Tree';
+    //         break;
+    //         case '23':
+    //             return '2-3 Tree';
+    //         break;
+    //         case '234':
+    //             return '2-3-4 Tree';
+    //         break;
+    //         case 'avl':
+    //             return 'AVL Tree';
+    //         break;
+    //         case 'redblack':
+    //             return 'Red-Black Tree';
+    //         break;
 
-            default:
-            break;
-        }
-    }
+    //         default:
+    //         break;
+    //     }
+    // }
 
     setTreeDescription(description){
         this.state.description.current.value = description;
@@ -318,7 +335,7 @@ class TreeOperations extends React.Component{
                             />
                             <InputGroup.Append>
                             <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
-                            <Button operation='remove' variant="outline-secondary" onClick={this.removeFromArray}>-</Button>
+                            <Button operation='remove' variant="outline-secondary" onClick={this.performOperation}>-</Button>
                             </InputGroup.Append>
                         </InputGroup>
                         <InputGroup className="mb-3">
@@ -329,7 +346,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Append>
-                                <Button operation='build' variant="outline-secondary" onClick={this.buildTree}>Go</Button>
+                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>
@@ -368,7 +385,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>
-                                <Button operation='buildRandom' variant="outline-secondary" onClick={this.buildRandonTree}>Create tree</Button>
+                                <Button operation='buildRandom' variant="outline-secondary" onClick={this.performOperation}>Create tree</Button>
                             </InputGroup.Prepend>
                         </InputGroup>
                     </Col>

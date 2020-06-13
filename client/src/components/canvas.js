@@ -123,8 +123,14 @@ class Canvas extends React.Component{
     }
 
     copyTreeString(e){
-        if (this.state.updateTreeOperations)
-            this.state.updateTreeOperations(this.state.tree.getTreeString());
+        if (this.state.updateTreeOperations){
+            var treeDescription;
+            if (this.state.tree.getTreeSequence() == '')
+                treeDescription = this.state.tree.getTreeString();
+            else
+                treeDescription = this.state.tree.getTreeString() + ":" + this.state.tree.getTreeSequence();
+            this.state.updateTreeOperations(treeDescription);
+        }
         e.preventDefault();
     }
 
