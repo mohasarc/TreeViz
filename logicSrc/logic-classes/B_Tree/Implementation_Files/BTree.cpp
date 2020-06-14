@@ -326,13 +326,13 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
         if (parentNode != NULL){
             for (int i = 0; i < parentNode->getChildNo(); i++){
                 if (parentNode->getChild(i) == curNode){ 
-                    curNode->setColor("sucess");
+                    curNode->setColor("success");
                     recordStep("Key inserted successfully");
                     curNode->setColor("");
                 }
             }
         } else if (curNode == this->root) {
-            curNode->setColor("sucess");
+            curNode->setColor("success");
             recordStep("Key inserted successfully");
             curNode->setColor("");
         }
@@ -1059,6 +1059,11 @@ void BTree<type>::recordStep(string stepText){
     step.text = stepText;
 
     this->steps.push_back(step);
+}
+
+template <class type>
+void BTree<type>::clearSteps(){
+    this->steps.clear();
 }
 
 template class BTree<int>;

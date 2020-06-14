@@ -294,6 +294,14 @@ Napi::Value BTreeWrapper::getStepTreeStr(const Napi::CallbackInfo& info){
     return Napi::String::New(info.Env(), stepTreeStr);
 }
 
+Napi::Value BTreeWrapper::clearSteps(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    theBTree->clearSteps();
+    return Napi::Boolean::New(info.Env(), env.Undefined());
+}
+
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
     BTreeWrapper::Init(env, exports);
