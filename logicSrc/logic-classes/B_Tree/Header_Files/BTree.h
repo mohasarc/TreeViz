@@ -49,7 +49,6 @@ private:
     void insert(BNode<type>* child, BNode<type>* parent);
     void generateInorderSequence(BNode<type>* curNode, string &sequence);
     void recordStep(string stepText);
-    void clearSteps();
 
 public:
     BTree(int degree);
@@ -78,5 +77,6 @@ public:
     int getStepsNo();
     string getStepText(int index);
     string getStepTreeStr(int index);
+    void clearSteps();
 };
 #endif

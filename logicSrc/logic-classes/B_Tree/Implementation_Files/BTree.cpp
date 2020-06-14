@@ -279,6 +279,10 @@ string BTree<type>::getStepTreeStr(int index){
     return "";
 }
 
+template <class type>
+void BTree<type>::clearSteps(){
+    this->steps.clear();
+}
 
 // Private functions implementations
 /**
@@ -1059,11 +1063,6 @@ void BTree<type>::recordStep(string stepText){
     step.text = stepText;
 
     this->steps.push_back(step);
-}
-
-template <class type>
-void BTree<type>::clearSteps(){
-    this->steps.clear();
 }
 
 template class BTree<int>;
