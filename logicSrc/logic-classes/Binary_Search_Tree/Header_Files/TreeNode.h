@@ -14,6 +14,7 @@ private :
     bool leftChildExists;
     bool newlyInserted;
     string color;
+    
 public :
     TreeNode();
     TreeNode( const T& anItem);

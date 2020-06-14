@@ -20,6 +20,7 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("getStepsNo", &BSTWrapper::getStepsNo),
         InstanceMethod("getStepText", &BSTWrapper::getStepText),
         InstanceMethod("getStepTreeStr", &BSTWrapper::getStepTreeStr),
+        InstanceMethod("clearSteps", &BSTWrapper::clearSteps),
     });
 
     constructor = Napi::Persistent(func);
@@ -206,6 +207,14 @@ Napi::Value BSTWrapper::getStepTreeStr(const Napi::CallbackInfo& info){
         Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
     
     return Napi::String::New(info.Env(), stepTreeStr);
+}
+
+Napi::Value BSTWrapper::clearSteps(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    theBSTTree->clearSteps();
+    return Napi::Boolean::New(info.Env(), env.Undefined());
 }
 
 // Initialize native add-on

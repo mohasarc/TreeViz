@@ -542,6 +542,11 @@ void BSTree<T>::recordStep(string stepText){
     this->steps.push_back(step);
 }
 
+template <class type>
+void BSTree<type>::clearSteps(){
+    this->steps.clear();
+}
+
 template class BSTree<int>;
 
 int main(){
