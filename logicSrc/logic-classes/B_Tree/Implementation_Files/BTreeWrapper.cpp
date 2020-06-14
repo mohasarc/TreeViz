@@ -24,7 +24,10 @@ Napi::Object BTreeWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("insertSequence", &BTreeWrapper::insertSequence),
         InstanceMethod("setSequence", &BTreeWrapper::setSequence),
         InstanceMethod("getSequence", &BTreeWrapper::getSequence),
-        InstanceMethod("generateInorderSequence", &BTreeWrapper::generateInorderSequence)
+        InstanceMethod("generateInorderSequence", &BTreeWrapper::generateInorderSequence),
+        InstanceMethod("getStepsNo", &BTreeWrapper::getStepsNo),
+        InstanceMethod("getStepText", &BTreeWrapper::getStepText),
+        InstanceMethod("getStepTreeStr", &BTreeWrapper::getStepTreeStr),
     });
 
     constructor = Napi::Persistent(func);
@@ -256,6 +259,40 @@ Napi::Value BTreeWrapper::generateInorderSequence(const Napi::CallbackInfo& info
     return Napi::String::New(info.Env(), generatedSequence);
 }
 
+
+Napi::Value BTreeWrapper::getStepsNo(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    int stepsNo = this->theBTree->getStepsNo();
+    return Napi::Number::New(info.Env(), stepsNo);
+}
+
+Napi::Value BTreeWrapper::getStepText(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    string stepText;
+
+    if (info.Length() > 0 && info[0].IsNumber())
+        stepText = theBTree->getStepText(info[0].As<Napi::Number>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::String::New(info.Env(), stepText);
+}
+
+Napi::Value BTreeWrapper::getStepTreeStr(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    string stepTreeStr;
+
+    if (info.Length() > 0 && info[0].IsNumber())
+        stepTreeStr = theBTree->getStepTreeStr(info[0].As<Napi::Number>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::String::New(info.Env(), stepTreeStr);
+}
 
 // Initialize native add-on
 Napi::Object Init (Napi::Env env, Napi::Object exports) {
