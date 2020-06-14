@@ -28,6 +28,7 @@ Napi::Object BTreeWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("getStepsNo", &BTreeWrapper::getStepsNo),
         InstanceMethod("getStepText", &BTreeWrapper::getStepText),
         InstanceMethod("getStepTreeStr", &BTreeWrapper::getStepTreeStr),
+        InstanceMethod("clearSteps", &BTWrapper::clearSteps),
     });
 
     constructor = Napi::Persistent(func);
