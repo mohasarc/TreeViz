@@ -57,6 +57,7 @@ router.post('/performOperation', (req, res) => {
     // Perform the operation
     switch (operationType) {
         case 'insert':
+            req.session.theTree.clearSteps();
             req.session.theTree.insert(parseInt(value));
         break;
 
@@ -107,13 +108,18 @@ router.post('/performOperation', (req, res) => {
 
     steps = [];
     // Retrieving steps
-    if (targetTreeInfo.type.value == 'BST')
-        for (var i = 0; i < req.session.theTree.getStepsNo(); i++){
-            steps.push({
-                'text' : req.session.theTree.getStepText(i),
-                'treeStr' : req.session.theTree.getStepTreeStr(i),
-            });
-        }
+    for (var i = 0; i < req.session.theTree.getStepsNo(); i++){
+        steps.push({
+            'text' : req.session.theTree.getStepText(i),
+            'treeStr' : req.session.theTree.getStepTreeStr(i),
+        });
+    }
+
+    // Add final result as a last step
+    steps.push({
+        'text' : '',
+        'treeStr' : req.session.theTree.toTreeString(),
+    });
 
     var responseObj = {
         'type' : treeName,

@@ -194,12 +194,17 @@ class Canvas extends React.Component{
 
         var steps = this.state.tree.getSteps();
         (function loop() {
-            enqueueSnackbar(steps[i].text);
-            tree.construct(steps[i].treeStr);
+            if (i < steps.length){
+                if (steps[i].text != '')
+                    enqueueSnackbar(steps[i].text);
+                if (steps[i].treeStr != '')
+                    tree.construct(steps[i].treeStr);
+            }
+
             p5.windowResized(width, tree.getHeight());
             p5.tree.center(width/2);
 
-            if (++i < steps.length) {
+            if (++i <= steps.length) {
                 setTimeout(loop, 1500);  // call myself in 1 seconds time if required
             }
         })(); // above function expression is called immediately to start it off

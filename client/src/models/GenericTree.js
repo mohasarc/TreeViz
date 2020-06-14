@@ -26,6 +26,8 @@ class GenericTree{
         this.sequence = '';
         this.preferences = {};
         this.steps = [];
+
+        this.latestCenterX = 0;
     }
 
     /**
@@ -259,6 +261,8 @@ class GenericTree{
         if (isNaN(width))
             return;
         
+        // this.latestCenterX = width/2;
+
         if (putInView)
             this.putInView(width/2)
         else
@@ -298,6 +302,8 @@ class GenericTree{
         // putting bounds to center to be able to compare them with other nodes locations
         this.treeLeftBound = this.root.getX();
         this.treeRightBound = this.root.getX();
+        // Update the latest center x value
+        this.latestCenterX = xAmount * 0.5 * (1 / this.scale);
         this.moveTreeRec(this.root, xAmount * 0.5 * (1 / this.scale), yAmount * 0.5 * (1 / this.scale));
     }
 
@@ -310,6 +316,8 @@ class GenericTree{
     }
 
     center(theCenterX){
+        // Update the center position
+        // this.latestCenterX = theCenterX;
 
         var properties = {
             spaceLeftBound : 0
@@ -326,6 +334,9 @@ class GenericTree{
     }
 
     putInView(theCenterX){
+        // Update the center position
+        // this.latestCenterX = theCenterX;
+
         var properties = {
             spaceLeftBound : 0
         };
