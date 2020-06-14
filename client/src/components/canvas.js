@@ -31,6 +31,7 @@ class Canvas extends React.Component{
             tree : props.tree,
             myP5 : null,
             updateTreeOperations : props.updateTreeOperations,
+            endEnimation : {'value' : true},
         }
         this.node = props.theNode;
         this.state.myP5 = this.props.p5;
@@ -46,6 +47,7 @@ class Canvas extends React.Component{
         this.popTreeEnable = true;
         this.isCalled = false;
         this.disableScrolling = true;
+        this.endEnimation = {'value' : true}
     }
 
     update(){
@@ -186,6 +188,13 @@ class Canvas extends React.Component{
 
     playSteps = (e) => {
         var i = 0;
+        this.setState(()=>{
+            console.log('setting state');
+            return {'endEnimation' : {value:false}}
+        });
+        this.endEnimation.value = false;
+        var endEnimation = this.endEnimation;
+
         var enqueueSnackbar = this.props.enqueueSnackbar;
 
         var tree = this.state.tree;
@@ -193,7 +202,14 @@ class Canvas extends React.Component{
         var p5 = this.state.myP5;
 
         var steps = this.state.tree.getSteps();
+        var stopSteps = this.stopSteps;
         (function loop() {
+            if (endEnimation.value){
+                // skip ahead to the last step
+                i = steps.length;
+            }
+
+            // in case steps were empty
             if (i < steps.length){
                 if (steps[i].text != '')
                     enqueueSnackbar(steps[i].text);
@@ -204,12 +220,31 @@ class Canvas extends React.Component{
             p5.windowResized(width, tree.getHeight());
             p5.tree.center(width/2);
 
-            if (++i <= steps.length) {
+            if (i == steps.length - 1)
+                stopSteps();
+
+            if (++i < steps.length) {
                 setTimeout(loop, 1500);  // call myself in 1 seconds time if required
             }
         })(); // above function expression is called immediately to start it off
 
         e.preventDefault();
+    }
+
+    stopSteps = (e) => {
+        this.setState(()=>{
+            console.log('setting state');
+            return {'endEnimation' : {value:true}}
+        });
+
+        if (e){
+            this.endEnimation.value = true;
+            var steps = this.state.tree.getSteps();
+            this.state.tree.construct(steps[steps.length - 1].treeStr);
+            this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
+            this.state.myP5.tree.center(this.state.width/2);
+            e.preventDefault();
+        }
     }
 
     render(){
@@ -240,10 +275,12 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={6} md={5} lg={5}>
                         <div className='float-right'>
-                            <a href='#' className='badge badge-light'  onClick={this.playSteps}
-                               style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
-                                <div className='play' style={{'color' : '#FFFFFF'}}>.</div>
+                            <a key={this.state.endEnimation.value} href='#' className='badge badge-light'  
+                            onClick={this.state.endEnimation.value?this.playSteps:this.stopSteps}
+                            style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
+                            <div className={this.state.endEnimation.value?'play':'stop'} style={{'color' : '#FFFFFF'}}>.</div>
                             </a>
+
                             <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
                                 <div className='save' >.</div>
