@@ -11,6 +11,12 @@
 #include <cmath>
 #include "../../../3rd-Party/deelx.h"
 
+struct Step
+{
+    string text;
+    string treeStr;
+};
+
 template <class type>
 class BTree{
 private:
@@ -22,10 +28,11 @@ private:
     bool prioritizeRotatingLeft;
     int minNumKeys;
     int maxNumKeys;
+    vector<Step> steps;
 
     // Private functions
     void insert(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success);
-    void balance(BNode<type>* child, BNode<type>* parent);
+    void balance(BNode<type>* child, BNode<type>* &parent);
     void split(BNode<type>* child, BNode<type>* parent, int splitIndex);
     void traverse(BNode<type>* curNode, int level);
     void remove(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success);
@@ -41,7 +48,8 @@ private:
     void toTreeString(BNode<type>* curNode, string &output);
     void insert(BNode<type>* child, BNode<type>* parent);
     void generateInorderSequence(BNode<type>* curNode, string &sequence);
- 
+    void recordStep(string stepText);
+
 public:
     BTree(int degree);
     ~BTree();
@@ -65,5 +73,9 @@ public:
     string getSequence();
     string generateInorderSequence();
     bool constructFromTreeString(string treeString); // DONE
+    vector<Step> getSteps();
+    int getStepsNo();
+    string getStepText(int index);
+    string getStepTreeStr(int index);
 };
 #endif

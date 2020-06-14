@@ -151,6 +151,16 @@ void BNode<Type>::construct(const string& nodeString){
     parseNodeStrig(nodeString, this->keys);
 }
 
+template <class Type>
+void BNode<Type>::setColor(string color){
+    this->color = color;
+}
+
+template <class Type>
+string BNode<Type>::getColor(){
+    return this->color;
+}
+
 template class BNode<int>;
 
 // int main(){

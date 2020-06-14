@@ -16,6 +16,7 @@ private:
     vector<Type> keys;
     vector<BNode*> children;
     bool leaf;
+    string color;
 
 public:
     BNode();
@@ -32,5 +33,7 @@ public:
     bool isLeaf();
     void parseNodeStrig(string nodeString, vector<Type> &keys);
     void construct(const string& nodeString);
+    void setColor(string color);
+    string getColor();
 };
 #endif

@@ -255,6 +255,31 @@ bool BTree<type>::constructFromTreeString(string treeString){
     return true;
 }
 
+template <class type>
+vector<Step> BTree<type>::getSteps(){
+    return this->steps;
+}
+
+template <class type>
+int BTree<type>::getStepsNo(){
+    return this->steps.size();
+}
+
+template <class type>
+string BTree<type>::getStepText(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].text;
+    return "";
+}
+
+template <class type>
+string BTree<type>::getStepTreeStr(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].treeStr;
+    return "";
+}
+
+
 // Private functions implementations
 /**
  * 
@@ -265,6 +290,13 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
     // Base case
     // -- If leaf insert at it --
     if (curNode->isLeaf()){
+        if (curNode->getKeyNo() > 0){
+            // Record a step
+            curNode->setColor("select");
+            recordStep("Reached a leaf node, insert the key there");
+            curNode->setColor("");
+        }
+
         // cout << "it is leaf & trying to insert " << key << endl;
         for (int i = 0; i < curNode->getKeyNo(); i++) {
             if (key < curNode->getKey(i)) {
@@ -286,8 +318,24 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
             success = true;
         }
 
+        BNode<type>* parentBeforeSplit = parentNode; // For capturing step
         // May become unbalanced so check balance
         this->balance(curNode, parentNode);
+
+        // If curNode is still part of the tree, it is the place where insertion happened
+        if (parentNode != NULL){
+            for (int i = 0; i < parentNode->getChildNo(); i++){
+                if (parentNode->getChild(i) == curNode){ 
+                    curNode->setColor("sucess");
+                    recordStep("Key inserted successfully");
+                    curNode->setColor("");
+                }
+            }
+        } else if (curNode == this->root) {
+            curNode->setColor("sucess");
+            recordStep("Key inserted successfully");
+            curNode->setColor("");
+        }
 
         return;
     }
@@ -295,6 +343,10 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
     // cout << "not a leaf" << endl;
 
     // Not leaf
+    // Record a step
+    curNode->setColor("select");
+    recordStep("Finding a direction to go to");
+    curNode->setColor("");
     // Go through current node's children and decide to 
     // which one to go
     for (int i = 0; i < curNode->getKeyNo(); i++) {
@@ -321,7 +373,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
  * @param parent Its parent node
  * */
 template <class type>
-void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
+void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
     // Local variables
     int splitIndex = 0;
     int childKeyNo = child->getKeyNo();
@@ -332,6 +384,11 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* parent){
     // if the child has more than or equal to degree number of keys it is not balanced
     // (overFull)
     if (childKeyNo > this->degree - 1){
+        // Record a step
+        child->setColor("alert");
+        recordStep("The node is over-full, perform a split");
+        child->setColor("");
+
         // cout << "not balanced" << endl;
         // Need to perform a split
         // ## calculate the index at which split is performed ##
@@ -418,6 +475,9 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         }
     }
 
+    // 2.b remove the middle key from the child
+    child->removeKey(splitIndex);
+
     // cout << "populated with keys" << endl;
 
     // 3. Populate the 2 nodes with children
@@ -444,6 +504,13 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
                 break;
             }
         }
+
+        // Record a step
+        parent->setColor("alert");
+        child->setColor("alert");
+        recordStep("Push middle key up to parent");
+        parent->setColor("");
+        child->setColor("");
     } 
     // 4.b. If parent is null, make a new parent and insert child middle key into it
     else {
@@ -455,6 +522,15 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         // No worries here, old root is kept by child here and this case won't happen
         // anywhere other than at the root
         this->root = parent;
+
+        parent->addChild(child, 0); // For the record not to fail
+
+        // Record a step
+        parent->setColor("alert");
+        child->setColor("alert");
+        recordStep("No parent, create one and push middle key to it");
+        parent->setColor("");
+        child->setColor("");
     }
 
     // cout << "removing the child from parent" << endl;
@@ -466,6 +542,15 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
     // 6. Insert the two new nodes to parent
     parent->addChild(tmpL, midKeyinsertIndex);
     parent->addChild(tmpR, midKeyinsertIndex + 1);
+
+    // Record a step
+    parent->setColor("success");
+    tmpL->setColor("success");
+    tmpR->setColor("success");
+    recordStep("Split the child into two nodes");
+    parent->setColor("");
+    tmpL->setColor("");
+    tmpR->setColor("");
 }
 
 /**
@@ -861,6 +946,8 @@ void BTree<type>::toTreeString(BNode<type>* curNode, string &output){
     if (curNode->isLeaf()){
         // wrap its contents with {}
         oss << "{";
+        if (curNode->getColor() != "")
+            oss << "*" << curNode->getColor() << "*";
 
         if (curNode->getKeyNo() > 0){
             oss << curNode->getKey(0);
@@ -879,6 +966,8 @@ void BTree<type>::toTreeString(BNode<type>* curNode, string &output){
     // Not a leaf
     // *** add self ***
     oss << "{";
+    if (curNode->getColor() != "")
+        oss << "*" << curNode->getColor() << "*";
 
     if (curNode->getKeyNo() > 0){
         oss << curNode->getKey(0);
@@ -963,40 +1052,57 @@ void BTree<type>::generateInorderSequence(BNode<type>* curNode, string &sequence
     }
 }
 
+template <class type>
+void BTree<type>::recordStep(string stepText){
+    Step step;
+    step.treeStr = toTreeString();
+    step.text = stepText;
+
+    this->steps.push_back(step);
+}
+
 template class BTree<int>;
 
 
-// int main(){
+int main(){
 
-//     BTree<int>* tree1 = new BTree<int>(3);
-//     // for (int i = 0; i < 1700 ; i++){
-//     //     tree1->insert(i);  
-//     // }
+    BTree<int>* tree1 = new BTree<int>(3);
+    // for (int i = 0; i < 1700 ; i++){
+    //     tree1->insert(i);  
+    // }
 
-//     // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
-//     // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
-//     // tree1->constructFromTreeString("{8}({1})");
+    // cout << "is valid " << tree1->constructFromTreeString("{5,8,12}({3}({1}{4}),{6}({5}{7}),{10}({9}{11}),{14}({13}{15}))") << endl;
+    // cout << "is valid " << tree1->insertSequence("1,2,3,4,5,6,7,8,9,11,10") << endl;
+    // tree1->constructFromTreeString("{8}({1})");
     
-//     // tree1->constructFromTreeString("{50}({1}{2,3}{3}{4})");
-//     // tree1->setSequence(tree1->generateInorderSequence());
-//     tree1->insertSequence("1");
-//     tree1->insert(2);  
+    // tree1->constructFromTreeString("{50}({1}{2,3}{3}{4})");
+    // tree1->setSequence(tree1->generateInorderSequence());
+    tree1->insertSequence("1");
+    tree1->insert(2);
 
-//     // tree1->insert(33);  
-//     // tree1->insert(42); 
-//     // tree1->insert(42); 
-//     // tree1->insert(-3);  
-//     // tree1->insert(1);
-//     // // tree1->remove(1);
-//     // tree1->insert(2);  
-//     // tree1->remove(3);
-//     // tree1->remove(-3);
+    tree1->insert(33);  
+    tree1->insert(42); 
+    tree1->insert(42); 
+    tree1->insert(-3);  
+    // tree1->insert(1);
+    // // tree1->remove(1);
+    // tree1->insert(2);  
+    // tree1->remove(3);
+    // tree1->remove(-3);
 
-//     cout << "sequence : " << tree1->getSequence() << endl;
-//     cout << "sequence : " << tree1->generateInorderSequence() << endl;
+    cout << "sequence : " << tree1->getSequence() << endl;
+    cout << "sequence : " << tree1->generateInorderSequence() << endl;
 
-//     // cout << "before" << endl;
-//     tree1->traverse();
+    // cout << "before" << endl;
+    tree1->traverse();
 
-//     return 0;
-// }
+    
+    vector<Step> myVector = tree1->getSteps();
+    cout << "size " << myVector.size() << endl;
+    for (Step step : myVector){
+        cout << "text : " << step.text << endl;
+        cout << "tree : " << step.treeStr << endl;
+    }
+
+    return 0;
+}
