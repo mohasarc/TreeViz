@@ -280,6 +280,13 @@ string BTree<type>::getStepTreeStr(int index){
 }
 
 template <class type>
+string BTree<type>::getStepNote(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].note;
+    return "";
+}
+
+template <class type>
 void BTree<type>::clearSteps(){
     this->steps.clear();
 }
@@ -290,6 +297,10 @@ void BTree<type>::clearSteps(){
  * */
 template <class type>
 void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode, bool &success){
+    // Local variables
+    string note = "inserting: " + keyToString(key);
+    string stepText;
+
     // cout << "in recursive insert" << endl;
     // Base case
     // -- If leaf insert at it --
@@ -297,7 +308,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
         if (curNode->getKeyNo() > 0){
             // Record a step
             curNode->setColor("select");
-            recordStep("Reached a leaf node, insert the key there");
+            recordStep("Reached a leaf node, insert the key at it", note);
             curNode->setColor("");
         }
 
@@ -331,13 +342,13 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
             for (int i = 0; i < parentNode->getChildNo(); i++){
                 if (parentNode->getChild(i) == curNode){ 
                     curNode->setColor("success");
-                    recordStep("Key inserted successfully");
+                    recordStep("Key inserted successfully", note);
                     curNode->setColor("");
                 }
             }
         } else if (curNode == this->root) {
             curNode->setColor("success");
-            recordStep("Key inserted successfully");
+            recordStep("Key inserted successfully", note);
             curNode->setColor("");
         }
 
@@ -349,7 +360,7 @@ void BTree<type>::insert(type key, BNode<type>* curNode, BNode<type>* parentNode
     // Not leaf
     // Record a step
     curNode->setColor("select");
-    recordStep("Finding a direction to go to");
+    recordStep("Finding a direction to go to", note);
     curNode->setColor("");
     // Go through current node's children and decide to 
     // which one to go
@@ -390,7 +401,7 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
     if (childKeyNo > this->degree - 1){
         // Record a step
         child->setColor("alert");
-        recordStep("The node is over-full, perform a split");
+        recordStep("The node is over-full, perform a split", "");
         child->setColor("");
 
         // cout << "not balanced" << endl;
@@ -422,14 +433,14 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
         // cout << "under-full" << endl;
         if (parent){
             child->setColor("alert");
-            recordStep("The node is under-full");
+            recordStep("The node is under-full", "");
             // Sol 1. Try borrowing from left or right sbling
             rotateSuccessful = rotate(child, parent);
 
             // Sol 2. Perform a merge
             if (!rotateSuccessful){
                 child->setColor("alert");
-                recordStep("Both sblings cannot donate: perform a merge");
+                recordStep("Both sblings cannot donate: perform a merge", "");
                 child->setColor("");
 
                 merge(child, parent);
@@ -520,7 +531,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         // Record a step
         parent->setColor("alert");
         child->setColor("alert");
-        recordStep("Push middle key up to parent");
+        recordStep("Push middle key up to parent", "");
         parent->setColor("");
         child->setColor("");
     } 
@@ -540,7 +551,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
         // Record a step
         parent->setColor("alert");
         child->setColor("alert");
-        recordStep("No parent, create one and push middle key to it");
+        recordStep("No parent, create one and push middle key to it", "");
         parent->setColor("");
         child->setColor("");
     }
@@ -559,7 +570,7 @@ void BTree<type>::split(BNode<type>* child, BNode<type>* parent, int splitIndex)
     parent->setColor("success");
     tmpL->setColor("success");
     tmpR->setColor("success");
-    recordStep("Split the child into two nodes");
+    recordStep("Split the child into two nodes", "");
     parent->setColor("");
     tmpL->setColor("");
     tmpR->setColor("");
@@ -607,6 +618,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     type inorderReplacementKey;
     bool couldGive = false;
     bool replacedWithInorderPredecessor = false;
+    string note = "removing: " + keyToString(key);
 
     // Base case - Leaf node -
     if (curNode->isLeaf()){
@@ -614,9 +626,9 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         for (int i = 0; i < curNode->getKeyNo(); i++){
             if (curNode->getKey(i) == key){
                 curNode->setColor("select");
-                recordStep("");
+                recordStep("", note);
                 curNode->setColor("danger");
-                recordStep("The key found at a leaf node: just delete it");
+                recordStep("The key found at a leaf node: just delete it", note);
                 curNode->setColor("");
 
                 // The key found.. delete it
@@ -639,9 +651,9 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         if (curNode->getKey(i) == key){
             // ## NOTE : Can't delete it directly, so replace with inorder successor or predecessor
             curNode->setColor("select");
-            recordStep("");
+            recordStep("", note);
             curNode->setColor("danger");
-            recordStep("The key found at a non-leaf node: replace with inorder successor or predecessor");
+            recordStep("The key found at a non-leaf node: replace with inorder successor or predecessor", note);
 
             // Finding the direct left and right children around key in question
             curNodeLeft = curNode->getChild(i);
@@ -652,7 +664,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
                 if (couldGive){
                     replacedWithInorderPredecessor = true;
                     curNodeLeft->setColor("alert");
-                    recordStep("replacing with inorder predecessor");
+                    recordStep("replacing with inorder predecessor", note);
                 }
             }
             
@@ -662,7 +674,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
                 findInorderSuccessor(key, inorderReplacementKey, curNodeRight, false, couldGive);
                 if (couldGive){
                     curNodeRight->setColor("alert");
-                    recordStep("replacing with inorder successor");
+                    recordStep("replacing with inorder successor", note);
                 }
             }
 
@@ -671,7 +683,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
                 if (couldGive){
                     replacedWithInorderPredecessor = true;
                     curNodeLeft->setColor("alert");
-                    recordStep("replacing with inorder predecessor");
+                    recordStep("replacing with inorder predecessor", note);
                 }
             }
 
@@ -682,13 +694,13 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
                     if (couldGive){
                         replacedWithInorderPredecessor = true;
                         curNodeLeft->setColor("alert");
-                        recordStep("replacing with inorder predecessor");
+                        recordStep("replacing with inorder predecessor", note);
                     }
                 } else {
                     findInorderSuccessor(key, inorderReplacementKey, curNodeRight, true, couldGive);
                     if (couldGive){
                         curNodeRight->setColor("alert");
-                        recordStep("replacing with inorder successor");
+                        recordStep("replacing with inorder successor", note);
                     }
                 }
             }
@@ -700,7 +712,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             curNode->addKey(inorderReplacementKey, i);
 
             // curNode->setColor("");
-            recordStep("Now delete the replacement key");
+            recordStep("Now delete the replacement key", note);
 
             // feedback
             success = true;
@@ -716,7 +728,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     for (int i = 0; i < curNode->getKeyNo(); i++) {
         if (key < curNode->getKey(i)) {
             curNode->setColor("select");
-            recordStep("searching for the key to be deleted");
+            recordStep("searching for the key to be deleted", note);
             curNode->setColor("");
 
             // continue with the tree just before the key greater than it
@@ -726,7 +738,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         // To fix the problem of the key being == to key in this node after replacement
         else if (key == curNode->getKey(i) && replacedWithInorderPredecessor){
             curNode->setColor("select");
-            recordStep("searching for the key to be deleted");
+            recordStep("searching for the key to be deleted", note);
             curNode->setColor("");
 
             remove(key, curNode->getChild(i), curNode, success);
@@ -734,7 +746,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         }
         else if (i == curNode->getKeyNo() - 1) {
             curNode->setColor("select");
-            recordStep("searching for the key to be deleted");
+            recordStep("searching for the key to be deleted", note);
             curNode->setColor("");
 
             // Greater than the last key
@@ -785,7 +797,7 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
         ){
 
         rightSbling->setColor("alert");
-        recordStep("Right sbling can donate");
+        recordStep("Right sbling can donate", "");
         rightSbling->setColor("");
 
         rotateSuccessful = rotateL(child, rightSbling, parent);
@@ -802,7 +814,7 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
                 // cout << parent->getChild(i) << "  ";
             // cout << "\n left sblinbg and child " << leftSbling << " " << child << endl;
             leftSbling->setColor("alert");
-            recordStep("Left sbling can donate");
+            recordStep("Left sbling can donate", "");
             leftSbling->setColor("");
 
         rotateSuccessful = rotateR(leftSbling, child, parent);
@@ -825,19 +837,19 @@ bool BTree<type>::rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     
     parent->setColor("alert");
     childL->setColor("alert");
-    recordStep("Move key from parent to child in need");
+    recordStep("Move key from parent to child in need", "");
 
     // Add the key to the child
     childL->addKey(parent->getKey(keyIndex), childL->getKeyNo());
     parent->removeKey(keyIndex);
 
-    recordStep("");
+    recordStep("", "");
     parent->setColor("");
     childL->setColor("");
 
     parent->setColor("alert");
     childR->setColor("alert");
-    recordStep("Move key from child donating to parent");
+    recordStep("Move key from child donating to parent", "");
 
     // 2.a. Move first key from child donating (right child) to parent at same
     // location of key moved to left child
@@ -845,19 +857,19 @@ bool BTree<type>::rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     // 2.b. remove the first key from right child
     childR->removeKey(0);
 
-    recordStep("");
+    recordStep("", "");
     parent->setColor("");
     childR->setColor("");
 
     // 3. move first child of right child to be last of left child
     if (childR->getChildNo() > 0){
         childR->getChild(0)->setColor("alert");
-        recordStep("Move the most left subtree of the right child to the left one");
+        recordStep("Move the most left subtree of the right child to the left one", "");
 
         childL->addChild(childR->getChild(0), childL->getChildNo());
         childR->removeChild(childR->getChild(0));
 
-        recordStep("");
+        recordStep("", "");
         childL->getChild(childL->getChildNo() - 1)->setColor("");
     }
 
@@ -879,19 +891,19 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     // cout << "keyIndex : " << keyIndex << endl;
     parent->setColor("alert");
     childR->setColor("alert");
-    recordStep("Move key from parent to child in need");
+    recordStep("Move key from parent to child in need", "");
 
     // Add the key to the child
     childR->addKey(parent->getKey(keyIndex), 0);
     parent->removeKey(keyIndex);
 
-    recordStep("");
+    recordStep("", "");
     parent->setColor("");
     childR->setColor("");
 
     parent->setColor("alert");
     childL->setColor("alert");
-    recordStep("Move key from child donating to parent");
+    recordStep("Move key from child donating to parent", "");
 
     // cout << "key added to right child" << endl;
 
@@ -902,19 +914,19 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     childL->removeKey(childL->getKeyNo() - 1);
 
     // cout << "key added to parent" << endl;
-    recordStep("");
+    recordStep("", "");
     parent->setColor("");
     childL->setColor("");
 
     // 3. move last child of left child to be first of right child
     if (childL->getChildNo() > 0){
         childL->getChild(childL->getChildNo() - 1)->setColor("alert");
-        recordStep("Move the most right subtree of the left child to the right one");
+        recordStep("Move the most right subtree of the left child to the right one", "");
 
         childR->addChild(childL->getChild(childL->getChildNo() - 1), 0);
         childL->removeChild(childL->getChild(childL->getChildNo() - 1));
 
-        recordStep("");
+        recordStep("", "");
         childR->getChild(0)->setColor("");
     }
 
@@ -964,7 +976,7 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     parent->setColor("alert");
     leftSbling->setColor("alert");
     rightSbling->setColor("alert");
-    recordStep("");
+    recordStep("", "");
 
     // Add keys from child 1
     for (int i = 0; i < leftSbling->getKeyNo(); i++)
@@ -997,7 +1009,7 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     tmpMergedNode->setLeaf(leftSbling->isLeaf());
     
     child->addKey(parentMiddleKey, 0); // only for graphics
-    recordStep("Push middle key down and merge it with the two children");
+    recordStep("Push middle key down and merge it with the two children", "");
 
     // Remove child and left sbling from parent
     parent->removeChild(leftSbling);
@@ -1007,7 +1019,7 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     parent->addChild(tmpMergedNode, leftSblingIndex);
 
     tmpMergedNode->setColor("alert");
-    recordStep("");
+    recordStep("", "");
     parent->setColor("");
     tmpMergedNode->setColor("");
 }
@@ -1193,11 +1205,12 @@ void BTree<type>::generateInorderSequence(BNode<type>* curNode, string &sequence
 }
 
 template <class type>
-void BTree<type>::recordStep(string stepText){
+void BTree<type>::recordStep(string stepText, string note){
     Step step;
     step.treeStr = toTreeString();
     step.text = stepText;
-
+    step.note = note;
+    
     this->steps.push_back(step);
 }
 

@@ -113,6 +113,7 @@ router.post('/performOperation', (req, res) => {
         steps.push({
             'text' : req.session.theTree.getStepText(i),
             'treeStr' : req.session.theTree.getStepTreeStr(i),
+            'note' : req.session.theTree.getStepNote(i),
         });
     }
 
@@ -120,6 +121,7 @@ router.post('/performOperation', (req, res) => {
     steps.push({
         'text' : '',
         'treeStr' : req.session.theTree.toTreeString(),
+        'note' : '',
     });
 
     var responseObj = {

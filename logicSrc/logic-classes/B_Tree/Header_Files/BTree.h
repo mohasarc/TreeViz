@@ -15,6 +15,7 @@ struct Step
 {
     string text;
     string treeStr;
+    string note;
 };
 
 template <class type>
@@ -48,7 +49,7 @@ private:
     void toTreeString(BNode<type>* curNode, string &output);
     void insert(BNode<type>* child, BNode<type>* parent);
     void generateInorderSequence(BNode<type>* curNode, string &sequence);
-    void recordStep(string stepText);
+    void recordStep(string stepText, string note);
 
 public:
     BTree(int degree);
@@ -77,6 +78,7 @@ public:
     int getStepsNo();
     string getStepText(int index);
     string getStepTreeStr(int index);
+    string getStepNote(int index);
     void clearSteps();
 };
 #endif

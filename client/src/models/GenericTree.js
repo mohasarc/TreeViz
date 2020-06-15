@@ -28,6 +28,7 @@ class GenericTree{
         this.steps = [];
 
         this.latestCenterX = 0;
+        this.note = '';
     }
 
     /**
@@ -170,6 +171,25 @@ class GenericTree{
             // this.root.setX(width/2);
             // this.root.setY(40);
         }
+
+        // Draw the note
+        if (this.note != ''){
+            var width = this.note.length * 7;
+            // Draw circles
+            p.rectMode(p.CENTER)
+            p.fill('FFFFF');
+            p.rect(25 + width/2, 25, width, 25, 20);
+
+            // Draw the node's text
+            // Identify the location
+            var nodeCenterX = 25 + width/2;
+            var nodeCenterY = 30;
+            // Draw it
+            p.fill(0);
+            p.textAlign(p.CENTER);
+            p.text(this.note, nodeCenterX, nodeCenterY);
+        }
+
         this.drawConnections(this.root, p, 0);
         // console.log('drawing the tree');
         this.drawNodes(this.root, p, 0);
@@ -453,6 +473,14 @@ class GenericTree{
 
     getSteps(){
         return this.steps;
+    }
+
+    setNote(note){
+        this.note = note;
+    }
+
+    getNote(){
+        return this.note;
     }
 }
 

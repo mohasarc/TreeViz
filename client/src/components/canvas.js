@@ -190,7 +190,7 @@ class Canvas extends React.Component{
         var i = 0;
         this.setState(()=>{
             console.log('setting state');
-            return {'endEnimation' : {value:false}}
+            return {'endEnimation' : {value:false},}
         });
         this.endEnimation.value = false;
         var endEnimation = this.endEnimation;
@@ -203,6 +203,7 @@ class Canvas extends React.Component{
 
         var steps = this.state.tree.getSteps();
         var stopSteps = this.stopSteps;
+        var setState = this.setState.bind(this);
         (function loop() {
             if (endEnimation.value){
                 // skip ahead to the last step
@@ -213,8 +214,15 @@ class Canvas extends React.Component{
             if (i < steps.length){
                 if (steps[i].text != '')
                     enqueueSnackbar(steps[i].text);
-                if (steps[i].treeStr != '')
+                if (steps[i].treeStr != ''){
                     tree.construct(steps[i].treeStr);
+                    tree.setNote(steps[i].note);
+                }
+
+                // Tree height might change while viewing the steps
+                setState(()=>{
+                    return {'height' : tree.getHeight() + 40,}
+                });
             }
 
             p5.windowResized(width, tree.getHeight());
@@ -232,15 +240,18 @@ class Canvas extends React.Component{
     }
 
     stopSteps = (e) => {
-        this.setState(()=>{
+        this.setState((prevState)=>{
             console.log('setting state');
-            return {'endEnimation' : {value:true}}
+            
+            return {'endEnimation' : {value:true},
+                    'height' : prevState.tree.getHeight() + 40,}
         });
 
         if (e){
             this.endEnimation.value = true;
             var steps = this.state.tree.getSteps();
             this.state.tree.construct(steps[steps.length - 1].treeStr);
+            this.state.tree.setNote('');
             this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
             this.state.myP5.tree.center(this.state.width/2);
             e.preventDefault();
