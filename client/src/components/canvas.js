@@ -184,6 +184,9 @@ class Canvas extends React.Component{
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
             this.state.tree.center(this.state.width / 2);
         }
+
+        this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
+        this.setState({'height' : this.state.tree.getHeight() + 40});
     }
 
     playSteps = (e) => {

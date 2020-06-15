@@ -54,28 +54,31 @@ class DetachedCanvas extends React.Component{
     }
 
     recieveMessage(e){
-        this.setState((prevState)=>{
-            // Using the recieved message to build the tree
-            prevState.tree.construct(e.data.tree.treeString);
-            prevState.tree.setTreeType(e.data.tree.treeType);
-            prevState.tree.setId(e.data.tree.id);
-            prevState.tree.setScale(e.data.tree.scale);
-
-            // Updatng the p5 object
-            this.myP5.tree = prevState.tree;
-
-            // deciding on height and width
-            var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
-            var treeHeight = this.state.tree.getHeight();
-            treeWidth = /*treeWidth > window.innerWidth - 5 ? treeWidth :*/ window.innerWidth - 5;
-            treeHeight = /*treeHeight > window.innerHeight - 5 ? treeHeight :*/ window.innerHeight - 5;
-
-            // resizing
-            this.myP5.tree.putInView(treeWidth/2);
-            this.myP5.windowResized(treeWidth, treeHeight);
-
-            return {msg : e.data}
-        });
+        if (e.data != ''){
+            this.setState((prevState)=>{
+                console.log('recieved msg ' , e.data );
+                // Using the recieved message to build the tree
+                prevState.tree.construct(e.data.tree.treeString);
+                prevState.tree.setTreeType(e.data.tree.treeType);
+                prevState.tree.setId(e.data.tree.id);
+                prevState.tree.setScale(e.data.tree.scale);
+    
+                // Updatng the p5 object
+                this.myP5.tree = prevState.tree;
+    
+                // deciding on height and width
+                var treeWidth = this.state.tree.getWidth() + 0.2 * this.state.tree.getWidth();
+                var treeHeight = this.state.tree.getHeight();
+                treeWidth = /*treeWidth > window.innerWidth - 5 ? treeWidth :*/ window.innerWidth - 5;
+                treeHeight = /*treeHeight > window.innerHeight - 5 ? treeHeight :*/ window.innerHeight - 5;
+    
+                // resizing
+                this.myP5.tree.putInView(treeWidth/2);
+                this.myP5.windowResized(treeWidth, treeHeight);
+    
+                return {msg : e.data}
+            });
+        }
     }
 
     pressed = (e) => {
