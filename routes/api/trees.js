@@ -62,6 +62,7 @@ router.post('/performOperation', (req, res) => {
         break;
 
         case 'remove':
+            req.session.theTree.clearSteps();
             req.session.theTree.remove(parseInt(value), 's');
         break;
 

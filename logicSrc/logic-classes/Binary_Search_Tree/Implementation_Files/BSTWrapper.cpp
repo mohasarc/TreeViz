@@ -13,6 +13,7 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("constructFromTreeString", &BSTWrapper::constructFromTreeString),
         InstanceMethod("insertSequence", &BSTWrapper::insertSequence),
         // InstanceMethod("search", &BSTWrapper::search),
+        InstanceMethod("remove", &BSTWrapper::remove),
         InstanceMethod("isEmpty", &BSTWrapper::isEmpty),
         InstanceMethod("setSequence", &BSTWrapper::setSequence),
         InstanceMethod("getSequence", &BSTWrapper::getSequence),

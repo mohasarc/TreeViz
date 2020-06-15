@@ -417,6 +417,10 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
 
     // If the child is underfull
     else if (childKeyNo < ( ceil((double)this->degree/2) - 1 ) ){
+        child->setColor("alert");
+        recordStep("The node is under-full");
+        // child->setColor("");
+
         // cout << "under-full" << endl;
         if (parent){
             // Sol 1. Try borrowing from left or right sbling
@@ -424,6 +428,10 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
 
             // Sol 2. Perform a merge
             if (!rotateSuccessful){
+                child->setColor("alert");
+                recordStep("Both sblings cannot donate: perform a merge");
+                child->setColor("");
+
                 merge(child, parent);
             }
         }
@@ -598,12 +606,17 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     BNode<type>* curNodeLeft = NULL;
     type inorderReplacementKey;
     bool couldGive = false;
+    bool replacedWithInorderPredecessor = false;
 
     // Base case - Leaf node -
     if (curNode->isLeaf()){
         // cout << "at leaf" << endl;
         for (int i = 0; i < curNode->getKeyNo(); i++){
             if (curNode->getKey(i) == key){
+                curNode->setColor("danger");
+                recordStep("The key found at a leaf node: just delete it");
+                curNode->setColor("");
+
                 // The key found.. delete it
                 curNode->removeKey(i);
 
@@ -623,31 +636,56 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     for (int i = 0; i < curNode->getKeyNo(); i++){
         if (curNode->getKey(i) == key){
             // ## NOTE : Can't delete it directly, so replace with inorder successor or predecessor
+            curNode->setColor("danger");
+            recordStep("The key found at a non-leaf node: replace with inorder successor or predecessor");
 
             // Finding the direct left and right children around key in question
             curNodeLeft = curNode->getChild(i);
             curNodeRight = curNode->getChild(i + 1);
 
             if (prioritizeInorderPredecessor){
-                couldGive = findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, false);
+                findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, false, couldGive);
+                if (couldGive){
+                    replacedWithInorderPredecessor = true;
+                    curNodeLeft->setColor("alert");
+                    recordStep("replacing with inorder predecessor");
+                }
             }
             
             // if first try was not successful or the priority whas for successor
             // , try with successor
             if (!prioritizeInorderPredecessor || !couldGive){
-                couldGive = findInorderSuccessor(key, inorderReplacementKey, curNodeRight, false);
+                findInorderSuccessor(key, inorderReplacementKey, curNodeRight, false, couldGive);
+                if (couldGive){
+                    curNodeRight->setColor("alert");
+                    recordStep("replacing with inorder successor");
+                }
             }
 
             if (!prioritizeInorderPredecessor && !couldGive){
-                couldGive = findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, false);
+                findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, false, couldGive);
+                if (couldGive){
+                    replacedWithInorderPredecessor = true;
+                    curNodeLeft->setColor("alert");
+                    recordStep("replacing with inorder predecessor");
+                }
             }
 
             // if again could not give, take from the side of the first try anyway
             if (!couldGive){
                 if (prioritizeInorderPredecessor){
-                    couldGive = findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, true);
+                    findInorderPredecessor(key, inorderReplacementKey, curNodeLeft, true, couldGive);
+                    if (couldGive){
+                        replacedWithInorderPredecessor = true;
+                        curNodeLeft->setColor("alert");
+                        recordStep("replacing with inorder predecessor");
+                    }
                 } else {
-                    couldGive = findInorderSuccessor(key, inorderReplacementKey, curNodeRight, true);
+                    findInorderSuccessor(key, inorderReplacementKey, curNodeRight, true, couldGive);
+                    if (couldGive){
+                        curNodeRight->setColor("alert");
+                        recordStep("replacing with inorder successor");
+                    }
                 }
             }
 
@@ -656,6 +694,9 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             // Now a replacement is obtained, so replace key in current node with it
             curNode->removeKey(i);
             curNode->addKey(inorderReplacementKey, i);
+
+            curNode->setColor("");
+            recordStep("Now delete the replacement key");
 
             // feedback
             success = true;
@@ -670,11 +711,28 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     // continue with the child that will contain the key
     for (int i = 0; i < curNode->getKeyNo(); i++) {
         if (key < curNode->getKey(i)) {
+            curNode->setColor("select");
+            recordStep("searching for the key to be deleted");
+            curNode->setColor("");
+
             // continue with the tree just before the key greater than it
+            remove(key, curNode->getChild(i), curNode, success);
+            break;
+        } 
+        // To fix the problem of the key being == to key in this node after replacement
+        else if (replacedWithInorderPredecessor){
+            curNode->setColor("select");
+            recordStep("searching for the key to be deleted");
+            curNode->setColor("");
+
             remove(key, curNode->getChild(i), curNode, success);
             break;
         }
         else if (i == curNode->getKeyNo() - 1) {
+            curNode->setColor("select");
+            recordStep("searching for the key to be deleted");
+            curNode->setColor("");
+
             // Greater than the last key
             remove(key, curNode->getChild(i+1), curNode, success);
             break;
@@ -721,6 +779,11 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
         && rightSbling 
         && rightSbling->getKeyNo() > this->minNumKeys
         ){
+
+        rightSbling->setColor("alert");
+        recordStep("Right sbling can donate");
+        rightSbling->setColor("");
+
         rotateSuccessful = rotateL(child, rightSbling, parent);
     } 
     
@@ -731,9 +794,13 @@ bool BTree<type>::rotate(BNode<type>* child, BNode<type>* parent){
         ){  
             // cout << "min key nums : " << this->minNumKeys << endl;
             // cout << "parent kids : " << endl;
-            for ( int i = 0; i < parent->getChildNo(); i++)
+            // for ( int i = 0; i < parent->getChildNo(); i++)
                 // cout << parent->getChild(i) << "  ";
             // cout << "\n left sblinbg and child " << leftSbling << " " << child << endl;
+            leftSbling->setColor("alert");
+            recordStep("Left sbling can donate");
+            leftSbling->setColor("");
+
         rotateSuccessful = rotateR(leftSbling, child, parent);
     }
 
@@ -751,20 +818,43 @@ bool BTree<type>::rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>*
     for (int i = 0; i < parent->getChildNo(); i++)
         if (parent->getChild(i) == childL)
             keyIndex = i;
+    
+    parent->setColor("alert");
+    childL->setColor("alert");
+    recordStep("Move key from parent to child in need");
+
     // Add the key to the child
     childL->addKey(parent->getKey(keyIndex), childL->getKeyNo());
+    parent->removeKey(keyIndex);
+
+    recordStep("");
+    parent->setColor("");
+    childL->setColor("");
+
+    parent->setColor("alert");
+    childR->setColor("alert");
+    recordStep("Move key from child donating to parent");
 
     // 2.a. Move first key from child donating (right child) to parent at same
     // location of key moved to left child
-    parent->removeKey(keyIndex);
     parent->addKey(childR->getKey(0), keyIndex);
     // 2.b. remove the first key from right child
     childR->removeKey(0);
 
+    recordStep("");
+    parent->setColor("");
+    childR->setColor("");
+
     // 3. move first child of right child to be last of left child
     if (childR->getChildNo() > 0){
+        childR->getChild(0)->setColor("alert");
+        recordStep("Move the most left subtree of the right child to the left one");
+
         childL->addChild(childR->getChild(0), childL->getChildNo());
         childR->removeChild(childR->getChild(0));
+
+        recordStep("");
+        childL->getChild(childL->getChildNo() - 1)->setColor("");
     }
 
     return true;
@@ -783,24 +873,45 @@ bool BTree<type>::rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>*
             keyIndex = i;
 
     // cout << "keyIndex : " << keyIndex << endl;
+    parent->setColor("alert");
+    childR->setColor("alert");
+    recordStep("Move key from parent to child in need");
+
     // Add the key to the child
     childR->addKey(parent->getKey(keyIndex), 0);
+    parent->removeKey(keyIndex);
+
+    recordStep("");
+    parent->setColor("");
+    childR->setColor("");
+
+    parent->setColor("alert");
+    childL->setColor("alert");
+    recordStep("Move key from child donating to parent");
 
     // cout << "key added to right child" << endl;
 
     // 2.a. Move first key from child donating (left child) to parent at same
     // location of key moved to left child
-    parent->removeKey(keyIndex);
     parent->addKey(childL->getKey(childL->getKeyNo() - 1), keyIndex);
     // 2.b. remove the first key from right child
     childL->removeKey(childL->getKeyNo() - 1);
 
     // cout << "key added to parent" << endl;
+    recordStep("");
+    parent->setColor("");
+    childL->setColor("");
 
     // 3. move last child of left child to be first of right child
     if (childL->getChildNo() > 0){
+        childL->getChild(childL->getChildNo() - 1)->setColor("alert");
+        recordStep("Move the most right subtree of the left child to the right one");
+
         childR->addChild(childL->getChild(childL->getChildNo() - 1), 0);
         childL->removeChild(childL->getChild(childL->getChildNo() - 1));
+
+        recordStep("");
+        childR->getChild(0)->setColor("");
     }
 
     // cout << "rotating right finidhed without problems" << endl;
@@ -845,7 +956,12 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // Perform the logic
     // Merge with left or right sbling according to availability and priority
     tmpMergedNode = new BNode<type>();
-    
+
+    parent->setColor("alert");
+    leftSbling->setColor("alert");
+    rightSbling->setColor("alert");
+    recordStep("");
+
     // Add keys from child 1
     for (int i = 0; i < leftSbling->getKeyNo(); i++)
         tmpMergedNode->addKey(leftSbling->getKey(i), tmpMergedNode->getKeyNo());
@@ -854,6 +970,7 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // Add the middle key from parent btwn child 1 and 2 and remove it
     // cout << "left sbling index : " << leftSblingIndex << "  self : " << parent->getKey(leftSblingIndex) << endl;
     tmpMergedNode->addKey(parent->getKey(leftSblingIndex), tmpMergedNode->getKeyNo());
+    type parentMiddleKey = parent->getKey(leftSblingIndex);
     parent->removeKey(leftSblingIndex);
     // cout << "keys added from parent" << endl;
 
@@ -875,6 +992,9 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // Setting the new node state
     tmpMergedNode->setLeaf(leftSbling->isLeaf());
     
+    child->addKey(parentMiddleKey, 0); // only for graphics
+    recordStep("Push middle key down and merge it with the two children");
+
     // Remove child and left sbling from parent
     parent->removeChild(leftSbling);
     parent->removeChild(rightSbling);
@@ -882,43 +1002,55 @@ void BTree<type>::merge(BNode<type>* child, BNode<type>* parent){
     // attach the new node instead of them
     parent->addChild(tmpMergedNode, leftSblingIndex);
 
+    tmpMergedNode->setColor("alert");
+    recordStep("");
+    parent->setColor("");
+    tmpMergedNode->setColor("");
 }
 
 template <class type>
-bool BTree<type>::findInorderSuccessor(type key, type &successorKey, BNode<type>* curNode, bool forceExtraction){
+void BTree<type>::findInorderSuccessor(type key, type &successorKey, BNode<type>* &curNode, bool forceExtraction, bool &success){
     // cout << "finding inorder successor with node : " << curNode << endl;
     // Base case - reached a leaf node
     if (curNode->isLeaf()){
         // cout << "is leaf" << endl;
         // check if it cannot donate, return
-        if (!forceExtraction && curNode->getKeyNo() <= this->minNumKeys)
-            return false;
+        if (!forceExtraction && curNode->getKeyNo() <= this->minNumKeys){
+            success = false;
+            return;
+        }
 
         // Get it no matter what
         successorKey = curNode->getKey(0);
-        return true;
+        success = true;
+        return;
     }
     
+    curNode = curNode->getChild(0);
     // Go to most left child
-    findInorderSuccessor(key, successorKey, curNode->getChild(0), forceExtraction);
+    findInorderSuccessor(key, successorKey, curNode, forceExtraction, success);
 }
 
 template <class type>
-bool BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<type>* curNode, bool forceExtraction){
+void BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<type>* &curNode, bool forceExtraction, bool &success){
     // cout << "finding inorder predecessor " << endl;
     // Base case - reached a leaf node
     if (curNode->isLeaf()){
         // check if it cannot donate, return
-        if (!forceExtraction && curNode->getKeyNo() <= this->minNumKeys)
-            return false;
+        if (!forceExtraction && curNode->getKeyNo() <= this->minNumKeys){
+            success = false;
+            return;
+        }
 
         // Get it no matter what
         predecessorKey = curNode->getKey(curNode->getKeyNo() - 1);
-        return true;
+        success = true;
+        return;
     }
     
     // Go to most right child
-    findInorderSuccessor(key, predecessorKey, curNode->getChild(curNode->getChildNo() - 1), forceExtraction);
+    curNode = curNode->getChild(curNode->getChildNo() - 1);
+    findInorderSuccessor(key, predecessorKey, curNode, forceExtraction, success);
 }
 
 template <class type>

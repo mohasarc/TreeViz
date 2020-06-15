@@ -40,8 +40,8 @@ private:
     bool rotateL(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent);
     bool rotateR(BNode<type>* childL, BNode<type>* childR, BNode<type>* parent);
     void merge(BNode<type>* child, BNode<type>* parent);
-    bool findInorderSuccessor(type key, type &successorKey, BNode<type>* curNode, bool forceExtraction);
-    bool findInorderPredecessor(type key, type &predecessorKey, BNode<type>* curNode, bool forceExtraction);
+    void findInorderSuccessor(type key, type &successorKey, BNode<type>* &curNode, bool forceExtraction, bool &success);
+    void findInorderPredecessor(type key, type &predecessorKey, BNode<type>* &curNode, bool forceExtraction, bool &success);
     string keyToString(type key);
     // TreeViz specific functions
     bool isValidBTreeString(string bTreeString);

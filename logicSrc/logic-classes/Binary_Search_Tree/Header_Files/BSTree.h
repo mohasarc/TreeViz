@@ -56,7 +56,6 @@ int getStepsNo();
 string getStepText(int index);
 string getStepTreeStr(int index);
 void clearSteps();
-
 };
 
 #endif
