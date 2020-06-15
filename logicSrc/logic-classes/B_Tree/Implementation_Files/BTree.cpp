@@ -417,12 +417,12 @@ void BTree<type>::balance(BNode<type>* child, BNode<type>* &parent){
 
     // If the child is underfull
     else if (childKeyNo < ( ceil((double)this->degree/2) - 1 ) ){
-        child->setColor("alert");
-        recordStep("The node is under-full");
         // child->setColor("");
 
         // cout << "under-full" << endl;
         if (parent){
+            child->setColor("alert");
+            recordStep("The node is under-full");
             // Sol 1. Try borrowing from left or right sbling
             rotateSuccessful = rotate(child, parent);
 
@@ -613,6 +613,8 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
         // cout << "at leaf" << endl;
         for (int i = 0; i < curNode->getKeyNo(); i++){
             if (curNode->getKey(i) == key){
+                curNode->setColor("select");
+                recordStep("");
                 curNode->setColor("danger");
                 recordStep("The key found at a leaf node: just delete it");
                 curNode->setColor("");
@@ -636,6 +638,8 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
     for (int i = 0; i < curNode->getKeyNo(); i++){
         if (curNode->getKey(i) == key){
             // ## NOTE : Can't delete it directly, so replace with inorder successor or predecessor
+            curNode->setColor("select");
+            recordStep("");
             curNode->setColor("danger");
             recordStep("The key found at a non-leaf node: replace with inorder successor or predecessor");
 
@@ -695,7 +699,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             curNode->removeKey(i);
             curNode->addKey(inorderReplacementKey, i);
 
-            curNode->setColor("");
+            // curNode->setColor("");
             recordStep("Now delete the replacement key");
 
             // feedback
@@ -720,7 +724,7 @@ void BTree<type>::remove(type key, BNode<type>* curNode, BNode<type>* parentNode
             break;
         } 
         // To fix the problem of the key being == to key in this node after replacement
-        else if (replacedWithInorderPredecessor){
+        else if (key == curNode->getKey(i) && replacedWithInorderPredecessor){
             curNode->setColor("select");
             recordStep("searching for the key to be deleted");
             curNode->setColor("");
@@ -1050,7 +1054,7 @@ void BTree<type>::findInorderPredecessor(type key, type &predecessorKey, BNode<t
     
     // Go to most right child
     curNode = curNode->getChild(curNode->getChildNo() - 1);
-    findInorderSuccessor(key, predecessorKey, curNode, forceExtraction, success);
+    findInorderPredecessor(key, predecessorKey, curNode, forceExtraction, success);
 }
 
 template <class type>
