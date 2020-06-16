@@ -23,65 +23,64 @@ class Canvas extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            height : 900,
+            height : props.tree.getHeight(),
             width : 100,
             canvasNo : props.canvasNo,
             treeType : props.treeType,
             canvasRef : React.createRef(),
             tree : props.tree,
-            myP5 : null,
+            myP5 : this.props.p5,
             updateTreeOperations : props.updateTreeOperations,
             endEnimation : {'value' : true},
         }
+
         this.node = props.theNode;
-        this.state.myP5 = this.props.p5;
-        this.state.height = this.state.tree.getHeight();
-        this.update = this.update.bind(this);
-        this.dragged = this.dragged.bind(this);
-        this.pressed = this.pressed.bind(this);
-        this.released = this.released.bind(this);
-        this.popTree = this.popTree.bind(this);
-        this.copyTreeString = this.copyTreeString.bind(this);
-        this.treeToCenter = this.treeToCenter.bind(this);
-        this.handleZoom = this.handleZoom.bind(this);
         this.popTreeEnable = true;
         this.isCalled = false;
         this.disableScrolling = true;
         this.endEnimation = {'value' : true}
     }
 
-    update(){
-        // console.log('update called with tree', this.state.tree);
-        console.log('update called');
-        this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
-        this.setState((prevState) => {
-            return {
-                width : prevState.canvasRef.current.offsetWidth
-            }
-        });
-    }
-
     componentDidMount() {
+        //
         window.document.getElementById(this.state.canvasNo).appendChild(this.node);
-        var newWidth = this.state.canvasRef.current.offsetWidth;
+        var canvasWidth = this.state.canvasRef.current.offsetWidth;
+        this.state.myP5.tree = this.state.tree; // put a reference to the tree into p5 object
+        this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
 
-        this.state.myP5.width = this.state.width;
-        this.state.myP5.height = this.state.height;
-        this.state.myP5.tree = this.state.tree;
-        // console.log('tree just mounted', this.state.tree);
-        this.state.myP5.tree.center(newWidth/2);
+        this.state.tree.setCenterX(canvasWidth/2);
+        this.state.tree.setCenterY(40);
+        this.state.tree.center();
+
+        window.addEventListener("resize", this.resize);      
+        window.addEventListener("orientationchange", ()=>{setTimeout(this.resize, 20)}, false);
+        window.addEventListener('touchmove', (e)=>{if(!this.disableScrolling){e.preventDefault()}}, false);
+
         this.setState({
             height : this.state.tree.getHeight() + 40,
-            width : newWidth
         });
-
-        this.state.myP5.windowResized(newWidth, this.state.tree.getHeight());
-        window.addEventListener("resize", this.update);      
-        window.addEventListener("orientationchange", ()=>{setTimeout(this.update, 20)}, false);
-        window.addEventListener('touchmove', (e)=>{if(!this.disableScrolling){e.preventDefault()}}, false);
     }
 
-    pressed(e){
+    resize = () => {
+        if (this.state.canvasRef.current){
+            var canvasWidth = this.state.canvasRef.current.offsetWidth;
+            this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
+        }
+    }
+
+    // update = () => {
+    //     // console.log('update called with tree', this.state.tree);
+    //     console.log('update called');
+    //     this.state.tree.latestWidth = this.state.width; // NEW-TEST
+    //     this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
+    //     this.setState((prevState) => {
+    //         return {
+    //             width : prevState.canvasRef.current.offsetWidth
+    //         }
+    //     });
+    // }
+
+    pressed = (e) => {
         this.mousePressed = true;
         if (e.touches){
             this.initialX = e.touches[0].clientX;
@@ -94,13 +93,13 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
-    released(e){
+    released = (e) => {
         this.mousePressed = false;
         
         e.preventDefault();
     }
 
-    dragged(e){
+    dragged = (e) => {
         e.preventDefault();
 
         if (this.mousePressed){
@@ -115,11 +114,10 @@ class Canvas extends React.Component{
                 this.initialX = e.clientX;
                 this.initialY = e.clientY;
             }
-
         }
     }
 
-    popTree(e){
+    popTree = (e) => {
         if (this.props.topTree){
             this.props.popTree();
         } else {
@@ -129,7 +127,7 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
-    copyTreeString(e){
+    copyTreeString = (e) => {
         if (this.state.updateTreeOperations){
             var treeDescription;
             if (this.state.tree.getTreeSequence() == '')
@@ -141,16 +139,9 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
-    treeToCenter(e){
-        this.setState(prevState=>{
-            if (!this.isCalled){
-                prevState.tree.setScale(1);
-                prevState.tree.center(prevState.width/2);
-                this.isCalled = true;
-            } else {
-                this.isCalled = false;
-            }
-        });
+    treeToCenter = (e) => {
+        this.state.tree.setScale(1);
+        this.state.tree.center();
         e.preventDefault();
     }
 
@@ -175,18 +166,28 @@ class Canvas extends React.Component{
         e.preventDefault();
     }
 
-    handleZoom(e, value){
-        console.log('width', this.state.tree.getWidth());
-        var rect = e.target.getBoundingClientRect();
-        // this.state.myP5.scaleValue = value/50;
+    handleZoom = (e, value) => {
         if (e.ctrlKey){
-            e.preventDefault();
-            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
-            this.state.tree.center(this.state.width / 2);
-        }
+            let rect = this.state.canvasRef.current.getBoundingClientRect();
 
-        this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
-        this.setState({'height' : this.state.tree.getHeight() + 40});
+            console.log('x : ', e.clientX, 'y: ', e.clientY, 'deltaX', e.deltaX, 'deltaY', e.deltaY);
+            console.log('diff in X : ', (e.clientX - this.state.tree.getCenterX()) * e.deltaY * -0.2);
+            console.log('diff in Y : ', (e.clientY - this.state.tree.getCenterY()) * e.deltaY * -0.01);
+            var canvasWidth = this.state.canvasRef.current.offsetWidth;
+
+            console.log('cur center : ', this.state.tree.getCenterX());
+            console.log('client x : ', e.clientX - rect.left);
+            console.log('rect left bound : ', rect.left);
+
+            this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - rect.left - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
+            // this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - rect.top - this.state.tree.getCenterY()) * e.deltaY * - 0.05);
+            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+            this.state.tree.center();
+            this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
+            this.setState({'height' : this.state.tree.getHeight() + 40});
+
+            e.preventDefault();
+        }
     }
 
     playSteps = (e) => {
@@ -201,12 +202,13 @@ class Canvas extends React.Component{
         var enqueueSnackbar = this.props.enqueueSnackbar;
 
         var tree = this.state.tree;
-        var width = this.state.width;
+        // var width = this.state.width;
         var p5 = this.state.myP5;
 
         var steps = this.state.tree.getSteps();
         var stopSteps = this.stopSteps;
         var setState = this.setState.bind(this);
+        var state = this.state;
         (function loop() {
             if (endEnimation.value){
                 // skip ahead to the last step
@@ -228,16 +230,16 @@ class Canvas extends React.Component{
                 });
             }
 
-            p5.windowResized(width, tree.getHeight());
-            p5.tree.center(width/2);
+            p5.windowResized(this.state.width, tree.getHeight());
+            p5.tree.center(this.state.tree.latestWidth/2);
 
             if (i == steps.length - 1)
                 stopSteps();
 
             if (++i < steps.length) {
-                setTimeout(loop, 1500);  // call myself in 1 seconds time if required
+                setTimeout(loop.bind(this), 1500);  // call myself in 1 seconds time if required
             }
-        })(); // above function expression is called immediately to start it off
+        }.bind(this))(); // above function expression is called immediately to start it off
 
         e.preventDefault();
     }
@@ -255,8 +257,8 @@ class Canvas extends React.Component{
             var steps = this.state.tree.getSteps();
             this.state.tree.construct(steps[steps.length - 1].treeStr);
             this.state.tree.setNote('');
-            this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
-            this.state.myP5.tree.center(this.state.width/2);
+            this.state.myP5.windowResized(this.state.tree.latestWidth, this.state.tree.getHeight());
+            this.state.myP5.tree.center(this.state.tree.latestWidth/2);
             e.preventDefault();
         }
     }

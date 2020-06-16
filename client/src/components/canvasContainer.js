@@ -43,12 +43,10 @@ class CanvasContainer extends React.Component{
     }
 
     Sketch = (p) => {
-        p.width = 0;
-        p.height = 0;
         p.tree = null;
 
         p.setup = () => {
-            var cnv = p.createCanvas(p.width, p.height - 40);
+            var cnv = p.createCanvas(0, 0);
             cnv.style('visibility: visible');
         }
    
@@ -56,7 +54,7 @@ class CanvasContainer extends React.Component{
             p.background('#34495e');
             if (p.tree){
                 p.scale(p.tree.getScale());
-                p.tree.draw(p, p.width);
+                p.tree.draw(p);
             }
         }
 
@@ -74,7 +72,7 @@ class CanvasContainer extends React.Component{
             var image = p.createGraphics(tree.getWidth() + 0.2 * tree.getWidth(), tree.getHeight());
             image.background('#34495e');
             image.scale(tree.getScale());
-            tree.draw(image, p.width);
+            tree.draw(image);
 
             // Adding copywrites to the image
             image.scale(1/tree.getScale() * 2);
@@ -90,9 +88,13 @@ class CanvasContainer extends React.Component{
         p.scaleValue = 1;
 
         p.windowResized = (width, height) => {
-            if (p.tree)
-                p.tree.resize(width);
+            // if (p.tree)
+            //     p.tree.resize(p.tree.latestWidth, p.tree.latestCenterY);
             p.resizeCanvas(width, height);
+            p.redraw();
+        }
+
+        p.redrawCanvas = () => {
             p.redraw();
         }
     }
@@ -161,16 +163,16 @@ class CanvasContainer extends React.Component{
     }
 
     popTree(){
-            this.setState(prevState=>{
-                if (!this.isCalled){
-                    prevState.treesStrs.pop()
-                    prevState.trees.shift();
-                    this.isCalled = true;
-                } else {
-                    this.isCalled = false;
-                    return ({trees: prevState.trees});
-                }
-            });
+        this.setState(prevState=>{
+            if (!this.isCalled){
+                prevState.treesStrs.pop()
+                prevState.trees.shift();
+                this.isCalled = true;
+            } else {
+                this.isCalled = false;
+                return ({trees: prevState.trees});
+            }
+        });
     }
 
     toggleTreesInView(checked){

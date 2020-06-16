@@ -29,6 +29,9 @@ class GenericTree{
 
         this.latestCenterX = 0;
         this.note = '';
+
+        this.centerX = 0;
+        this.centerY = 0;
     }
 
     /**
@@ -42,7 +45,7 @@ class GenericTree{
      * Builds a tree according to its tree string
      * @param {The tree string of the desired tree} treeString 
      */
-    construct(treeString){      
+    construct(treeString){     
         var treeStack = [];
         var parentsStack = [];
         // clear the previous tree
@@ -89,6 +92,11 @@ class GenericTree{
                     break;
             }
         });
+
+        var properties = { spaceLeftBound : 0 };
+        this.shapeTree(this.root, 1, properties);
+        this.width = properties.spaceLeftBound;
+        this.treeRightBound = this.width;
     }
 
     /**
@@ -107,23 +115,12 @@ class GenericTree{
      */
     insert(node, parent) {
         // IF the tree is already empty
-        if (parent == null){
+        if (parent == null)
             this.root = node;
-        }
-        else
+        else // Add the node to the parent
             parent.addChild(node);
 
         node.setParent(parent);
-        // this.criticalLevelNodesNum = this.criticalLevelNodes();
-
-        var properties = {
-            spaceLeftBound : 0
-        };
-        this.shapeTree(this.root, 1, properties);
-        this.width = properties.spaceLeftBound;
-        this.treeRightBound = this.width;
-        // this.updateHeight(this.root, 1);
-        // this.updateNumLevels();
     }
 
     /**
@@ -164,25 +161,19 @@ class GenericTree{
     /**
      * Draws the tree nodes on the canvas
      * @param {P5 object} p 
-     * @param {The width of the canvas} width 
      */
-    draw(p, width){
-        if (this.root != null){
-            // this.root.setX(width/2);
-            // this.root.setY(40);
-        }
-
+    draw(p){
         // Draw the note
         if (this.note != ''){
-            var width = this.note.length * 7;
+            var noteWidth = this.note.length * 7;
             // Draw circles
             p.rectMode(p.CENTER)
             p.fill('FFFFF');
-            p.rect(25 + width/2, 25, width, 25, 20);
+            p.rect(25 + noteWidth/2, 25, noteWidth, 25, 20);
 
             // Draw the node's text
             // Identify the location
-            var nodeCenterX = 25 + width/2;
+            var nodeCenterX = 25 + noteWidth/2;
             var nodeCenterY = 30;
             // Draw it
             p.fill(0);
@@ -191,20 +182,58 @@ class GenericTree{
         }
 
         this.drawConnections(this.root, p, 0);
-        // console.log('drawing the tree');
         this.drawNodes(this.root, p, 0);
         this.printed = true;
     }
-
+    
     /**
+     * Draws the connections between the nodes
+     * @param {The current node being draws (used for the recursive call)} node 
+     * @param {The P5 object} p 
+     * @param {The level of the current node} curLevel 
+     */
+    drawConnections(node, p, curLevel){
+
+        if (node == null)
+            return;
+        else {
+            // Update the level
+            var childrenLevel = curLevel + 1;
+
+            // draw all its children
+            node.getChildren().map((child, i) => {
+                // calculate the location of the child
+                var childrenNum = node.getChildren().length;
+                var curLevelNodesNum = this.levelsNodes[childrenLevel];
+                // var childX = this.calculateX(childrenNum, curLevelNodesNum, i);
+                var childY = node.getY() + 40;
+
+                // update the child's location
+                if (!this.printed)
+                    // console.log('the location', childX);
+
+                // child.setX(childX);
+                child.setY(childY);
+
+                // draw the line if child is not empty
+                if (!child.isEmpty()){
+                    p.stroke(255);
+                    p.line(node.getX(), node.getY(), child.getX(), child.getY());
+                }
+
+                this.drawConnections(child, p, childrenLevel);
+            });
+        }
+    }
+
+/**
      * Draws all the tree nodes as ovals on the canvas and add their texts
      * @param {The current node being draws (used for the recursive call)} node 
      * @param {The P5 object} p 
      * @param {The level of the current node} curLevel 
      */
     drawNodes(node, p, curLevel){
-    const X_SPACING = 10;
-
+    
         if (node == null)
             return;
         else {
@@ -231,63 +260,22 @@ class GenericTree{
             });
         }
     }
-    
-    /**
-     * Draws the connections between the nodes
-     * @param {The current node being draws (used for the recursive call)} node 
-     * @param {The P5 object} p 
-     * @param {The level of the current node} curLevel 
-     */
-    drawConnections(node, p, curLevel){
-        const X_SPACING = 10;
-    
-            if (node == null)
-                return;
-            else {
-                // Update the level
-                var childrenLevel = curLevel + 1;
-    
-                // draw all its children
-                node.getChildren().map((child, i) => {
-                    // calculate the location of the child
-                    var childrenNum = node.getChildren().length;
-                    var curLevelNodesNum = this.levelsNodes[childrenLevel];
-                    // var childX = this.calculateX(childrenNum, curLevelNodesNum, i);
-                    var childY = node.getY() + 40;
-    
-                    // update the child's location
-                    if (!this.printed)
-                        // console.log('the location', childX);
 
-                    // child.setX(childX);
-                    child.setY(childY);
-
-                    // draw the line if child is not empty
-                    if (!child.isEmpty()){
-                        p.stroke(255);
-                        p.line(node.getX(), node.getY(), child.getX(), child.getY());
-                    }
-
-                    this.drawConnections(child, p, childrenLevel);
-                });
-            }
-        }
-
-    /**
-     * Udates the tree nodes locations according to 
-     * the new size of the canvas
-     */
-    resize(width, putInView){
-        if (isNaN(width))
-            return;
+    // /**
+    //  * Udates the tree nodes locations according to 
+    //  * the new size of the canvas
+    //  */
+    // resize(width, newCenterY, putInView){
+    //     if (isNaN(width))
+    //         return;
         
-        // this.latestCenterX = width/2;
+    //     // this.latestCenterX = width/2;
 
-        if (putInView)
-            this.putInView(width/2)
-        else
-            this.center(width/2);
-    }
+    //     if (putInView)
+    //         this.putInView(width/2, newCenterY)
+    //     else
+    //         this.center(width/2, newCenterY);
+    // }
 
     /**
      * Returns the tree height in pixels
@@ -301,6 +289,127 @@ class GenericTree{
      */
     getWidth(){
         return this.width * this.scale;
+    }
+
+    /**
+     * A wrapper for moveTreeRec
+     * @param {The amount of change in X direction} xAmount 
+     * @param {The amount of change in Y direction} yAmount 
+     */
+    moveTree(xAmount, yAmount){
+        this.moveTreeRec(this.root, xAmount * 0.5 * (1 / this.scale), yAmount * 0.5 * (1 / this.scale));
+    }
+
+    /**
+     * Puts the root of the tree in this specific location
+     * @param {The x value of the center} theCenterX 
+     * @param {The y value of the center} theCenterY 
+     */
+    center(){
+        // Create the tree centered at (rootX, rootY)
+        var properties = { spaceLeftBound : 0 };
+        this.shapeTree(this.root, 1, properties);
+        this.visitedMark = !this.visitedMark;   
+
+        var xShamt = this.centerX * (1 / this.scale) - this.root.getX();
+        var yShamt = this.centerY - this.root.getY();
+
+        this.moveTreeRec(this.root, xShamt, yShamt);
+    }
+
+    // putInView(theCenterX, theCenterY){
+    //     // Update the center position
+    //     // this.latestCenterX = theCenterX;
+
+    //     var properties = { spaceLeftBound : 0 };
+
+    //     // Take initial values for right and left bounds of the tree
+    //     this.treeRightBound = this.root.getX();
+    //     this.treeLeftBound = this.root.getX();
+
+    //     // Create the tree centered at (rootX, rootY)
+    //     this.shapeTree(this.root, 1, properties);
+    //     this.visitedMark = !this.visitedMark;
+
+    //     // Calculate the distance between (rootX and the target X, rootY and the target Y)
+    //     var xShamt = theCenterX * (1/this.scale) - (this.treeRightBound - this.treeLeftBound) / 2;
+    //     var yShamt = theCenterY * (1/this.scale) - 40 - this.root.getY();
+
+    //     // putting bounds to center to be able to compare them with other nodes locations
+    //     this.treeRightBound = this.root.getX();
+    //     this.treeLeftBound = this.root.getX();
+    //     this.moveTreeRec(this.root, xShamt, yShamt);
+    // }
+
+    /**
+     * Shapes the tree accoding to the destance given in the
+     * constants of the class
+     * @param {The node being processed} curNode 
+     * @param {The current level of the node} level 
+     * @param {An object carrying the value of the right bound so far} properties 
+     */
+    shapeTree(curNode, level, properties){
+        // updating the tree's height
+        if (level > this.height)
+            this.height = level;
+
+        // Go through the left children if they exist
+        var leftChildren = curNode.getLeftChildren();
+        if (leftChildren){
+            leftChildren.map(child=>{
+                this.shapeTree(child, level + 1, properties);
+            });
+        }
+
+        // Visit the middle child
+        var middleChild = curNode.getMiddleChild();
+        var leftBoundBeforeMid = properties.spaceLeftBound;
+        if (middleChild)
+            this.shapeTree(middleChild, level + 1, properties)
+        else // only update the space left bound
+            properties.spaceLeftBound = properties.spaceLeftBound + this.NODE_SEPARATION + curNode.getWidth();
+
+        var leftBoundAfterMid = properties.spaceLeftBound;
+        var width = leftBoundAfterMid - leftBoundBeforeMid;
+
+        // calculate X-value for current node using width from
+        // max(currentNodeWidth, middleSubTreeWidth)
+        var xValue = leftBoundBeforeMid + this.NODE_SEPARATION + width/2;
+
+        // IF NOT VISITED BEFORE
+        // Assign X-value for current node and mark as visited
+        // Assign X-value for middle child node and mark as visited
+        if (curNode.isVisited() != this.visitedMark){
+            curNode.setX(xValue);
+            curNode.setY(level*40);
+            curNode.visited(this.visitedMark);
+        }
+
+        // Go through the right children if they exist
+        var rightChildren = curNode.getRightChildren();
+        if (rightChildren){
+            rightChildren.map(child=>{
+                this.shapeTree(child, level + 1, properties);
+            });
+        }
+    }
+
+    /**
+     * Moves all tree nodes in the direction of the
+     * change in x and y value
+     * @param {The node being processed} curNode 
+     * @param {The change in X value} xShamt 
+     * @param {The change in Y value} yShamt 
+     */
+    moveTreeRec(curNode, xShamt, yShamt){
+        // shift self
+        curNode.setX(curNode.getX() + xShamt);
+        curNode.setY(curNode.getY() + yShamt);
+
+        // visit all children and shift
+        curNode.getChildren().map(child=>{
+            this.moveTreeRec(child, xShamt, yShamt);
+        });
     }
 
     /**
@@ -318,129 +427,12 @@ class GenericTree{
         return this.treeType;
     }
 
-    moveTree(xAmount, yAmount){
-        // putting bounds to center to be able to compare them with other nodes locations
-        this.treeLeftBound = this.root.getX();
-        this.treeRightBound = this.root.getX();
-        // Update the latest center x value
-        this.latestCenterX = xAmount * 0.5 * (1 / this.scale);
-        this.moveTreeRec(this.root, xAmount * 0.5 * (1 / this.scale), yAmount * 0.5 * (1 / this.scale));
-    }
-
     setId(id){
         this.id = id;
     }
 
     getId(){
         return this.id;
-    }
-
-    center(theCenterX){
-        // Update the center position
-        // this.latestCenterX = theCenterX;
-
-        var properties = {
-            spaceLeftBound : 0
-        };
-        this.shapeTree(this.root, 1, properties);
-        this.visitedMark = !this.visitedMark;
-        var xShamt = (theCenterX) * (1 / this.scale) - this.root.getX();
-        var yShamt = 40 - this.root.getY();
-
-        // putting bounds to center to be able to compare them with other nodes locations
-        this.treeLeftBound = this.root.getX();
-        this.treeRightBound = this.root.getX();
-        this.moveTreeRec(this.root, xShamt, yShamt);
-    }
-
-    putInView(theCenterX){
-        // Update the center position
-        // this.latestCenterX = theCenterX;
-
-        var properties = {
-            spaceLeftBound : 0
-        };
-
-        this.treeRightBound = this.root.getX();
-        this.treeLeftBound = this.root.getX();
-        this.shapeTree(this.root, 1, properties);
-        this.visitedMark = !this.visitedMark;
-
-        var xShamt = theCenterX * (1/this.scale) - (this.treeRightBound - this.treeLeftBound) / 2;
-        var yShamt = 40 - this.root.getY();
-
-        // putting bounds to center to be able to compare them with other nodes locations
-        this.treeRightBound = this.root.getX();
-        this.treeLeftBound = this.root.getX();
-        this.moveTreeRec(this.root, xShamt, yShamt);
-    }
-
-    shapeTree(curNode, level, properties){
-        // updating the tree's height
-        if (level > this.height)
-            this.height = level;
-
-        // Go through the left children if they exist
-        var leftChildren = curNode.getLeftChildren();
-        if (leftChildren)
-            leftChildren.map(child=>{
-                this.shapeTree(child, level + 1, properties);
-            });
-
-
-        // Visit the middle child
-        var middleChild = curNode.getMiddleChild();
-        var leftBoundBeforeMid = properties.spaceLeftBound;
-        if (middleChild)
-            this.shapeTree(middleChild, level + 1, properties)
-        else // only update the space left bound
-            properties.spaceLeftBound = properties.spaceLeftBound + this.NODE_SEPARATION + curNode.getWidth();
-
-        var leftBoundAfterMid = properties.spaceLeftBound;
-        var width = leftBoundAfterMid - leftBoundBeforeMid;
-
-        // calculate X-value for current node using width from
-        // max(currentNodeWidth, middleSubTreeWidth)
-        var xValue =leftBoundBeforeMid + this.NODE_SEPARATION + width/2;
-
-        // IF NOT VISITED BEFORE
-        // Assign X-value for current node and mark as visited
-        // Assign X-value for middle child node and mark as visited
-        if (curNode.isVisited() != this.visitedMark){
-            curNode.setX(xValue);
-            curNode.setY(level*40);
-            curNode.visited(this.visitedMark);
-            
-            // Updating the tree bounds
-            if (xValue > this.treeRightBound)
-                this.treeRightBound = xValue;
-            if (xValue < this.treeLeftBound)
-                this.treeLeftBound = xValue;
-        }
-
-        // Go through the right children if they exist
-        var rightChildren = curNode.getRightChildren();
-        if (rightChildren)
-            rightChildren.map(child=>{
-                this.shapeTree(child, level + 1, properties);
-            });
-    }
-
-    moveTreeRec(curNode, xShamt, yShamt){
-        // shift self
-        curNode.setX(curNode.getX() + xShamt);
-        curNode.setY(curNode.getY() + yShamt);
-
-        // Update the bounds location
-        if (curNode.getX() > this.treeRightBound)
-            this.treeRightBound = curNode.getX();
-        if (curNode.getX() < this.treeLeftBound)
-            this.treeLeftBound = curNode.getX();
-
-        // visit all children and shift
-        curNode.getChildren().map(child=>{
-            this.moveTreeRec(child, xShamt, yShamt);
-        });
     }
 
     setScale(scale){
@@ -481,6 +473,22 @@ class GenericTree{
 
     getNote(){
         return this.note;
+    }
+
+    setCenterX(centerX){
+        this.centerX = centerX;
+    }
+
+    setCenterY(centerY){
+        this.centerY = centerY;
+    }
+
+    getCenterX(){
+        return this.centerX;
+    }
+
+    getCenterY(){
+        return this.centerY;
     }
 }
 
