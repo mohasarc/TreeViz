@@ -191,7 +191,7 @@ class GenericNode {
         var contentCount = 0;
         this.values.map(val=>{
             var valStr = val.toString(10);
-            console.log(val, valStr, valStr.length);
+            // console.log(val, valStr, valStr.length);
             contentCount += valStr.length;
         });
         var newWidth = 20 * contentCount / 2;

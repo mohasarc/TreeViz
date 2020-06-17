@@ -10,11 +10,6 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import p5 from 'p5'
 import { withSnackbar } from 'notistack';
-import IconButton from '@material-ui/core/IconButton';
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
-import CenterFocusStrongRoundedIcon from '@material-ui/icons/CenterFocusStrongRounded';
-import AspectRatioRoundedIcon from '@material-ui/icons/AspectRatioRounded';
-import SaveRoundedIcon from '@material-ui/icons/SaveRounded';
 
 /**
  * The canvas component
@@ -31,18 +26,15 @@ class Canvas extends React.Component{
             tree : props.tree,
             myP5 : this.props.p5,
             updateTreeOperations : props.updateTreeOperations,
-            endEnimation : {'value' : true},
         }
 
         this.node = props.theNode;
         this.popTreeEnable = true;
         this.isCalled = false;
         this.disableScrolling = true;
-        this.endEnimation = {'value' : true}
     }
 
     componentDidMount() {
-        //
         window.document.getElementById(this.state.canvasNo).appendChild(this.node);
         var canvasWidth = this.state.canvasRef.current.offsetWidth;
         this.state.myP5.tree = this.state.tree; // put a reference to the tree into p5 object
@@ -65,6 +57,7 @@ class Canvas extends React.Component{
         if (this.state.canvasRef.current){
             var canvasWidth = this.state.canvasRef.current.offsetWidth;
             this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
+            this.setState({'height' : this.state.tree.getHeight() + 40});
         }
     }
 
@@ -140,8 +133,11 @@ class Canvas extends React.Component{
     }
 
     treeToCenter = (e) => {
+        this.state.tree.setCenterX(this.state.canvasRef.current.offsetWidth/2);
+        this.state.tree.setCenterY(40);
         this.state.tree.setScale(1);
         this.state.tree.center();
+        this.resize();
         e.preventDefault();
     }
 
@@ -169,16 +165,7 @@ class Canvas extends React.Component{
     handleZoom = (e, value) => {
         if (e.ctrlKey){
             let rect = this.state.canvasRef.current.getBoundingClientRect();
-
-            console.log('x : ', e.clientX, 'y: ', e.clientY, 'deltaX', e.deltaX, 'deltaY', e.deltaY);
-            console.log('diff in X : ', (e.clientX - this.state.tree.getCenterX()) * e.deltaY * -0.2);
-            console.log('diff in Y : ', (e.clientY - this.state.tree.getCenterY()) * e.deltaY * -0.01);
             var canvasWidth = this.state.canvasRef.current.offsetWidth;
-
-            console.log('cur center : ', this.state.tree.getCenterX());
-            console.log('client x : ', e.clientX - rect.left);
-            console.log('rect left bound : ', rect.left);
-
             this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - rect.left - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
             // this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - rect.top - this.state.tree.getCenterY()) * e.deltaY * - 0.05);
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
@@ -192,52 +179,38 @@ class Canvas extends React.Component{
 
     playSteps = (e) => {
         var i = 0;
-        this.setState(()=>{
-            console.log('setting state');
-            return {'endEnimation' : {value:false},}
-        });
-        this.endEnimation.value = false;
-        var endEnimation = this.endEnimation;
-
-        var enqueueSnackbar = this.props.enqueueSnackbar;
-
-        var tree = this.state.tree;
-        // var width = this.state.width;
-        var p5 = this.state.myP5;
-
+        var immediatly = 1;
+        this.state.tree.beingEnimated = true;
         var steps = this.state.tree.getSteps();
-        var stopSteps = this.stopSteps;
-        var setState = this.setState.bind(this);
-        var state = this.state;
+        var delay = 1500;
+
         (function loop() {
-            if (endEnimation.value){
-                // skip ahead to the last step
-                i = steps.length;
+            if (!this.state.tree.beingEnimated){
+                i = steps.length; // skip ahead to the last step
+                immediatly = 0; // To stop immedietly without delay
             }
 
-            // in case steps were empty
+            // If steps were not empty
             if (i < steps.length){
-                if (steps[i].text != '')
-                    enqueueSnackbar(steps[i].text);
+                if (steps[i].text != ''){}
+                    this.props.enqueueSnackbar(steps[i].text);
+
                 if (steps[i].treeStr != ''){
-                    tree.construct(steps[i].treeStr);
-                    tree.setNote(steps[i].note);
+                    this.state.tree.construct(steps[i].treeStr);
+                    this.state.tree.setNote(steps[i].note);
                 }
 
-                // Tree height might change while viewing the steps
-                setState(()=>{
-                    return {'height' : tree.getHeight() + 40,}
-                });
+                // center needs to be called twice
+                this.state.tree.center();
+                this.state.tree.center();
+                this.resize(); // in case tree in step i is larger
             }
 
-            p5.windowResized(this.state.width, tree.getHeight());
-            p5.tree.center(this.state.tree.latestWidth/2);
-
             if (i == steps.length - 1)
-                stopSteps();
+                this.stopSteps();
 
             if (++i < steps.length) {
-                setTimeout(loop.bind(this), 1500);  // call myself in 1 seconds time if required
+                setTimeout(loop.bind(this), delay * immediatly);  // call myself in 1 seconds time if required
             }
         }.bind(this))(); // above function expression is called immediately to start it off
 
@@ -245,20 +218,17 @@ class Canvas extends React.Component{
     }
 
     stopSteps = (e) => {
-        this.setState((prevState)=>{
-            console.log('setting state');
-            
-            return {'endEnimation' : {value:true},
-                    'height' : prevState.tree.getHeight() + 40,}
-        });
+        this.state.tree.beingEnimated = false;
 
         if (e){
-            this.endEnimation.value = true;
             var steps = this.state.tree.getSteps();
             this.state.tree.construct(steps[steps.length - 1].treeStr);
             this.state.tree.setNote('');
-            this.state.myP5.windowResized(this.state.tree.latestWidth, this.state.tree.getHeight());
-            this.state.myP5.tree.center(this.state.tree.latestWidth/2);
+
+            // center needs to be called twice
+            this.state.tree.center();
+            this.state.tree.center();
+            this.resize(); // in case original tree is larger
             e.preventDefault();
         }
     }
@@ -291,10 +261,10 @@ class Canvas extends React.Component{
                     </Col>
                     <Col xs={6} md={5} lg={5}>
                         <div className='float-right'>
-                            <a key={this.state.endEnimation.value} href='#' className='badge badge-light'  
-                            onClick={this.state.endEnimation.value?this.playSteps:this.stopSteps}
+                            <a href='#' className='badge badge-light'  
+                            onClick={!this.state.tree.beingEnimated?this.playSteps:this.stopSteps}
                             style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
-                            <div className={this.state.endEnimation.value?'play':'stop'} style={{'color' : '#FFFFFF'}}>.</div>
+                            <div className={!this.state.tree.beingEnimated?'play':'stop'} style={{'color' : '#FFFFFF'}}>.</div>
                             </a>
 
                             <a href='#' className='badge badge-light'  onClick={this.saveAsImage}

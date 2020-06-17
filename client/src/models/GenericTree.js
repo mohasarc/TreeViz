@@ -32,6 +32,8 @@ class GenericTree{
 
         this.centerX = 0;
         this.centerY = 0;
+
+        this.beingEnimated = false;
     }
 
     /**
@@ -165,20 +167,35 @@ class GenericTree{
     draw(p){
         // Draw the note
         if (this.note != ''){
-            var noteWidth = this.note.length * 7;
+            var noteWidth = this.note.length * 8;
+            var noteHeight = 25;
+            var positionLeft = 25;
+            var positionTop = 25;
+            var textSize = 15;
+
+            noteWidth *= (1/this.scale);
+            noteHeight *= (1/this.scale);
+            positionLeft *= (1/this.scale);
+            positionTop *= (1/this.scale);
+            textSize *= (1/this.scale);
+
             // Draw circles
             p.rectMode(p.CENTER)
             p.fill('FFFFF');
-            p.rect(25 + noteWidth/2, 25, noteWidth, 25, 20);
+            p.rect(positionLeft + noteWidth/2, positionTop, noteWidth, noteHeight, 20);
 
             // Draw the node's text
             // Identify the location
-            var nodeCenterX = 25 + noteWidth/2;
-            var nodeCenterY = 30;
+            var nodeCenterX = positionLeft + noteWidth/2;
+            var nodeCenterY = positionTop + (noteHeight / 4);
             // Draw it
             p.fill(0);
             p.textAlign(p.CENTER);
+            p.textSize(textSize);
             p.text(this.note, nodeCenterX, nodeCenterY);
+
+            // restore the default size for the rest of the drawing
+            p.textSize(12);
         }
 
         this.drawConnections(this.root, p, 0);
@@ -297,6 +314,8 @@ class GenericTree{
      * @param {The amount of change in Y direction} yAmount 
      */
     moveTree(xAmount, yAmount){
+        this.centerX += xAmount * (1 / this.scale);
+        this.centerY += yAmount * (1 / this.scale);
         this.moveTreeRec(this.root, xAmount * 0.5 * (1 / this.scale), yAmount * 0.5 * (1 / this.scale));
     }
 
