@@ -114,8 +114,12 @@ class TreeOperations extends React.Component{
 
                     tmpTree.setTreeType(responseObj.type);
                     tmpTree.setScale(1);
+                    if (this.state.trees.length == 0){
+                        tmpTree.setId(1);
+                    } else {
+                        tmpTree.setId(this.state.trees[0].getId() + 1);
+                    }
                     this.state.trees.unshift(tmpTree);
-                    tmpTree.setId(this.state.trees.length);
                     tmpTree.setSteps(responseObj.steps);
 
                     this.triggerUpdate();

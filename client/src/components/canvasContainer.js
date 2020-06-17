@@ -64,8 +64,11 @@ class CanvasContainer extends React.Component{
             tree.setTreeType(p.tree.treeType);
             tree.setId(p.tree.id);
             tree.setScale(p.tree.scale);
-            tree.resize(tree.getWidth() + 0.2 * tree.getWidth(), true);
-            tree.putInView((tree.getWidth() + 0.2 * tree.getWidth())/2);
+            tree.setCenterX(p.tree.getCenterX());
+            tree.setCenterY(p.tree.getCenterY());
+            // tree.resize(tree.getWidth() + 0.2 * tree.getWidth(), true);
+            tree.center();
+            // tree.putInView((tree.getWidth() + 0.2 * tree.getWidth())/2);
 
             var scaleUp = 7000 / tree.getWidth();
             tree.setScale(tree.getScale() * scaleUp);
@@ -165,11 +168,16 @@ class CanvasContainer extends React.Component{
         e.preventDefault(); // to pevent the default behavior (refreshing the page)
     }
 
-    popTree(){
+    popTree(id){
         this.setState(prevState=>{
             if (!this.isCalled){
                 prevState.treesStrs.pop()
-                prevState.trees.shift();
+                // prevState.trees.shift();
+                prevState.trees.map((tree, index) => {
+                    if (tree.getId() == id){
+                        prevState.trees.splice(index, 1);
+                    }
+                });
                 this.isCalled = true;
             } else {
                 this.isCalled = false;
@@ -226,7 +234,7 @@ class CanvasContainer extends React.Component{
                         // The conditons to view it
                         this.state.trees.length > this.state.leftTreeIndex && this.state.NumTreesInView > 1
                         // what to view
-                        ? <Col> <Canvas topTree={this.state.leftTreeIndex == 0 ? true : false} popTree={this.popTree}
+                        ? <Col> <Canvas topTree={true} popTree={this.popTree}
                                 key={this.state.trees[this.state.leftTreeIndex].getId()} ref={this.state.child1}
                                 tree={this.state.trees[this.state.leftTreeIndex]} canvasNo={this.state.trees[this.state.leftTreeIndex].getId()} treeType={this.state.trees[this.state.leftTreeIndex].getTreeType()}
                                 updateTreeOperations={this.props.updateTreeOperations}
@@ -239,7 +247,7 @@ class CanvasContainer extends React.Component{
                         // The conditions to view it
                         this.state.trees.length > this.state.rightTreeIndex && this.state.NumTreesInView > 1
                         // what to view
-                        ? <Col> <Canvas topTree={this.state.rightTreeIndex == 0 ? true : false} popTree={this.popTree}
+                        ? <Col> <Canvas topTree={true} popTree={this.popTree}
                                 key={this.state.trees[this.state.rightTreeIndex].getId()} ref={this.state.child1}
                                 tree={this.state.trees[this.state.rightTreeIndex]} canvasNo={this.state.trees[this.state.rightTreeIndex].getId()} treeType={this.state.trees[this.state.rightTreeIndex].getTreeType()}
                                 updateTreeOperations={this.props.updateTreeOperations}
@@ -252,7 +260,7 @@ class CanvasContainer extends React.Component{
                         // The conditions to view it
                         this.state.trees.length > this.state.fullScreenTreeIndex && this.state.NumTreesInView < 2
                         // what to view
-                        ? <Col> <Canvas topTree={this.state.fullScreenTreeIndex == 0 ? true : false} popTree={this.popTree}
+                        ? <Col> <Canvas topTree={true} popTree={this.popTree}
                                 key={this.state.trees[this.state.fullScreenTreeIndex].getId()} ref={this.state.child1}
                                 tree={this.state.trees[this.state.fullScreenTreeIndex]} 
                                 canvasNo={this.state.trees[this.state.fullScreenTreeIndex].getId()} 

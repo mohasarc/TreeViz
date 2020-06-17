@@ -5,10 +5,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Canvasno from './canvasno'
 import Badge from 'react-bootstrap/Badge'
-import Button from 'react-bootstrap/Button'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Slider from '@material-ui/core/Slider';
-import p5 from 'p5'
 import { withSnackbar } from 'notistack';
 
 /**
@@ -61,18 +57,6 @@ class Canvas extends React.Component{
         }
     }
 
-    // update = () => {
-    //     // console.log('update called with tree', this.state.tree);
-    //     console.log('update called');
-    //     this.state.tree.latestWidth = this.state.width; // NEW-TEST
-    //     this.state.myP5.windowResized(this.state.width, this.state.tree.getHeight());
-    //     this.setState((prevState) => {
-    //         return {
-    //             width : prevState.canvasRef.current.offsetWidth
-    //         }
-    //     });
-    // }
-
     pressed = (e) => {
         this.mousePressed = true;
         if (e.touches){
@@ -112,7 +96,7 @@ class Canvas extends React.Component{
 
     popTree = (e) => {
         if (this.props.topTree){
-            this.props.popTree();
+            this.props.popTree(this.state.tree.getId());
         } else {
             this.popTreeEnable = false;
         }
@@ -168,7 +152,7 @@ class Canvas extends React.Component{
             var canvasWidth = this.state.canvasRef.current.offsetWidth;
             this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - rect.left - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
             // this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - rect.top - this.state.tree.getCenterY()) * e.deltaY * - 0.05);
-            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
             this.state.tree.center();
             this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
             this.setState({'height' : this.state.tree.getHeight() + 40});

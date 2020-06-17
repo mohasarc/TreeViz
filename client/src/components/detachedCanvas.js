@@ -17,7 +17,6 @@ class DetachedCanvas extends React.Component{
         this.myP5 = null;
     }
 
-    
     Sketch = (p) => {
         p.width = window.innerWidth;
         p.height = window.innerHeight;
@@ -137,7 +136,7 @@ class DetachedCanvas extends React.Component{
             if (e.ctrlKey){
                 this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
                 this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - (window.innerHeight - 20) / 2) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
-                this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05);
+                this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
                 this.state.tree.center();
             }
         }
