@@ -63,7 +63,10 @@ router.post('/performOperation', (req, res) => {
 
         case 'remove':
             req.session.theTree.clearSteps();
+            console.log('before calling remove');
             req.session.theTree.remove(parseInt(value), 's');
+            console.log('after calling remove');
+
         break;
 
         // case 'build':

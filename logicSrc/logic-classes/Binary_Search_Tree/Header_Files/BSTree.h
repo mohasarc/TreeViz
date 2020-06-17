@@ -13,6 +13,7 @@ struct Step
 {
     string text;
     string treeStr;
+    string note;
 };
 
 template <class T>
@@ -35,7 +36,7 @@ string keyToString(T key);
 void insert(TreeNode<T> *child, TreeNode<T> *parent);
 bool isValidBSTreeString(string bsTreeString);
 void generateInorderSequence(TreeNode<T>* curNode, string &sequence);
-void recordStep(string stepText);
+void recordStep(string stepText, string note);
 
 public:
 BSTree();
@@ -55,6 +56,7 @@ vector<Step> getSteps();
 int getStepsNo();
 string getStepText(int index);
 string getStepTreeStr(int index);
+string getStepNote(int index);
 void clearSteps();
 };
 

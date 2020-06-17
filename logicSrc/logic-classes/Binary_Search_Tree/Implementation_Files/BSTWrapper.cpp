@@ -21,6 +21,7 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("getStepsNo", &BSTWrapper::getStepsNo),
         InstanceMethod("getStepText", &BSTWrapper::getStepText),
         InstanceMethod("getStepTreeStr", &BSTWrapper::getStepTreeStr),
+        InstanceMethod("getStepNote", &BSTWrapper::getStepNote),
         InstanceMethod("clearSteps", &BSTWrapper::clearSteps),
     });
 
@@ -208,6 +209,19 @@ Napi::Value BSTWrapper::getStepTreeStr(const Napi::CallbackInfo& info){
         Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
     
     return Napi::String::New(info.Env(), stepTreeStr);
+}
+
+Napi::Value BSTWrapper::getStepNote(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+    string stepNote;
+
+    if (info.Length() > 0 && info[0].IsNumber())
+        stepNote = theBSTTree->getStepNote(info[0].As<Napi::Number>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
+    return Napi::String::New(info.Env(), stepNote);
 }
 
 Napi::Value BSTWrapper::clearSteps(const Napi::CallbackInfo& info){

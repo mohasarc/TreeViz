@@ -7,6 +7,7 @@ TreeNode<T>::TreeNode(){
     this->leftChildExists = false;
     this->newlyInserted = false;
     this->color = "";
+    this->empty = false;
 }
 
 template <class T>
@@ -17,6 +18,7 @@ TreeNode<T>::TreeNode( const T& anItem){
     this->leftChildExists = false;
     this->newlyInserted = false;
     this->color = "";
+    this->empty = false;
 }
 
 template <class T>
@@ -27,6 +29,7 @@ TreeNode<T>::TreeNode( const T& anItem, TreeNode<T>* leftPtr, TreeNode<T>* right
     this->leftChildExists = false;
     this->newlyInserted = false;
     this->color = "";
+    this->empty = false;
 }
 
 template <class T>
@@ -136,5 +139,16 @@ template <class T>
 bool TreeNode<T>::doesLeftChildExist(){
     return this->leftChildExists;
 }
+
+template <class T>
+void TreeNode<T>::setEmpty(bool empty){
+    this->empty = empty;
+}
+
+template <class T>
+bool TreeNode<T>::isEmpty(){
+    return this->empty;
+}
+
 
 template class TreeNode<int>;

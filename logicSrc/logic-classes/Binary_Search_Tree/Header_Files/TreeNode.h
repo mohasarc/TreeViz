@@ -14,6 +14,7 @@ private :
     bool leftChildExists;
     bool newlyInserted;
     string color;
+    bool empty;
     
 public :
     TreeNode();
@@ -34,6 +35,8 @@ public :
     bool getNewlyInserted();
     void setColor(string color);
     string getColor();
+    void setEmpty(bool empty);
+    bool isEmpty();
 };
 
 #endif

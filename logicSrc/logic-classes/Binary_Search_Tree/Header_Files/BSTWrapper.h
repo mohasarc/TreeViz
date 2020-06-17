@@ -26,6 +26,7 @@ private:
     Napi::Value getStepsNo(const Napi::CallbackInfo& info);
     Napi::Value getStepText(const Napi::CallbackInfo& info);
     Napi::Value getStepTreeStr(const Napi::CallbackInfo& info);
+    Napi::Value getStepNote(const Napi::CallbackInfo& info);
     Napi::Value clearSteps(const Napi::CallbackInfo& info);
 
     BSTree<int>* theBSTTree;

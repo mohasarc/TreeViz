@@ -176,7 +176,7 @@ class Canvas extends React.Component{
 
             // If steps were not empty
             if (i < steps.length){
-                if (steps[i].text != ''){}
+                if (steps[i].text != '')
                     this.props.enqueueSnackbar(steps[i].text);
 
                 if (steps[i].treeStr != ''){
@@ -212,9 +212,9 @@ class Canvas extends React.Component{
             // center needs to be called twice
             this.state.tree.center();
             this.state.tree.center();
-            this.resize(); // in case original tree is larger
             e.preventDefault();
         }
+        this.resize(); // in case original tree is larger
     }
 
     render(){

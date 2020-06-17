@@ -171,7 +171,7 @@ class DetachedCanvas extends React.Component{
 
                 // If steps were not empty
                 if (i < steps.length){
-                    if (steps[i].text != ''){}
+                    if (steps[i].text != '')
                         this.props.enqueueSnackbar(steps[i].text);
 
                     if (steps[i].treeStr != ''){
@@ -184,8 +184,11 @@ class DetachedCanvas extends React.Component{
                     this.state.tree.center();
                 }
 
-                if (i == steps.length - 1)
+                if (i == steps.length - 1){
+                    this.setState({'beingEnimated' : false});
+                    this.state.tree.beingEnimated = false;
                     this.stopSteps();
+                }
 
                 if (++i < steps.length) {
                     setTimeout(loop.bind(this), delay * immediatly);  // call myself in 1 seconds time if required
