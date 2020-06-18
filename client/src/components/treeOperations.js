@@ -7,6 +7,8 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import axios from 'axios'
+import XRegExp from 'xregexp'
+
 import { unstable_batchedUpdates } from 'react-dom'
 
 class TreeOperations extends React.Component{
@@ -71,15 +73,22 @@ class TreeOperations extends React.Component{
             case 'build':
                 var description = this.state.description.current.value;
                 var delimIndex = description.indexOf(':');
-                var treeString = '';
-                var treeSequence = '';
+                const re = /^(d?-?\d+,?)+/;
+                var str1, str2, treeString, treeSequence;
 
                 if (delimIndex > 0){
-                    treeString = description.substr(0, delimIndex);
-                    treeSequence = description.substr(delimIndex + 1);
+                    str1 = description.substr(0, delimIndex);
+                    str2 = description.substr(delimIndex + 1);
                 } else {
-                    treeString = description;
-                    treeSequence = '';
+                    str1 = description;
+                }
+
+                if (re.test(str1)){
+                    treeSequence = str1;
+                    treeString = str2;
+                } else {
+                    treeSequence = str2;
+                    treeString = str1;
                 }
 
                 operationObj.treeContent.treeString = treeString;
