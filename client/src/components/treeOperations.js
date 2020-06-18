@@ -37,6 +37,9 @@ class TreeOperations extends React.Component{
     }
 
     performOperation = (e) => {
+        // Local variables
+        const emptiness = /^\s*$/;
+
         // get the operation required
         var operation = e.target.attributes.operation.value;
         var operationObj = {
@@ -62,12 +65,18 @@ class TreeOperations extends React.Component{
         console.log('sending ', operationObj)
 
         switch (operation) {
-            case 'insert':               
+            case 'insert':
                 operationObj.operation.type = 'insert';
+
+                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value))
+                    return;
             break;
     
             case 'remove':
                 operationObj.operation.type = 'remove';
+
+                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value))
+                    return;
             break;
     
             case 'build':
@@ -104,6 +113,15 @@ class TreeOperations extends React.Component{
                 operationObj.operation.preferences.numNodes = this.state.numNodes.current.value;
 
                 operationObj.operation.type = 'buildRandom';
+
+                if (emptiness.test(operationObj.operation.preferences.range.min) || 
+                    emptiness.test(operationObj.operation.preferences.range.max) || 
+                    emptiness.test(operationObj.operation.preferences.numNodes) ||
+                    !Number.isInteger(+operationObj.operation.preferences.range.min) ||
+                    !Number.isInteger(+operationObj.operation.preferences.range.max) ||
+                    !Number.isInteger(+operationObj.operation.preferences.numNodes)){
+                        return;
+                    }
             break;
     
             default:
@@ -178,6 +196,31 @@ class TreeOperations extends React.Component{
     render(){
         return (
                 <Row xs={12} md={12} lg={12}>
+                    <Col xs={12} md={6} lg={7}>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                            ref={this.state.reference}
+                            placeholder="Enter a value"
+                            aria-label="Enter a value"
+                            aria-describedby="basic-addon2"
+                            />
+                            <InputGroup.Append>
+                            <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
+                            <Button operation='remove' variant="outline-secondary" onClick={this.performOperation}>-</Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                            ref={this.state.description}
+                            placeholder="Describe a tree"
+                            aria-label="Describe a tree"
+                            aria-describedby="basic-addon2"
+                            />
+                            <InputGroup.Append>
+                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                    </Col>
                     <Col xs={12} md={6} lg={5}>
                         <InputGroup className="mb-3" size='sm' style={{'margin-top':'0.5em'}}>
                             <InputGroup.Prepend>
@@ -215,31 +258,6 @@ class TreeOperations extends React.Component{
                             <InputGroup.Prepend>
                                 <Button operation='buildRandom' variant="outline-secondary" onClick={this.performOperation}>Create tree</Button>
                             </InputGroup.Prepend>
-                        </InputGroup>
-                    </Col>
-                    <Col xs={12} md={6} lg={7}>
-                        <InputGroup className="mb-3">
-                            <FormControl
-                            ref={this.state.reference}
-                            placeholder="Enter a value"
-                            aria-label="Enter a value"
-                            aria-describedby="basic-addon2"
-                            />
-                            <InputGroup.Append>
-                            <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
-                            <Button operation='remove' variant="outline-secondary" onClick={this.performOperation}>-</Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                        <InputGroup className="mb-3">
-                            <FormControl
-                            ref={this.state.description}
-                            placeholder="Describe a tree"
-                            aria-label="Describe a tree"
-                            aria-describedby="basic-addon2"
-                            />
-                            <InputGroup.Append>
-                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
-                            </InputGroup.Append>
                         </InputGroup>
                     </Col>
                 </Row>

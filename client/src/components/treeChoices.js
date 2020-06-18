@@ -77,7 +77,7 @@ class TreeChoices extends React.Component{
                     </Col>
                     <Col xs={6} md={12} lg={12}>
                         {/* <Grid container direction="row" justify="center" alignItems="center" spacing={0}> */}
-                        <div className='float-left'>
+                        <div >
                             <DialogSelect key={this.state.key} preferences={this.preferences}/>
                         </div>
                         {/* </Grid> */}

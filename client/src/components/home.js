@@ -46,13 +46,13 @@ class Home extends React.Component{
                 <Jumbotron>
                     <Container>
                         <Row xs={12} md={12} lg={12}>
+                            <Col xs={12} md={3} lg={3}>
+                                <TreeChoices preferences={this.preferences}/>
+                            </Col>
                             <Col xs={12} md={9} lg={9}>
                                 <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} 
                                             trees={this.trees} preferences={this.preferences} 
                                             ref={this.TreeOperationsRef}/>
-                            </Col>
-                            <Col xs={12} md={3} lg={3}>
-                                <TreeChoices preferences={this.preferences}/>
                             </Col>
                         </Row>
                     </Container>

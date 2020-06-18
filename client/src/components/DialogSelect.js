@@ -99,7 +99,7 @@ export default function DialogSelect(props) {
 
   return (
     <div>
-      <Button variant="outline-secondary"  onClick={handleClickOpen}>Preferences</Button>
+      <Button variant="outline-secondary" onClick={handleClickOpen} className='btn-block btn-sm'>Preferences</Button>
       
       <Dialog disableBackdropClick disableEscapeKeyDown open={open} onClose={handleClose}>
         <DialogTitle>{preferences.type.name} preferences</DialogTitle>
