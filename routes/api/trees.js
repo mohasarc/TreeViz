@@ -26,13 +26,16 @@ router.post('/performOperation', (req, res) => {
         case 'BST':
             req.session.theTree = new BSTree();
             console.log(targetTreeInfo.preferences.replaceWithPredecessor);
-            req.session.theTree.setPrioritizePredecessor(targetTreeInfo.preferences.replaceWithPredecessor)
+            req.session.theTree.setPrioritizePredecessor(targetTreeInfo.preferences.replaceWithPredecessor);
         break;
         
         case '234':
         case 'B-T':
         case '23T':
             req.session.theTree = new BTree(targetTreeInfo.preferences.order);
+            req.session.theTree.setPropagateS(targetTreeInfo.preferences.propagateSmallerValue);
+            req.session.theTree.setPrioritizeInorderPredecessor(targetTreeInfo.preferences.prioritizeInorderPredecessor);
+            req.session.theTree.setPrioritizeRotateLeft(targetTreeInfo.preferences.prioritizeRotateLeft);
         break;
 
         case 'AVL':
