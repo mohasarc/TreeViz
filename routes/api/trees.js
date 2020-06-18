@@ -88,6 +88,7 @@ router.post('/performOperation', (req, res) => {
         // break;
 
         case 'buildRandom':
+            
             // utility function
             function shuffle(o) {
                 for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -121,7 +122,14 @@ router.post('/performOperation', (req, res) => {
     // Special naming for B-trees
     var treeName = targetTreeInfo.type.name;
     if (targetTreeInfo.type.value == 'B-T'){
-        treeName = targetTreeInfo.preferences.order + targetTreeInfo.type.name.substr(1);
+        if (targetTreeInfo.preferences.order > 4)
+            treeName = targetTreeInfo.preferences.order + targetTreeInfo.type.name.substr(1);
+        else{
+            if (targetTreeInfo.preferences.order == 3)
+                treeName = '2-3 tree'
+            if (targetTreeInfo.preferences.order == 4)
+                treeName = '2-3-4 tree'
+        }
     }
 
     steps = [];

@@ -126,13 +126,14 @@ export default function DialogSelect(props) {
                   <FormControlLabel control={
                       <Checkbox
                         checked={propagateSmallerValue}
+                        disabled={order % 2 != 0 }
                         onChange={handlePSVChange}
                         name="PSV"
                         color="primary"
                       />
-                    }
+                      }
                     label="Propagate smaller value"
-                  />
+                    />
                   <FormControlLabel control={
                       <Checkbox
                         checked={prioritizeInorderPredecessor}
