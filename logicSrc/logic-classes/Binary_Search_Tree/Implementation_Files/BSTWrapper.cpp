@@ -23,6 +23,7 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
         InstanceMethod("getStepTreeStr", &BSTWrapper::getStepTreeStr),
         InstanceMethod("getStepNote", &BSTWrapper::getStepNote),
         InstanceMethod("clearSteps", &BSTWrapper::clearSteps),
+        InstanceMethod("setPrioritizePredecessor", &BSTWrapper::setPrioritizePredecessor),
     });
 
     constructor = Napi::Persistent(func);
@@ -123,18 +124,12 @@ Napi::Value BSTWrapper::remove(const Napi::CallbackInfo& info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (info.Length() > 1 && info[0].IsNumber()){
+    if (info.Length() > 0 && info[0].IsNumber()){
         int val = info[0].As<Napi::Number>();
-        string type = info[1].As<Napi::String>();
-        this->theBSTTree->remove(val, type[0]);
+        this->theBSTTree->remove(val);
         bool result = true;
         return Napi::Boolean::New(info.Env(), result);
     } 
-    // else if (info[0].IsString()){
-    //     string val = info[0].As<Napi::String>();
-    //     bool result = this->theBSTTree->insert(val);
-    //     return Napi::Boolean::New(info.Env(), result);
-    // }
      else {
         Napi::Error::New(env, "unhandeled type to be removed").ThrowAsJavaScriptException();
         return Napi::Boolean::New(info.Env(), env.Undefined());
@@ -229,6 +224,18 @@ Napi::Value BSTWrapper::clearSteps(const Napi::CallbackInfo& info){
     Napi::HandleScope scope(env);
 
     theBSTTree->clearSteps();
+    return Napi::Boolean::New(info.Env(), env.Undefined());
+}
+
+Napi::Value BSTWrapper::setPrioritizePredecessor(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() > 0 && info[0].IsBoolean())
+        theBSTTree->setPrioritizePredecessor(info[0].As<Napi::Boolean>());
+    else
+        Napi::Error::New(env, "arguments number or type is not correct").ThrowAsJavaScriptException();
+    
     return Napi::Boolean::New(info.Env(), env.Undefined());
 }
 

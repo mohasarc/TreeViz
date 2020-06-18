@@ -29,6 +29,8 @@ private:
     Napi::Value getStepNote(const Napi::CallbackInfo& info);
     Napi::Value clearSteps(const Napi::CallbackInfo& info);
 
+    Napi::Value setPrioritizePredecessor(const Napi::CallbackInfo& info);
+
     BSTree<int>* theBSTTree;
 };
 

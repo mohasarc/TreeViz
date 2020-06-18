@@ -4,6 +4,7 @@ template <class T>
 BSTree<T>::BSTree(){
     this->root = NULL;
     this->sequence = "";
+    this->prioritizePredecessor = false;
 }
 
 template <class T>
@@ -48,24 +49,165 @@ bool BSTree<T>::insert(T anItem){
 }
 
 template <class T>
-bool BSTree<T>::remove(T anItem, char type){
+bool BSTree<T>::remove(T anItem){
     bool success = false;
     TreeNode<T>* toBeDeleted = NULL;
     TreeNode<T>* toBeDeletedParent = NULL;
 
-    switch (type)
-    {
-    case 's':
-    case 'S':
-        toBeDeleted = this->root;
-        search(toBeDeleted, toBeDeletedParent, anItem);
-        cout << "found the item to be deleted" << endl;
-        if (toBeDeleted){
-            // mark node to be deleted
-            toBeDeleted->setColor("danger");
-            recordStep("", "");
-            // toBeDeleted->setColor("");
+    // Find the node to be deleted
+    toBeDeleted = this->root;
+    search(toBeDeleted, toBeDeletedParent, anItem);
 
+    // mark node to be deleted
+    toBeDeleted->setColor("danger");
+    recordStep("", "");
+
+    // if the node is leaf just remove it
+    if (toBeDeleted->isLeaf()){
+
+        toBeDeleted->setEmpty(true);
+        recordStep("", "");
+
+        if (toBeDeletedParent){
+            if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
+                // delete the child to the left
+                toBeDeletedParent->setLeftChildPtr(NULL);
+            } else {
+                // delete the child to the left
+                toBeDeletedParent->setRightChildPtr(NULL);
+            }
+        }
+
+        recordStep("It is a leaf node: only delete it", "");
+
+        delete toBeDeleted;
+        if (!toBeDeletedParent)
+            this->root = NULL;
+
+        success = true;
+        return success;
+    }
+
+    // If node to be deleted is the root and it has one child
+    if (!toBeDeletedParent && (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL)){
+        if (toBeDeleted->getLeftChildPtr() != NULL){
+            // make it the root
+            toBeDeleted->setEmpty(true);
+            recordStep("", "");
+
+            toBeDeleted->getLeftChildPtr()->setColor("alert");
+            recordStep("The node is the root, make its left child the root", "");
+
+            this->root = toBeDeleted->getLeftChildPtr();
+
+            recordStep("", "");
+            toBeDeleted->getLeftChildPtr()->setColor("");
+        } else {
+            // make right child the root
+            toBeDeleted->setEmpty(true);
+            recordStep("", "");
+
+            toBeDeleted->getRightChildPtr()->setColor("alert");
+            recordStep("The node is the root, make its left child the root", "");
+
+            this->root = toBeDeleted->getRightChildPtr();
+
+            recordStep("", "");
+            toBeDeleted->getRightChildPtr()->setColor("");
+        }
+
+        delete toBeDeleted;
+        success = true;
+        return success;
+    }
+
+    // if has one child, make parent point to child's child
+    if (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL){
+        toBeDeleted->setEmpty(true);
+        recordStep("", "");
+
+        TreeNode<T>* tmp = toBeDeleted;
+        if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
+            // delete the child to the left
+            if (toBeDeleted->getLeftChildPtr() != NULL){
+
+                toBeDeletedParent->setColor("alert");
+                toBeDeleted->getLeftChildPtr()->setColor("alert");
+                recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
+
+                toBeDeletedParent->setLeftChildPtr(toBeDeleted->getLeftChildPtr());
+
+                toBeDeletedParent->setColor("success");
+                toBeDeletedParent->getLeftChildPtr()->setColor("success");
+                recordStep("The node was removed successfully", "");
+                toBeDeletedParent->setColor("");
+                toBeDeletedParent->getLeftChildPtr()->setColor("");
+            } else {
+                toBeDeletedParent->setColor("alert");
+                toBeDeleted->getRightChildPtr()->setColor("alert");
+                recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
+
+                toBeDeletedParent->setLeftChildPtr(toBeDeleted->getRightChildPtr());
+
+                toBeDeletedParent->setColor("success");
+                toBeDeletedParent->getLeftChildPtr()->setColor("success");
+                recordStep("The node was removed successfully", "");
+                toBeDeletedParent->setColor("");
+                toBeDeletedParent->getLeftChildPtr()->setColor("");
+            }
+            // toBeDeletedParent->setLeftChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+            //                         ? toBeDeleted->getLeftChildPtr() 
+            //                         : toBeDeleted->getRightChildPtr()));
+        } else {
+            // delete the child to the right
+            if (toBeDeleted->getLeftChildPtr() != NULL ){
+
+                toBeDeletedParent->setColor("alert");
+                toBeDeleted->getLeftChildPtr()->setColor("alert");
+                recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
+
+                toBeDeletedParent->setRightChildPtr(toBeDeleted->getLeftChildPtr());
+
+                toBeDeletedParent->setColor("success");
+                toBeDeletedParent->getRightChildPtr()->setColor("success");
+                recordStep("The node was removed successfully", "");
+                toBeDeletedParent->setColor("");
+                toBeDeletedParent->getRightChildPtr()->setColor("");
+            } else {
+                toBeDeletedParent->setColor("alert");
+                toBeDeleted->getRightChildPtr()->setColor("alert");
+                recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
+
+                toBeDeletedParent->setRightChildPtr(toBeDeleted->getRightChildPtr());
+
+                toBeDeletedParent->setColor("success");
+                toBeDeletedParent->getRightChildPtr()->setColor("success");
+                recordStep("The node was removed successfully", "");
+                toBeDeletedParent->setColor("");
+                toBeDeletedParent->getRightChildPtr()->setColor("");
+            }
+
+            // parent->setRightChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+            //                         ? toBeDeleted->getLeftChildPtr() 
+            //                         : toBeDeleted->getRightChildPtr()));
+        }
+
+        delete toBeDeleted;
+        success = true;
+        return success;
+    }
+
+    if (this->prioritizePredecessor){
+        if (toBeDeleted){
+            this->removeWithPredecessor(toBeDeleted, toBeDeletedParent, success);
+        }
+
+        if (success)
+            this->sequence += ",d" + keyToString(anItem);
+
+        return success;
+    } else {
+        if (toBeDeleted){
             this->removeWithSuccessor(toBeDeleted, toBeDeletedParent, success);
         }
 
@@ -73,22 +215,17 @@ bool BSTree<T>::remove(T anItem, char type){
             this->sequence += ",d" + keyToString(anItem);
 
         return success;
-    break;
-    
-    case 'p':
-    case 'P':
-        return false;
-    break;
-
-    default:
-        return false;
-        break;
     }
 }
 
 template <class T>
 bool BSTree<T>::isEmpty(){
     return root == NULL;
+}
+
+template <class T>
+void BSTree<T>::setPrioritizePredecessor(bool prioritizePredecessor){
+    this->prioritizePredecessor = prioritizePredecessor;
 }
 
 template <class T>
@@ -128,7 +265,7 @@ bool BSTree<T>::insertSequence(string sequence){
         // Parse all string numbers as integers and add them to the tree
         for (string numStr : record){
             if (numStr.at(0) == 'd')
-                remove(stoi(numStr.substr(1)), 's');
+                remove(stoi(numStr.substr(1)));
             else
                 insert(stoi(numStr));
         }
@@ -328,143 +465,6 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
 
 template <class T>
 void BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent, bool &success){
-    cout << "remove with succ" << root << "  " << parent << endl;
-
-    // if leaf just remove it
-    if (root->isLeaf()){
-
-        root->setEmpty(true);
-        recordStep("", "");
-
-        if (parent){
-            if (parent->getLeftChildPtr() == root){
-                // delete the child to the left
-                parent->setLeftChildPtr(NULL);
-            } else {
-                // delete the child to the left
-                parent->setRightChildPtr(NULL);
-            }
-        }
-
-        recordStep("It is a leaf node: only delete it", "");
-
-        delete root;
-        if (!parent)
-            this->root = NULL;
-
-        success = true;
-        return;
-    }
-
-    // If deleting the root and it has children
-    if (!parent && (root->getLeftChildPtr() == NULL || root->getRightChildPtr() == NULL)){
-        cout << "deleting the root and it has children" << endl;
-        if (root->getLeftChildPtr() != NULL){
-            // make it the root
-            root->setEmpty(true);
-            recordStep("", "");
-
-            root->getLeftChildPtr()->setColor("alert");
-            recordStep("The node is the root, make its left child the root", "");
-
-            this->root = root->getLeftChildPtr();
-
-            recordStep("", "");
-            root->getLeftChildPtr()->setColor("");
-        } else {
-            // make right child the root
-            root->setEmpty(true);
-            recordStep("", "");
-
-            root->getRightChildPtr()->setColor("alert");
-            recordStep("The node is the root, make its left child the root", "");
-
-            this->root = root->getRightChildPtr();
-
-            recordStep("", "");
-            root->getRightChildPtr()->setColor("");
-        }
-
-        delete root;
-        return;
-    }
-
-    // if has one child, make parent point to child's child
-    if (root->getLeftChildPtr() == NULL || root->getRightChildPtr() == NULL){
-        root->setEmpty(true);
-        recordStep("", "");
-
-        TreeNode<T>* tmp = root;
-        if (parent->getLeftChildPtr() == root){
-            // delete the child to the left
-            if (root->getLeftChildPtr() != NULL){
-
-                parent->setColor("alert");
-                root->getLeftChildPtr()->setColor("alert");
-                recordStep("The node has one left child: conect its parent with its left child", "");
-
-                parent->setLeftChildPtr(root->getLeftChildPtr());
-
-                parent->setColor("success");
-                parent->getLeftChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                parent->setColor("");
-                parent->getLeftChildPtr()->setColor("");
-            } else {
-                parent->setColor("alert");
-                root->getRightChildPtr()->setColor("alert");
-                recordStep("The node has one right child: conect parent and right child", "");
-
-                parent->setLeftChildPtr(root->getRightChildPtr());
-
-                parent->setColor("success");
-                parent->getLeftChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                parent->setColor("");
-                parent->getLeftChildPtr()->setColor("");
-            }
-            // parent->setLeftChildPtr((root->getLeftChildPtr() != NULL 
-            //                         ? root->getLeftChildPtr() 
-            //                         : root->getRightChildPtr()));
-        } else {
-            // delete the child to the right
-            if (root->getLeftChildPtr() != NULL ){
-
-                parent->setColor("alert");
-                root->getLeftChildPtr()->setColor("alert");
-                recordStep("The node has one left child: conect its parent with its left child", "");
-
-                parent->setRightChildPtr(root->getLeftChildPtr());
-
-                parent->setColor("success");
-                parent->getRightChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                parent->setColor("");
-                parent->getRightChildPtr()->setColor("");
-            } else {
-                parent->setColor("alert");
-                root->getRightChildPtr()->setColor("alert");
-                recordStep("The node has one right child: conect parent and right child", "");
-
-                parent->setRightChildPtr(root->getRightChildPtr());
-
-                parent->setColor("success");
-                parent->getRightChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                parent->setColor("");
-                parent->getRightChildPtr()->setColor("");
-            }
-
-            // parent->setRightChildPtr((root->getLeftChildPtr() != NULL 
-            //                         ? root->getLeftChildPtr() 
-            //                         : root->getRightChildPtr()));
-        }
-
-        delete root;
-        success = true;
-        return;
-    }
-
     // if root has both children, replace with inorder successor
     // and delete it from there leaf node
     TreeNode<T>* inSuccParent = NULL;
@@ -487,7 +487,56 @@ void BSTree<T>::removeWithSuccessor(TreeNode<T>* root, TreeNode<T>* parent, bool
     // root->setColor("");
     // inorderSuccessor->setColor("");
 
-    removeWithSuccessor(inorderSuccessor, inSuccParent, success);
+    if (inSuccParent){
+        if (inSuccParent->getLeftChildPtr() == inorderSuccessor){
+            inSuccParent->setLeftChildPtr(inorderSuccessor->getRightChildPtr());
+        } else {
+            inSuccParent->setRightChildPtr(inorderSuccessor->getRightChildPtr());
+        }
+
+        delete inorderSuccessor;
+        success = true;
+    }
+
+    // Remove the inorder successor
+    // success = remove(inorderSuccessor->getItem());
+    // removeWithSuccessor(inorderSuccessor, inSuccParent, success);
+}
+
+template <class T>
+void BSTree<T>::removeWithPredecessor(TreeNode<T>* root, TreeNode<T>* parent, bool &success){
+    // if root has both children, replace with inorder predecessor
+    // and delete it from there leaf node
+    TreeNode<T>* inPredecParent = NULL;
+    TreeNode<T>* inorderPredecessor = root->getLeftChildPtr()->getRightChildPtr() == NULL 
+                                    ? root->getLeftChildPtr() 
+                                    : getMostRight(root->getLeftChildPtr(), inPredecParent);
+    if (inPredecParent == NULL) inPredecParent = root;
+
+    inorderPredecessor->setColor("alert");
+    recordStep("The node has two children, find its inorder predecessor", "");
+
+    // replace with inorder predecessor
+    T tmpItem = root->getItem();
+    root->setItem(inorderPredecessor->getItem());
+    recordStep("Replace the node with its inorder predecessor", "");
+
+    root->setColor("");
+    inorderPredecessor->setColor("danger");
+    recordStep("Mark the inorder predecessor to be deleted", "");
+    // root->setColor("");
+    // inorderPredecessor->setColor("");
+
+    if (inPredecParent){
+        if (inPredecParent->getLeftChildPtr() == inorderPredecessor){
+            inPredecParent->setLeftChildPtr(inorderPredecessor->getLeftChildPtr());
+        } else {
+            inPredecParent->setRightChildPtr(inorderPredecessor->getLeftChildPtr());
+        }
+
+        delete inorderPredecessor;
+        success = true;
+    }
 }
 
 template <class T>
@@ -632,6 +681,17 @@ TreeNode<T>* BSTree<T>::getMostLeft(TreeNode<T>* root, TreeNode<T>* &parent){
 
     parent = root;
     return getMostLeft(root->getLeftChildPtr(), parent);
+}
+
+template <class T>
+TreeNode<T>* BSTree<T>::getMostRight(TreeNode<T>* root, TreeNode<T>* &parent){
+    // Base case -- if left is null
+    if (root->getRightChildPtr() == NULL){
+        return root;
+    }
+
+    parent = root;
+    return getMostRight(root->getRightChildPtr(), parent);
 }
 
 template <class T>
