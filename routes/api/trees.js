@@ -19,13 +19,14 @@ router.post('/performOperation', (req, res) => {
     var value = req.body.operation.value;
     var treeContent = req.body.treeContent;
     var targetTreeInfo = req.body.targetTreeInfo;
-
     console.log(req.body);
 
     // Create the tree
     switch (targetTreeInfo.type.value) {
         case 'BST':
             req.session.theTree = new BSTree();
+            console.log(targetTreeInfo.preferences.replaceWithPredecessor);
+            req.session.theTree.setPrioritizePredecessor(targetTreeInfo.preferences.replaceWithPredecessor)
         break;
         
         case '234':
@@ -47,11 +48,24 @@ router.post('/performOperation', (req, res) => {
     // Populate tree
     if (treeContent.treeSequence != ''){
         req.session.theTree.insertSequence(treeContent.treeSequence);
+        req.session.useSequence = true;
     }
     else{
-        req.session.theTree.constructFromTreeString(treeContent.treeString);
-        var treeSequence = req.session.theTree.generateInorderSequence();
-        req.session.theTree.setSequence(treeSequence);
+        // If tree string has only one node with one value create tree + generate tree sequence
+
+        // If tree string has more than one node or a node with more than one value, DO NOT
+        // generate tree sequence and do not send back any tree sequence
+        var re = new RegExp("^{\\d+}$");
+        console.log('the test', re.test(treeContent.treeString));
+        if (re.test(treeContent.treeString)){
+            req.session.theTree.constructFromTreeString(treeContent.treeString);
+            var treeSequence = req.session.theTree.generateInorderSequence();
+            req.session.theTree.setSequence(treeSequence);
+            req.session.useSequence = true;
+        } else {
+            req.session.theTree.constructFromTreeString(treeContent.treeString);
+            req.session.useSequence = false;
+        }
     }
 
     // Perform the operation
@@ -63,10 +77,7 @@ router.post('/performOperation', (req, res) => {
 
         case 'remove':
             req.session.theTree.clearSteps();
-            console.log('before calling remove');
             req.session.theTree.remove(parseInt(value), 's');
-            console.log('after calling remove');
-
         break;
 
         // case 'build':
@@ -130,7 +141,7 @@ router.post('/performOperation', (req, res) => {
     var responseObj = {
         'type' : treeName,
         'treeString' : req.session.theTree.toTreeString(),
-        'treeSequence' : req.session.theTree.getSequence(),
+        'treeSequence' : req.session.useSequence ? req.session.theTree.getSequence() : '',
         'preferences' : targetTreeInfo.preferences,
         'steps' : steps
     }
