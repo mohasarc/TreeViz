@@ -68,9 +68,10 @@ class TreeChoices extends React.Component{
                             id="choose-tree-combo-box"
                             options={this.treeOptions}
                             getOptionLabel={(option) => option.name}
-                            style={{ width: 190, height : 60 }}
+                            style={{ height : 60 }}
                             onChange={this.updateChoice}
                             disableClearable={true}
+                            fullWidth={true}
                             renderInput={(params) => <TextField {...params} label="Choose a tree type" variant="outlined" />}
                         />
                     </Col>
