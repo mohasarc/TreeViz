@@ -62,30 +62,27 @@ class TreeChoices extends React.Component{
 
     render(){
         return (
-
-            <Container>
                 <Row xs={12} md={12} lg={12}>
-                    <Col xs={12} md={3} lg={3}>
+                    <Col xs={6} md={12} lg={12} style={{ width: 190}}>
                         <Autocomplete
                             id="choose-tree-combo-box"
                             options={this.treeOptions}
                             getOptionLabel={(option) => option.name}
-                            style={{ width: 300 }}
+                            style={{ width: 190, height : 60 }}
                             onChange={this.updateChoice}
                             disableClearable={true}
                             renderInput={(params) => <TextField {...params} label="Choose a tree type" variant="outlined" />}
                         />
-                        <br/>
                     </Col>
-                    <Col xs={12} md={3} lg={3}>
-                        <Grid container direction="row" justify="center" alignItems="center" spacing={0}>
+                    <Col xs={6} md={12} lg={12}>
+                        {/* <Grid container direction="row" justify="center" alignItems="center" spacing={0}> */}
+                        <div className='float-left'>
                             <DialogSelect key={this.state.key} preferences={this.preferences}/>
-                        </Grid>
+                        </div>
+                        {/* </Grid> */}
                     </Col>
+                    <br/>
                 </Row>
-            </Container>
-
-
 
             // <Grid container direction="row" justify="flex-start" alignItems="baseline" spacing={0}>
             //     <Grid item xs={4} lg={3} spacing={0}>

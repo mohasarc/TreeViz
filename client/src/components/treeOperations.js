@@ -41,6 +41,7 @@ class TreeOperations extends React.Component{
             'treeContent' : {
                             'treeString' : this.state.trees.length > 0? this.state.trees[0].getTreeString() : '',
                             'treeSequence' : this.state.trees.length > 0? this.state.trees[0].getTreeSequence() : '',
+                            'type' : this.state.trees.length > 0? this.state.trees[0].getTreeType() : '',
                             },
             'targetTreeInfo' : {
                                 'type' : this.props.preferences.type,
@@ -167,34 +168,8 @@ class TreeOperations extends React.Component{
 
     render(){
         return (
-            <Container>
                 <Row xs={12} md={12} lg={12}>
-                    <Col xs={12} md={6} lg={6}>
-                        <InputGroup className="mb-3">
-                            <FormControl
-                            ref={this.state.reference}
-                            placeholder="Enter a value"
-                            aria-label="Enter a value"
-                            aria-describedby="basic-addon2"
-                            />
-                            <InputGroup.Append>
-                            <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
-                            <Button operation='remove' variant="outline-secondary" onClick={this.performOperation}>-</Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                        <InputGroup className="mb-3">
-                            <FormControl
-                            ref={this.state.description}
-                            placeholder="Describe a tree"
-                            aria-label="Describe a tree"
-                            aria-describedby="basic-addon2"
-                            />
-                            <InputGroup.Append>
-                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                    </Col>
-                    <Col xs={12} md={6} lg={6}>
+                    <Col xs={12} md={6} lg={5}>
                         <InputGroup className="mb-3" size='sm' style={{'margin-top':'0.5em'}}>
                             <InputGroup.Prepend>
                                 <InputGroup.Text>Values range</InputGroup.Text>
@@ -233,9 +208,32 @@ class TreeOperations extends React.Component{
                             </InputGroup.Prepend>
                         </InputGroup>
                     </Col>
+                    <Col xs={12} md={6} lg={7}>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                            ref={this.state.reference}
+                            placeholder="Enter a value"
+                            aria-label="Enter a value"
+                            aria-describedby="basic-addon2"
+                            />
+                            <InputGroup.Append>
+                            <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
+                            <Button operation='remove' variant="outline-secondary" onClick={this.performOperation}>-</Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                            ref={this.state.description}
+                            placeholder="Describe a tree"
+                            aria-label="Describe a tree"
+                            aria-describedby="basic-addon2"
+                            />
+                            <InputGroup.Append>
+                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                    </Col>
                 </Row>
-
-            </Container>
         );
     }
 }

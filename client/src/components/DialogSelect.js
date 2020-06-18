@@ -177,7 +177,7 @@ export default function DialogSelect(props) {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleClose} variant="outline-secondary">
+          <Button onClick={handleClose} style={{ width: 190}} variant="outline-secondary">
             Cancel
           </Button>
           <Button onClick={handleOk} variant="outline-secondary">

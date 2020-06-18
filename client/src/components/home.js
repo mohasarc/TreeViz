@@ -4,6 +4,9 @@ import TreeChoices from './treeChoices';
 import CanvasContainer from './canvasContainer'
 import TreeOperations from './treeOperations'
 import Jumbotron from 'react-bootstrap/Jumbotron'
+import Col from 'react-bootstrap/Col'
+import Row from 'react-bootstrap/Row'
+import Container from 'react-bootstrap/Container'
 
 class Home extends React.Component{
     constructor(props){
@@ -41,11 +44,21 @@ class Home extends React.Component{
             <div>
                 <Header/>
                 <Jumbotron>
+                    <Container>
+                        <Row xs={12} md={12} lg={12}>
+                            <Col xs={12} md={9} lg={9}>
+                                <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} 
+                                            trees={this.trees} preferences={this.preferences} 
+                                            ref={this.TreeOperationsRef}/>
+                            </Col>
+                            <Col xs={12} md={3} lg={3}>
+                                <TreeChoices preferences={this.preferences}/>
+                            </Col>
+                        </Row>
+                    </Container>
                     {/* <h3>Choose a tree type</h3> */}
-                    <TreeChoices preferences={this.preferences}/>
-                    <TreeOperations triggerUpdate={this.update} treesStrs={this.treesStrs} 
-                                    trees={this.trees} preferences={this.preferences} 
-                                    ref={this.TreeOperationsRef}/>
+
+
                     <CanvasContainer updateTreeOperations={this.updateTreeOperations} 
                                      ref={this.canvasContainerRef} treesStrs={this.treesStrs} 
                                      trees={this.trees} ></CanvasContainer>
