@@ -15,6 +15,7 @@ private :
     bool newlyInserted;
     string color;
     bool empty;
+    int height;
     
 public :
     TreeNode();
@@ -37,6 +38,8 @@ public :
     string getColor();
     void setEmpty(bool empty);
     bool isEmpty();
+    int getHeight();
+    void setHeight(int height);
 };
 
 #endif

@@ -1,10 +1,13 @@
 #include "../Header_Files/BSTree.h"
 
 template <class T>
-BSTree<T>::BSTree(){
+BSTree<T>::BSTree(bool balanced){
     this->root = NULL;
     this->sequence = "";
     this->prioritizePredecessor = false;
+    this->balanced = balanced;
+
+    cout << this->balanced << endl;
 }
 
 template <class T>
@@ -34,7 +37,7 @@ bool BSTree<T>::insert(T anItem){
         success = true;
     }
     else {
-        this->insert(this->root, anItem, success);
+        this->insert(this->root, NULL, anItem, success);
     }
 
     if (success){
@@ -56,166 +59,171 @@ bool BSTree<T>::remove(T anItem){
 
     // Find the node to be deleted
     toBeDeleted = this->root;
-    search(toBeDeleted, toBeDeletedParent, anItem);
+    // search(toBeDeleted, toBeDeletedParent, anItem);
 
-    // mark node to be deleted
-    toBeDeleted->setColor("danger");
-    recordStep("", "");
+    remove(this->root, NULL, anItem, success);
 
-    // if the node is leaf just remove it
-    if (toBeDeleted->isLeaf()){
+    // // mark node to be deleted
+    // toBeDeleted->setColor("danger");
+    // recordStep("", "");
 
-        toBeDeleted->setEmpty(true);
-        recordStep("", "");
+    // // if the node is leaf just remove it
+    // if (toBeDeleted->isLeaf()){
 
-        if (toBeDeletedParent){
-            if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
-                // delete the child to the left
-                toBeDeletedParent->setLeftChildPtr(NULL);
-            } else {
-                // delete the child to the left
-                toBeDeletedParent->setRightChildPtr(NULL);
-            }
-        }
+    //     toBeDeleted->setEmpty(true);
+    //     recordStep("", "");
 
-        recordStep("It is a leaf node: only delete it", "");
+    //     if (toBeDeletedParent){
+    //         if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
+    //             // delete the child to the left
+    //             toBeDeletedParent->setLeftChildPtr(NULL);
+    //         } else {
+    //             // delete the child to the left
+    //             toBeDeletedParent->setRightChildPtr(NULL);
+    //         }
+    //     }
 
-        delete toBeDeleted;
-        if (!toBeDeletedParent)
-            this->root = NULL;
+    //     recordStep("It is a leaf node: only delete it", "");
 
-        success = true;
-        return success;
-    }
+    //     delete toBeDeleted;
+    //     if (!toBeDeletedParent)
+    //         this->root = NULL;
 
-    // If node to be deleted is the root and it has one child
-    if (!toBeDeletedParent && (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL)){
-        if (toBeDeleted->getLeftChildPtr() != NULL){
-            // make it the root
-            toBeDeleted->setEmpty(true);
-            recordStep("", "");
+    //     success = true;
+    //     return success;
+    // }
 
-            toBeDeleted->getLeftChildPtr()->setColor("alert");
-            recordStep("The node is the root, make its left child the root", "");
+    // // If node to be deleted is the root and it has one child
+    // if (!toBeDeletedParent && (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL)){
+    //     if (toBeDeleted->getLeftChildPtr() != NULL){
+    //         // make it the root
+    //         toBeDeleted->setEmpty(true);
+    //         recordStep("", "");
 
-            this->root = toBeDeleted->getLeftChildPtr();
+    //         toBeDeleted->getLeftChildPtr()->setColor("alert");
+    //         recordStep("The node is the root, make its left child the root", "");
 
-            recordStep("", "");
-            toBeDeleted->getLeftChildPtr()->setColor("");
-        } else {
-            // make right child the root
-            toBeDeleted->setEmpty(true);
-            recordStep("", "");
+    //         this->root = toBeDeleted->getLeftChildPtr();
 
-            toBeDeleted->getRightChildPtr()->setColor("alert");
-            recordStep("The node is the root, make its left child the root", "");
+    //         recordStep("", "");
+    //         toBeDeleted->getLeftChildPtr()->setColor("");
+    //     } else {
+    //         // make right child the root
+    //         toBeDeleted->setEmpty(true);
+    //         recordStep("", "");
 
-            this->root = toBeDeleted->getRightChildPtr();
+    //         toBeDeleted->getRightChildPtr()->setColor("alert");
+    //         recordStep("The node is the root, make its left child the root", "");
 
-            recordStep("", "");
-            toBeDeleted->getRightChildPtr()->setColor("");
-        }
+    //         this->root = toBeDeleted->getRightChildPtr();
 
-        delete toBeDeleted;
-        success = true;
-        return success;
-    }
+    //         recordStep("", "");
+    //         toBeDeleted->getRightChildPtr()->setColor("");
+    //     }
 
-    // if has one child, make parent point to child's child
-    if (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL){
-        toBeDeleted->setEmpty(true);
-        recordStep("", "");
+    //     delete toBeDeleted;
+    //     success = true;
+    //     return success;
+    // }
 
-        TreeNode<T>* tmp = toBeDeleted;
-        if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
-            // delete the child to the left
-            if (toBeDeleted->getLeftChildPtr() != NULL){
+    // // if has one child, make parent point to child's child
+    // if (toBeDeleted->getLeftChildPtr() == NULL || toBeDeleted->getRightChildPtr() == NULL){
+    //     toBeDeleted->setEmpty(true);
+    //     recordStep("", "");
 
-                toBeDeletedParent->setColor("alert");
-                toBeDeleted->getLeftChildPtr()->setColor("alert");
-                recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
+    //     TreeNode<T>* tmp = toBeDeleted;
+    //     if (toBeDeletedParent->getLeftChildPtr() == toBeDeleted){
+    //         // delete the child to the left
+    //         if (toBeDeleted->getLeftChildPtr() != NULL){
 
-                toBeDeletedParent->setLeftChildPtr(toBeDeleted->getLeftChildPtr());
+    //             toBeDeletedParent->setColor("alert");
+    //             toBeDeleted->getLeftChildPtr()->setColor("alert");
+    //             recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
 
-                toBeDeletedParent->setColor("success");
-                toBeDeletedParent->getLeftChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                toBeDeletedParent->setColor("");
-                toBeDeletedParent->getLeftChildPtr()->setColor("");
-            } else {
-                toBeDeletedParent->setColor("alert");
-                toBeDeleted->getRightChildPtr()->setColor("alert");
-                recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
+    //             toBeDeletedParent->setLeftChildPtr(toBeDeleted->getLeftChildPtr());
 
-                toBeDeletedParent->setLeftChildPtr(toBeDeleted->getRightChildPtr());
+    //             toBeDeletedParent->setColor("success");
+    //             toBeDeletedParent->getLeftChildPtr()->setColor("success");
+    //             recordStep("The node was removed successfully", "");
+    //             toBeDeletedParent->setColor("");
+    //             toBeDeletedParent->getLeftChildPtr()->setColor("");
+    //         } else {
+    //             toBeDeletedParent->setColor("alert");
+    //             toBeDeleted->getRightChildPtr()->setColor("alert");
+    //             recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
 
-                toBeDeletedParent->setColor("success");
-                toBeDeletedParent->getLeftChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                toBeDeletedParent->setColor("");
-                toBeDeletedParent->getLeftChildPtr()->setColor("");
-            }
-            // toBeDeletedParent->setLeftChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
-            //                         ? toBeDeleted->getLeftChildPtr() 
-            //                         : toBeDeleted->getRightChildPtr()));
-        } else {
-            // delete the child to the right
-            if (toBeDeleted->getLeftChildPtr() != NULL ){
+    //             toBeDeletedParent->setLeftChildPtr(toBeDeleted->getRightChildPtr());
 
-                toBeDeletedParent->setColor("alert");
-                toBeDeleted->getLeftChildPtr()->setColor("alert");
-                recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
+    //             toBeDeletedParent->setColor("success");
+    //             toBeDeletedParent->getLeftChildPtr()->setColor("success");
+    //             recordStep("The node was removed successfully", "");
+    //             toBeDeletedParent->setColor("");
+    //             toBeDeletedParent->getLeftChildPtr()->setColor("");
+    //         }
+    //         // toBeDeletedParent->setLeftChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+    //         //                         ? toBeDeleted->getLeftChildPtr() 
+    //         //                         : toBeDeleted->getRightChildPtr()));
+    //     } else {
+    //         // delete the child to the right
+    //         if (toBeDeleted->getLeftChildPtr() != NULL ){
 
-                toBeDeletedParent->setRightChildPtr(toBeDeleted->getLeftChildPtr());
+    //             toBeDeletedParent->setColor("alert");
+    //             toBeDeleted->getLeftChildPtr()->setColor("alert");
+    //             recordStep("The node has one left child: conect its toBeDeletedParent with its left child", "");
 
-                toBeDeletedParent->setColor("success");
-                toBeDeletedParent->getRightChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                toBeDeletedParent->setColor("");
-                toBeDeletedParent->getRightChildPtr()->setColor("");
-            } else {
-                toBeDeletedParent->setColor("alert");
-                toBeDeleted->getRightChildPtr()->setColor("alert");
-                recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
+    //             toBeDeletedParent->setRightChildPtr(toBeDeleted->getLeftChildPtr());
 
-                toBeDeletedParent->setRightChildPtr(toBeDeleted->getRightChildPtr());
+    //             toBeDeletedParent->setColor("success");
+    //             toBeDeletedParent->getRightChildPtr()->setColor("success");
+    //             recordStep("The node was removed successfully", "");
+    //             toBeDeletedParent->setColor("");
+    //             toBeDeletedParent->getRightChildPtr()->setColor("");
+    //         } else {
+    //             toBeDeletedParent->setColor("alert");
+    //             toBeDeleted->getRightChildPtr()->setColor("alert");
+    //             recordStep("The node has one right child: conect toBeDeletedParent and right child", "");
 
-                toBeDeletedParent->setColor("success");
-                toBeDeletedParent->getRightChildPtr()->setColor("success");
-                recordStep("The node was removed successfully", "");
-                toBeDeletedParent->setColor("");
-                toBeDeletedParent->getRightChildPtr()->setColor("");
-            }
+    //             toBeDeletedParent->setRightChildPtr(toBeDeleted->getRightChildPtr());
 
-            // parent->setRightChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
-            //                         ? toBeDeleted->getLeftChildPtr() 
-            //                         : toBeDeleted->getRightChildPtr()));
-        }
+    //             toBeDeletedParent->setColor("success");
+    //             toBeDeletedParent->getRightChildPtr()->setColor("success");
+    //             recordStep("The node was removed successfully", "");
+    //             toBeDeletedParent->setColor("");
+    //             toBeDeletedParent->getRightChildPtr()->setColor("");
+    //         }
 
-        delete toBeDeleted;
-        success = true;
-        return success;
-    }
+    //         // parent->setRightChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+    //         //                         ? toBeDeleted->getLeftChildPtr() 
+    //         //                         : toBeDeleted->getRightChildPtr()));
+    //     }
 
-    if (this->prioritizePredecessor){
-        if (toBeDeleted){
-            this->removeWithPredecessor(toBeDeleted, toBeDeletedParent, success);
-        }
+    //     delete toBeDeleted;
+    //     success = true;
+    //     return success;
+    // }
 
-        if (success)
-            this->sequence += ",d" + keyToString(anItem);
+    // if (this->prioritizePredecessor){
+    //     if (toBeDeleted){
+    //         this->removeWithPredecessor(toBeDeleted, toBeDeletedParent, success);
+    //     }
 
-        return success;
-    } else {
-        if (toBeDeleted){
-            this->removeWithSuccessor(toBeDeleted, toBeDeletedParent, success);
-        }
+    //     if (success)
+    //         this->sequence += ",d" + keyToString(anItem);
 
-        if (success)
-            this->sequence += ",d" + keyToString(anItem);
+    //     return success;
+    // } else {
+    //     if (toBeDeleted){
+    //         this->removeWithSuccessor(toBeDeleted, toBeDeletedParent, success);
+    //     }
 
-        return success;
-    }
+    //     if (success)
+    //         this->sequence += ",d" + keyToString(anItem);
+
+    //     return success;
+    // }
+
+    if (success)
+    this->sequence += ",d" + keyToString(anItem);
 }
 
 template <class T>
@@ -382,28 +390,35 @@ void BSTree<T>::search(TreeNode<T>* &root, TreeNode<T>* &parent, T anItem){
 }
 
 template <class T>
-void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
+void BSTree<T>::insert(TreeNode<T>* curNode, TreeNode<T>* parent, T &anItem, bool &success){
+    cout << "inserting " << anItem << endl;
     // Reset newlyInserted of all other nodes to false
-    root->setNewlyInserted(false);
+    curNode->setNewlyInserted(false);
 
     // Base case -- if leaf node insert at it
-    if (root->isLeaf()){
+    if (curNode->isLeaf()){
         // set the node to be selected, record step, then unselect it
-        root->setColor("select");
+        curNode->setColor("select");
         recordStep("Reached a leaf node, insert at it", "");
-        root->setColor("");
+        curNode->setColor("");
 
         TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
         tmpNode->setNewlyInserted(true);
         tmpNode->setColor("success");
-        if (anItem < root->getItem()){
-            root->setLeftChildPtr(tmpNode);
+        if (anItem < curNode->getItem()){
+            curNode->setLeftChildPtr(tmpNode);
             recordStep("Item is less than item in the leaf, so insert at left", "");
         } else {
-            root->setRightChildPtr(tmpNode);
+            curNode->setRightChildPtr(tmpNode);
             recordStep("Item is greater than item in the leaf, so insert at right", "");
         }
         tmpNode->setColor("");
+
+        // Update the height of current node
+        if (curNode->getHeight() <= tmpNode->getHeight()){
+            cout << "updating height" << endl;
+            curNode->setHeight(tmpNode->getHeight() + 1);
+        }
 
         // Give feedback
         success = true;
@@ -411,28 +426,40 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
         return;
     }
 
-    // cout << "left child : " << (root->getLeftChildPtr() != NULL ? root->getLeftChildPtr()->getItem() : 0) 
-    //      << "  rightChild   " << (root->getRightChildPtr() != NULL? root->getRightChildPtr()->getItem() : 0)  << endl; 
+    // cout << "left child : " << (curNode->getLeftChildPtr() != NULL ? curNode->getLeftChildPtr()->getItem() : 0) 
+    //      << "  rightChild   " << (curNode->getRightChildPtr() != NULL? curNode->getRightChildPtr()->getItem() : 0)  << endl; 
 
     // Either go left or make new node there
-    if (anItem < root->getItem()){
+    if (anItem < curNode->getItem()){
         // Record a step
-        root->setColor("select");
+        curNode->setColor("select");
         recordStep("Key to be inserted < key being checked, check left", "");
-        root->setColor("");
+        curNode->setColor("");
 
-        if (root->getLeftChildPtr() != NULL){
-            insert(root->getLeftChildPtr(), anItem, success);
+        if (curNode->getLeftChildPtr() != NULL){
+            insert(curNode->getLeftChildPtr(), curNode, anItem, success);
+
+            // Update the height of current node
+            if (curNode->getHeight() <= curNode->getLeftChildPtr()->getHeight()){
+                cout << "updating height" << endl;
+                curNode->setHeight(curNode->getLeftChildPtr()->getHeight() + 1);
+            }
         }
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
-            root->setLeftChildPtr(tmpNode);
+            curNode->setLeftChildPtr(tmpNode);
             
             // Record a step
             tmpNode->setColor("success");
             recordStep("The is no left child, insert here", "");
             tmpNode->setColor("");
+
+            // Update the height of current node
+            if (curNode->getHeight() <= tmpNode->getHeight()){
+                cout << "updating height" << endl;
+                curNode->setHeight(tmpNode->getHeight() + 1);
+            }
 
             // Give feedback
             success = true;
@@ -441,26 +468,252 @@ void BSTree<T>::insert(TreeNode<T>* root, T &anItem, bool &success){
     // Either go right or make new node there
     else {
         // Record a step
-        root->setColor("select");
+        curNode->setColor("select");
         recordStep("Key to be inserted >= key being checked, check right", "");
-        root->setColor("");
+        curNode->setColor("");
 
-        if (root->getRightChildPtr() != NULL)
-            insert(root->getRightChildPtr(), anItem, success);
+        if (curNode->getRightChildPtr() != NULL){
+            insert(curNode->getRightChildPtr(), curNode, anItem, success);
+
+            // Update the height of current node
+            cout << "curnode " << curNode << " right child  " << curNode->getRightChildPtr() << endl;
+            if (curNode->getHeight() <= curNode->getRightChildPtr()->getHeight()){
+                cout << "updating height" << endl;
+                curNode->setHeight(curNode->getRightChildPtr()->getHeight() + 1);
+            }
+        }
         else{
             TreeNode<T> *tmpNode = new TreeNode<T>(anItem);
             tmpNode->setNewlyInserted(true);
-            root->setRightChildPtr(tmpNode);
+            curNode->setRightChildPtr(tmpNode);
 
             // Record a step
             tmpNode->setColor("success");
             recordStep("The is no right child, insert here", "");
             tmpNode->setColor("");
 
+            // Update the height of current node
+            if (curNode->getHeight() <= tmpNode->getHeight()){
+                cout << "updating height" << endl;
+                curNode->setHeight(tmpNode->getHeight() + 1);
+            }
+
             // Give feedback
             success = true;
         }
     }
+
+    if (this->balanced){
+        // Check balance
+        cout << "balancing" << endl;
+        balance(curNode, parent);
+    }
+}
+
+template <class T>
+void BSTree<T>::remove(TreeNode<T>* curNode, TreeNode<T>* parent, T anItem, bool &success){
+    // Base case 1 - not found return
+    if (curNode == NULL){
+        recordStep("Key could not be found!", "");
+        return;
+    }
+
+    // Base case 2 - if found return
+    if (anItem == curNode->getItem()){
+        curNode->setColor("select");
+        recordStep("Key was found", "");
+        curNode->setColor("");
+
+        // mark node to be deleted
+        curNode->setColor("danger");
+        recordStep("", "");
+
+        // if the node is leaf just remove it
+        if (curNode->isLeaf()){
+
+            curNode->setEmpty(true);
+            recordStep("", "");
+
+            if (parent){
+                if (parent->getLeftChildPtr() == curNode){
+                    // delete the child to the left
+                    parent->setLeftChildPtr(NULL);
+                } else {
+                    // delete the child to the left
+                    parent->setRightChildPtr(NULL);
+                }
+            }
+
+            recordStep("It is a leaf node: only delete it", "");
+
+            delete curNode;
+            if (!parent)
+                this->root = NULL;
+
+            success = true;
+            return;
+        }
+
+        // If node to be deleted is the root and it has one child
+        if (!parent && (curNode->getLeftChildPtr() == NULL || curNode->getRightChildPtr() == NULL)){
+            if (curNode->getLeftChildPtr() != NULL){
+                // make it the root
+                curNode->setEmpty(true);
+                recordStep("", "");
+
+                curNode->getLeftChildPtr()->setColor("alert");
+                recordStep("The node is the root, make its left child the root", "");
+
+                this->root = curNode->getLeftChildPtr();
+
+                recordStep("", "");
+                curNode->getLeftChildPtr()->setColor("");
+            } else {
+                // make right child the root
+                curNode->setEmpty(true);
+                recordStep("", "");
+
+                curNode->getRightChildPtr()->setColor("alert");
+                recordStep("The node is the root, make its left child the root", "");
+
+                this->root = curNode->getRightChildPtr();
+
+                recordStep("", "");
+                curNode->getRightChildPtr()->setColor("");
+            }
+
+            delete curNode;
+            success = true;
+            return;
+        }
+
+        // if has one child, make parent point to child's child
+        if (curNode->getLeftChildPtr() == NULL || curNode->getRightChildPtr() == NULL){
+            curNode->setEmpty(true);
+            recordStep("", "");
+
+            TreeNode<T>* tmp = curNode;
+            if (parent->getLeftChildPtr() == curNode){
+                // delete the child to the left
+                if (curNode->getLeftChildPtr() != NULL){
+
+                    parent->setColor("alert");
+                    curNode->getLeftChildPtr()->setColor("alert");
+                    recordStep("The node has one left child: conect its parent with its left child", "");
+
+                    parent->setLeftChildPtr(curNode->getLeftChildPtr());
+
+                    parent->setColor("success");
+                    parent->getLeftChildPtr()->setColor("success");
+                    recordStep("The node was removed successfully", "");
+                    parent->setColor("");
+                    parent->getLeftChildPtr()->setColor("");
+                } else {
+                    parent->setColor("alert");
+                    curNode->getRightChildPtr()->setColor("alert");
+                    recordStep("The node has one right child: conect parent and right child", "");
+
+                    parent->setLeftChildPtr(curNode->getRightChildPtr());
+
+                    parent->setColor("success");
+                    parent->getLeftChildPtr()->setColor("success");
+                    recordStep("The node was removed successfully", "");
+                    parent->setColor("");
+                    parent->getLeftChildPtr()->setColor("");
+                }
+                // parent->setLeftChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+                //                         ? toBeDeleted->getLeftChildPtr() 
+                //                         : toBeDeleted->getRightChildPtr()));
+            } else {
+                // delete the child to the right
+                if (curNode->getLeftChildPtr() != NULL ){
+
+                    parent->setColor("alert");
+                    curNode->getLeftChildPtr()->setColor("alert");
+                    recordStep("The node has one left child: conect its parent with its left child", "");
+
+                    parent->setRightChildPtr(curNode->getLeftChildPtr());
+
+                    parent->setColor("success");
+                    parent->getRightChildPtr()->setColor("success");
+                    recordStep("The node was removed successfully", "");
+                    parent->setColor("");
+                    parent->getRightChildPtr()->setColor("");
+                } else {
+                    parent->setColor("alert");
+                    curNode->getRightChildPtr()->setColor("alert");
+                    recordStep("The node has one right child: conect parent and right child", "");
+
+                    parent->setRightChildPtr(curNode->getRightChildPtr());
+
+                    parent->setColor("success");
+                    parent->getRightChildPtr()->setColor("success");
+                    recordStep("The node was removed successfully", "");
+                    parent->setColor("");
+                    parent->getRightChildPtr()->setColor("");
+                }
+
+                // parent->setRightChildPtr((toBeDeleted->getLeftChildPtr() != NULL 
+                //                         ? toBeDeleted->getLeftChildPtr() 
+                //                         : toBeDeleted->getRightChildPtr()));
+            }
+
+            delete curNode;
+            success = true;
+            return;
+        }
+
+        if (this->prioritizePredecessor){
+            if (curNode){
+                this->removeWithPredecessor(curNode, parent, success);
+            }
+
+            return;
+        } else {
+            if (curNode){
+                this->removeWithSuccessor(curNode, parent, success);
+            }
+
+            return;
+        }
+
+        return;
+    }
+
+    // parent = curNode;
+    if (anItem < curNode->getItem()){
+        curNode->setColor("select");
+        recordStep("Target key < current key: go to left child", "");
+        curNode->setColor("");
+
+        remove(curNode->getLeftChildPtr(), curNode, anItem, success);
+        cout << "returned from remove " << endl;
+    }
+    else{
+        curNode->setColor("select");
+        recordStep("Target key > current key: go to right child", "");
+        curNode->setColor("");
+
+        remove(curNode->getRightChildPtr(), curNode, anItem, success);
+    }
+
+    // Update height
+    cout << "updating curNode height " << endl;
+    int lChildHeight = 0, rChildHeight = 0;
+    if(curNode->getLeftChildPtr()){
+        lChildHeight = curNode->getLeftChildPtr()->getHeight();
+    }
+    if (curNode->getRightChildPtr()){
+        rChildHeight = curNode->getRightChildPtr()->getHeight();
+    }
+
+    cout << "old height " << curNode->getHeight() << endl;
+    curNode->setHeight(max(lChildHeight, rChildHeight) + 1);
+    cout << "new height " << curNode->getHeight() << endl;
+
+    if (this->balanced){
+        balance(curNode, parent);
+    }    
 }
 
 template <class T>
@@ -743,15 +996,188 @@ void BSTree<T>::recordStep(string stepText, string note){
     this->steps.push_back(step);
 }
 
-template <class type>
-void BSTree<type>::clearSteps(){
+template <class T>
+void BSTree<T>::balance(TreeNode<T>* curNode, TreeNode<T>* parent){
+    cout << "in balancing cur node" << curNode << " parent " << parent << endl;
+    int lChildHeight = 0, rChildHeight = 0, lGrandChildHeight = 0, rGrandChildHeight = 0;
+    int balanceFactor = 0;
+
+    TreeNode<T> *rChild = curNode->getRightChildPtr(), *lChild = curNode->getLeftChildPtr(), 
+                *rGrandChild, *lGrandChild;
+
+    // Get the heights of the left and right children
+    if (lChild){
+        lChildHeight = lChild->getHeight();
+    }
+
+    if (rChild){
+        rChildHeight = rChild->getHeight();
+    }
+
+    cout << "Got the heights of the left and right children" << endl;
+
+    // Get the heights of left and right grand children
+    if (lChildHeight > rChildHeight){
+        if (lChild->getLeftChildPtr()){
+            lGrandChild = lChild->getLeftChildPtr();
+            lGrandChildHeight = lGrandChild->getHeight();
+        }
+
+        if (lChild->getRightChildPtr()){
+            rGrandChild = lChild->getRightChildPtr();
+            rGrandChildHeight = rGrandChild->getHeight();
+        }
+    } else if (lChildHeight < rChildHeight) {
+        if (rChild->getLeftChildPtr()){
+            lGrandChild = rChild->getLeftChildPtr();
+            lGrandChildHeight = lGrandChild->getHeight();
+        }
+
+        if (rChild->getRightChildPtr()){
+            rGrandChild = rChild->getRightChildPtr();
+            rGrandChildHeight = rGrandChild->getHeight();
+        }
+    }
+
+    cout << "Got the heights of left and right grand children" << endl;
+
+    //calculate the balance factor
+    balanceFactor = lChildHeight - rChildHeight;
+
+    if (balanceFactor <= 1 && balanceFactor >= -1){
+        // subtree is balanced 
+        cout << "balanced" << endl;
+        return;
+    }
+
+    // Not balanced
+
+    // Rotate R
+    if (lChildHeight > rChildHeight && lGrandChildHeight > rGrandChildHeight){
+        rotateR(curNode, parent, lChild);
+    }
+    // Rotate L
+    if (rChildHeight > lChildHeight && rGrandChildHeight > lGrandChildHeight){
+        rotateL(curNode, parent, rChild);
+    }
+    // Rotate RL
+    if (rChildHeight > lChildHeight && lGrandChildHeight > rGrandChildHeight){
+        // Right rotate
+        rotateR(rChild, curNode, lGrandChild);
+
+        // Left rotate
+        rotateL(curNode, parent, rChild);
+    }
+    // Rotate LR
+    if (lChildHeight > rChildHeight && rGrandChildHeight > lGrandChildHeight){
+        // Left rotate
+        rotateL(lChild, curNode, rGrandChild);
+        
+        // Right rotate
+        rotateR(curNode, parent, lChild);
+    }
+}
+
+template <class T>
+void BSTree<T>::rotateR(TreeNode<T>* curNode, TreeNode<T>* parent, TreeNode<T>* lChild){
+    if (parent){
+        cout << "performing right rotate " << parent->getItem() << " " << curNode->getItem() << " " << lChild->getItem() << endl;
+
+        if (parent->getLeftChildPtr() == curNode){
+            parent->setLeftChildPtr(lChild);
+        } else {
+            parent->setRightChildPtr(lChild);
+        }
+    } else {
+        cout << "performing right rotate " << parent << " " << curNode->getItem() << " " << lChild->getItem() << endl;
+
+        this->root = lChild;
+    }
+
+    // Move the right child of the node moved up to the cur node
+    curNode->setLeftChildPtr(lChild->getRightChildPtr());
+    // Make the cur node replace the right child of the node moved up
+    lChild->setRightChildPtr(curNode);
+
+    // Update the heights
+    int lChildHeight = 0, rChildHeight = 0, biggerHeight = 0;
+    if (curNode->getLeftChildPtr()){
+        lChildHeight = curNode->getLeftChildPtr()->getHeight();
+    }
+
+    if (curNode->getRightChildPtr()){
+        rChildHeight = curNode->getRightChildPtr()->getHeight();
+    }
+
+    lChildHeight > rChildHeight ? biggerHeight = lChildHeight : biggerHeight = rChildHeight;
+    curNode->setHeight(biggerHeight + 1);
+
+    if (lChild->getLeftChildPtr()){
+        lChildHeight = lChild->getLeftChildPtr()->getHeight();
+    }
+
+    if (lChild->getRightChildPtr()){
+        rChildHeight = lChild->getRightChildPtr()->getHeight();
+    }
+
+    lChildHeight > rChildHeight ? biggerHeight = lChildHeight : biggerHeight = rChildHeight;
+    lChild->setHeight(biggerHeight + 1);
+}
+
+template <class T>
+void BSTree<T>::rotateL(TreeNode<T>* curNode, TreeNode<T>* parent, TreeNode<T>* rChild){
+    if (parent){
+        cout << "performing left rotate " << parent->getItem() << " " << curNode->getItem() << " " << rChild->getItem() << endl;
+
+        if (parent->getLeftChildPtr() == curNode){
+            parent->setLeftChildPtr(rChild);
+        } else {
+            parent->setRightChildPtr(rChild);
+        }
+    } else {
+        cout << "performing left rotate " << parent << " " << curNode->getItem() << " " << rChild->getItem() << endl;
+
+        this->root = rChild;
+    }
+
+    curNode->setRightChildPtr(rChild->getLeftChildPtr());
+    rChild->setLeftChildPtr(curNode);
+
+    // Update the heights
+    int lChildHeight = 0, rChildHeight = 0, biggerHeight = 0;
+    if (curNode->getLeftChildPtr()){
+        lChildHeight = curNode->getLeftChildPtr()->getHeight();
+    }
+
+    if (curNode->getRightChildPtr()){
+        rChildHeight = curNode->getRightChildPtr()->getHeight();
+    }
+
+    lChildHeight > rChildHeight ? biggerHeight = lChildHeight : biggerHeight = rChildHeight;
+    curNode->setHeight(biggerHeight + 1);
+
+    if (rChild->getLeftChildPtr()){
+        lChildHeight = rChild->getLeftChildPtr()->getHeight();
+    }
+
+    if (rChild->getRightChildPtr()){
+        rChildHeight = rChild->getRightChildPtr()->getHeight();
+    }
+
+    lChildHeight > rChildHeight ? biggerHeight = lChildHeight : biggerHeight = rChildHeight;
+    rChild->setHeight(biggerHeight + 1);
+}
+
+
+template <class T>
+void BSTree<T>::clearSteps(){
     this->steps.clear();
 }
 
 template class BSTree<int>;
 
 int main(){
-    BSTree<int> tree;
+    BSTree<int> tree(1);
 
     // tree.insert(1);
     // tree.insert(2);
@@ -759,7 +1185,10 @@ int main(){
     // tree.insert(4);
     // tree.insert(5);
 
-    tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d6,d-5");
+    // tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9");
+    tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d1");
+    // tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,d1,d-5");
+    // tree.insertSequence("1,2,3,5,4,12,-5,33,6,7,8,9,-10,20,13");
     // tree.constructFromTreeString("{35}({26}({24}({19}({},{*20}),{}),{29}({},{*34})),{89}({68}({53}({50}({46}({},{*49}),{}),{}),{}),{92}({},{*95})))");
     
     // tree.setSequence(tree.generateInorderSequence());
