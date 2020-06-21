@@ -59,8 +59,13 @@ void BTree<type>::insert(type key){
  * */
 template <class type>
 void BTree<type>::remove(type key){
-    // cout << "remove called" << endl;
+    // Local variables
     bool success = false;
+
+    // If empty don't remove
+    if (!this->root)
+        return;
+
     remove(key, this->root, NULL, success);
 
     if (success)
