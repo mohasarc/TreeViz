@@ -3,6 +3,10 @@ import p5 from 'p5'
 import GenericTree from '../models/GenericTree'
 import '../Styles/canvas.css'
 import { withSnackbar } from 'notistack';
+import { Slider } from 'rsuite';
+import 'rsuite/dist/styles/rsuite-default.css';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 class DetachedCanvas extends React.Component{
     constructor(props){
@@ -11,6 +15,7 @@ class DetachedCanvas extends React.Component{
             key : 1,
             tree : null,
             beingEnimated : false,
+            speed : 1500,
         }
 
         this.node = document.createElement('div');
@@ -191,7 +196,7 @@ class DetachedCanvas extends React.Component{
                 }
 
                 if (++i < steps.length) {
-                    setTimeout(loop.bind(this), delay * immediatly);  // call myself in 1 seconds time if required
+                    setTimeout(loop.bind(this), this.state.speed * immediatly);  // call myself in 1 seconds time if required
                 }
             }.bind(this))(); // above function expression is called immediately to start it off
         }
@@ -216,20 +221,31 @@ class DetachedCanvas extends React.Component{
         }
     }
 
+    handleSlider = (value) => {
+        // this.setState({speed : Number(e.target.value)});
+        console.log(value);
+        value = 3000 - ( value / 100 * 3000 );
+        this.state.speed = value;
+    }
+
     render(){
         return (
             <div>
-                <div className='float-right' style={{height : 25, 'position': 'absolute', 'top': '5px', 'right': '5px'}}> 
-                    <a key={this.state.beingEnimated} href='#' className='badge badge-light'  
-                        onClick={this.state.tree && !this.state.tree.beingEnimated?this.playSteps:this.stopSteps}
-                        style={{'margin-right':'0.5em'}}>
-                        <div className={this.state.tree && !this.state.tree.beingEnimated?'play':'stop'} style={{'color' : '#FFFFFF'}}></div>
-                    </a>
-                    <a href='#' className='badge badge-light'  onClick={this.treeToCenter}
-                        style={{'margin-right':'0.5em'}}>
-                        <div className='center' style={{'color' : '#FFFFFF'}} ></div>
-                    </a>
+                <div className='float-right' style={{height : 25, width : 100, 'position': 'absolute', 'top': '5px', 'right': '70px'}}>
+                        <Slider defaultValue={50} tooltip={false} style={{'margin-bottom' : '0.5em', 'margin-top' : '0.5em'}} onChange={this.handleSlider}/>
                 </div>
+                        <div className='float-right' style={{height : 25, 'position': 'absolute', 'top': '5px', 'right': '5px'}}> 
+                            <a key={this.state.beingEnimated} href='#' className='badge badge-light'  
+                                onClick={this.state.tree && !this.state.tree.beingEnimated?this.playSteps:this.stopSteps}
+                                style={{'margin-right':'0.5em'}}>
+                                <div className={this.state.tree && !this.state.tree.beingEnimated?'play':'stop'} style={{'color' : '#FFFFFF'}}></div>
+                            </a>
+                            <a href='#' className='badge badge-light'  onClick={this.treeToCenter}
+                                style={{'margin-right':'0.5em'}}>
+                                <div className='center' style={{'color' : '#FFFFFF'}} ></div>
+                            </a>
+                        </div>
+
                 <div>
                     <div style={{'background-color' : '#34495e' , 'height' : window.innerHeight}} 
                     id={this.state.key}
