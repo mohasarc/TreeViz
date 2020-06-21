@@ -1066,7 +1066,7 @@ void BSTree<T>::balance(TreeNode<T>* curNode, TreeNode<T>* parent){
         rotateR(rChild, curNode, lGrandChild);
 
         // Left rotate
-        rotateL(curNode, parent, rChild);
+        rotateL(curNode, parent, lGrandChild);
     }
     // Rotate LR
     if (lChildHeight > rChildHeight && rGrandChildHeight > lGrandChildHeight){
@@ -1074,7 +1074,7 @@ void BSTree<T>::balance(TreeNode<T>* curNode, TreeNode<T>* parent){
         rotateL(lChild, curNode, rGrandChild);
         
         // Right rotate
-        rotateR(curNode, parent, lChild);
+        rotateR(curNode, parent, rGrandChild);
     }
 }
 
@@ -1130,8 +1130,10 @@ void BSTree<T>::rotateL(TreeNode<T>* curNode, TreeNode<T>* parent, TreeNode<T>* 
         cout << "performing left rotate " << parent->getItem() << " " << curNode->getItem() << " " << rChild->getItem() << endl;
 
         if (parent->getLeftChildPtr() == curNode){
+            cout << "setting the left" << endl;
             parent->setLeftChildPtr(rChild);
         } else {
+            cout << "setting the right" << endl;
             parent->setRightChildPtr(rChild);
         }
     } else {
@@ -1166,6 +1168,7 @@ void BSTree<T>::rotateL(TreeNode<T>* curNode, TreeNode<T>* parent, TreeNode<T>* 
 
     lChildHeight > rChildHeight ? biggerHeight = lChildHeight : biggerHeight = rChildHeight;
     rChild->setHeight(biggerHeight + 1);
+
 }
 
 

@@ -39,6 +39,7 @@ router.post('/performOperation', (req, res) => {
         break;
 
         case 'AVL':
+            req.session.theTree = new BSTree(true);
         break;
 
         case 'RBT':

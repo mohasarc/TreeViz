@@ -37,10 +37,13 @@ Napi::Object BSTWrapper::Init(Napi::Env env, Napi::Object exports){
 BSTWrapper::BSTWrapper(const Napi::CallbackInfo& info) : Napi::ObjectWrap<BSTWrapper>(info){
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
+    bool balanced = false;
 
-    int length = info.Length();
+    if (info.Length() > 0 && info[0].IsBoolean()){
+        balanced = info[0].As<Napi::Boolean>();
+    } 
 
-    this->theBSTTree = new BSTree<int>();
+    this->theBSTTree = new BSTree<int>(balanced);
 }
 
 // Methods' wrappers

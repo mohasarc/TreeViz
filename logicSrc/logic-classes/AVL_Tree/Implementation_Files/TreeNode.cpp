@@ -80,14 +80,14 @@ void TreeNode<ItemType>::NodeStringParser(string nodeString, ItemType* Values, i
     char aChar;
     numValues = 0;
 
-    for (int i = 0; i < nodeString.length(); i++){
+    for (int i = 0; i < nodeString.length() && !nodeFilled; i++){
         aChar = nodeString.at(i);
-        if ((aChar == ',' || aChar == '}') && !nodeFilled){
+        if ((aChar == ',' || aChar == '}') && aVal != ""){
             Values[numValues] = stoi(aVal);
             aVal = "";
             numValues ++;
         } else {
-            if (aChar != '{' && aChar != '}' && !nodeFilled){
+            if (aChar != '{' && aChar != '}' && aChar != '*'){
                 aVal += aChar;
             }
         }

@@ -50,7 +50,7 @@ bool AVLTree<T>::search(TreeNode<T>* root, T anItem, TreeNode<T>* foundLocation)
 
 template <class T>
 bool AVLTree<T>::insert(T anItem){
-    TreeNode<T>* updatedPtr;
+    TreeNode<T>* updatedPtr = NULL;
     insert(root, anItem, updatedPtr);
 
     return true; // HARD CODED -- Might need to be changed
@@ -58,7 +58,7 @@ bool AVLTree<T>::insert(T anItem){
 
 template <class T>
 void AVLTree<T>::insert(TreeNode<T>* cur, T &anItem, TreeNode<T>* &updatePtr){
-    cout << "in insert" << endl;
+    cout << "inserting " << anItem << endl;
     // If empty insert at root
     if (isEmpty()){
         root = new TreeNode<T>(anItem);
@@ -68,8 +68,8 @@ void AVLTree<T>::insert(TreeNode<T>* cur, T &anItem, TreeNode<T>* &updatePtr){
 
     // Find the location to insert
     // Not Leaf
-    if (!cur->isLeaf()){
-        cout << "not a leaf" << endl;
+    // if (!cur->isLeaf()){
+    //     cout << "not a leaf" << cur->getItem() << endl;
         if (anItem < cur->getItem()){
             // Smaller, go left
             if (cur->getLeftChildPtr() != NULL){
@@ -102,16 +102,16 @@ void AVLTree<T>::insert(TreeNode<T>* cur, T &anItem, TreeNode<T>* &updatePtr){
             }
 
         }
-    }
+    // }
     // Leaf OR returning
-    else {
-        // Leaf node
-        cout << "insering at a leaf node " << endl;
-        if (anItem < cur->getItem())
-            cur->setLeftChildPtr(new TreeNode<T>(anItem));
-        else 
-            cur->setRightChildPtr(new TreeNode<T>(anItem));
-    }
+    // else {
+    //     // Leaf node
+    //     cout << "insering at a leaf node " << endl;
+    //     if (anItem < cur->getItem())
+    //         cur->setLeftChildPtr(new TreeNode<T>(anItem));
+    //     else 
+    //         cur->setRightChildPtr(new TreeNode<T>(anItem));
+    // }
 
     // Returning
     cout << "returning" << endl;
@@ -209,6 +209,7 @@ void AVLTree<T>::fixAVLTree(TreeNode<T>* aNode, TreeNode<T>* &updatePtr){
     } else if (lChildHeight > rChildHeight && !lChildBalanced){
         // Perform a left right rotate
         cout << "Perform a left right rotate" << endl;
+        cout << aNode->getLeftChildPtr() << "  " << aNode->getLeftChildPtr()->getRightChildPtr() << endl;
         updatePtr = aNode->getLeftChildPtr();
         rotateLR(aNode, aNode->getLeftChildPtr(), aNode->getLeftChildPtr()->getRightChildPtr());
     } else if (rChildHeight > lChildHeight && !rChildBalanced){
@@ -249,9 +250,9 @@ void AVLTree<T>::rotateRL(TreeNode<T>* parent, TreeNode<T>* rightChild, TreeNode
 template <class T>
 void AVLTree<T>::rotateLR(TreeNode<T>* parent, TreeNode<T>* leftChild, TreeNode<T>* rightGrandChild){
     TreeNode<T>* updatePtr = rightGrandChild;
-    rotateR(leftChild, rightGrandChild);
+    rotateL(leftChild, rightGrandChild);
     parent->setRightChildPtr(updatePtr);
-    rotateL(parent, leftChild);
+    rotateR(parent, leftChild);
 }
 
 template <class T>
@@ -322,10 +323,65 @@ void AVLTree<T>::insert(TreeNode<T> *child, TreeNode<T> *parent){
 }
 
 template <class T>
+string AVLTree<T>::keyToString(T key){
+    string keyString = "";
+    ostringstream oss;
+    oss.str("");
+    oss.clear();
+    oss << key;
+    keyString += oss.str();
+    return keyString;
+}
+
+template <class T>
+bool AVLTree<T>::isValidBSTreeString(string bsTreeString){
+    static CRegexpT<char> regexp(R"(\{\*?\d*\}(\(((?R)(,(?R))?)?\))*)");
+
+    MatchResult result = regexp.MatchExact(bsTreeString.c_str());
+
+    return result.IsMatched();
+}
+
+template <class T>
+void AVLTree<T>::generateInorderSequence(TreeNode<T>* curNode, string &sequence){
+    // Base case - NULL, return
+    if (curNode == NULL)
+        return;
+
+    // add left child
+    generateInorderSequence(curNode->getLeftChildPtr(), sequence);
+
+    // add self
+    if(sequence.size() > 0)
+        sequence += "," + keyToString(curNode->getItem());
+    else
+        sequence += keyToString(curNode->getItem());
+
+    // add right child
+    generateInorderSequence(curNode->getRightChildPtr(), sequence);
+}
+
+template <class T>
+void AVLTree<T>::recordStep(string stepText, string note){
+    Step step;
+    step.treeStr = toTreeString();
+    step.text = stepText;
+    step.note = note;
+
+    this->steps.push_back(step);
+}
+
+template <class T>
 void AVLTree<T>::constructFromTreeString(const string treeString){
     stack<TreeNode<T>*> parentsStack;
     TreeNode<T>* tmpNode;
     bool treeNodeConstructed = false;
+
+    // Validate the tree string
+    if (!isValidBSTreeString(treeString)){
+        // Not valid
+        return;
+    }
     
     for (int i = 0; i < treeString.length(); i++){
         switch (treeString.at(i))
@@ -345,7 +401,6 @@ void AVLTree<T>::constructFromTreeString(const string treeString){
         }
 
         // update stack
-        cout << "pushing father " << tmpNode->getItem() << endl;
         parentsStack.push(tmpNode);
         break;
 
@@ -381,17 +436,123 @@ string AVLTree<T>::toTreeString(){
     return outStr;
 }
 
-template class AVLTree<int>;
-template class AVLTree<string>;
+template <class T>
+bool AVLTree<T>::insertSequence(string sequence){
+    // Check if a valid number sequence
+    static CRegexpT <char> regexp(R"(\d(,?d?-?(?R))*)");
+    // test
+    MatchResult result = regexp.MatchExact(sequence.c_str());
+    // matched or not
+    if (result.IsMatched()){
+        // Get all numbers as strings
+        istringstream ss( sequence );
+        vector <string> record;
+        while (ss)
+        {
+        string tmpNumStr;
+        if (!getline( ss, tmpNumStr, ',' )) break;
+        record.push_back( tmpNumStr );
+        }
 
-// int main (){
-//     AVLTree<int>* node = new AVLTree<int>();
-//     node->insert(10);
-//     node->insert(5);
-//     node->insert(2);
-//     node->insert(3);
-//     node->insert(7);
-//     node->insert(1);
-//     node->traverse();
-//     return 0;
-// }
+        // THERE CAN BE MULTIPLE DELETIONS / INSERTIONS
+        // // Make sure that there are no repetitions
+        // for (int i = 0; i < record.size(); i++){
+        //     for (int j = i + 1; j < record.size(); j++){
+        //         if (record[i] == record[j])
+        //             return false;
+        //     }
+        // }
+
+        // Parse all string numbers as integers and add them to the tree
+        for (string numStr : record){
+            if (numStr.at(0) == 'd')
+                remove(stoi(numStr.substr(1)));
+            else
+                insert(stoi(numStr));
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+template <class T>
+void AVLTree<T>::setSequence(string sequence){
+    this->sequence = sequence;
+}
+
+template <class T>
+string AVLTree<T>::getSequence(){
+    return this->sequence;
+}
+
+template <class T>
+string AVLTree<T>::generateInorderSequence(){
+    string theSequence;
+    this->generateInorderSequence(this->root, theSequence);
+    return theSequence;
+}
+
+template <class T>
+vector<Step> AVLTree<T>::getSteps(){
+    return this->steps;
+}
+
+template <class T>
+int AVLTree<T>::getStepsNo(){
+    return this->steps.size();
+}
+
+template <class T>
+string AVLTree<T>::getStepText(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].text;
+    return "";
+}
+
+template <class T>
+string AVLTree<T>::getStepTreeStr(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].treeStr;
+    return "";
+}
+
+template <class T>
+string AVLTree<T>::getStepNote(int index){
+    if (index >= 0 && index < this->steps.size());
+        return this->steps[index].note;
+    return "";
+}
+
+template <class T>
+void AVLTree<T>::clearSteps(){
+    this->steps.clear();
+}
+
+template class AVLTree<int>;
+// template class AVLTree<string>;
+
+int main (){
+    AVLTree<int>* tree = new AVLTree<int>();
+    // tree->insert(10);
+    // cout << "1" << endl;
+    // tree->insert(5);
+    // cout << "2" << endl;
+    // tree->insert(2);
+    // cout << "3" << endl;
+    // tree->insert(3);
+    // cout << "4" << endl;
+    // tree->insert(7);
+    // cout << "5" << endl;
+    // tree->insert(1);
+    // cout << "6" << endl;
+
+    // tree->constructFromTreeString("{5}({2}({1},{3}),{10}({7},{}))");
+    tree->insertSequence("1,2,3,4,5,6,7,8,9");
+    cout << tree->traverse();
+    cout << "7" << endl;
+    cout << tree->toTreeString();
+    cout << "8" << endl;
+    return 0;
+}
