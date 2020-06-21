@@ -200,27 +200,27 @@ class CanvasContainer extends React.Component{
             );
         }
     }
-    
+
     render(){
         return  (
         <Container>
             <Container className="canvasContainer h-auto d-inline-block">
                 <br/>
-                <Row>
-                    <Col>
+                <Row xs={12} md={12} lg={12}>
+                    <Col xs={4} md={4} lg={4}>
                         <a  href='#' className='badge badge-warning' 
                             style={{'border-radius' : '100%'}} 
                             onClick={this.viewNewerTrees}>
                                 <div className='icon icon-back' ></div>
                         </a>
                     </Col>
-                    <Col className='d-none d-sm-block'> {/* Block from view on smalland medium devices*/}
+                    <Col className='d-none d-sm-block' xs={4} md={4} lg={4}> {/* Block from view on smalland medium devices*/}
                         <Switch color='default' value='canvacesperpage' 
                                 inputProps={{ 'aria-label': 'Switch A' }} 
                                 onChange={e=>{this.toggleTreesInView(e.target.checked)}} 
                         />
                     </Col>
-                    <Col>
+                    <Col xs={4} md={4} lg={4}>
                         <a  href='#' className='badge badge-warning' 
                             style={{'border-radius' : '100%'}} 
                             onClick={this.viewOlderTrees}>

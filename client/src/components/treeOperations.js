@@ -284,9 +284,11 @@ class TreeOperations extends React.Component{
                             placeholder="Describe a tree"
                             aria-label="Describe a tree"
                             aria-describedby="basic-addon2"
+                            operation='build'
+                            onKeyUp={(e) => { if (e.keyCode == 13) this.performOperation(e) }}
                             />
                             <InputGroup.Append>
-                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation} onKeyUp={this.performOperation}>Go</Button>
+                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>

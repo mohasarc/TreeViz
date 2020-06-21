@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col'
 import Canvasno from './canvasno'
 import Badge from 'react-bootstrap/Badge'
 import { withSnackbar } from 'notistack';
+import { Slider } from 'rsuite';
+import 'rsuite/dist/styles/rsuite-default.css';
 
 /**
  * The canvas component
@@ -22,6 +24,7 @@ class Canvas extends React.Component{
             tree : props.tree,
             myP5 : this.props.p5,
             updateTreeOperations : props.updateTreeOperations,
+            speed : 1500,
         }
 
         this.node = props.theNode;
@@ -45,7 +48,7 @@ class Canvas extends React.Component{
         window.addEventListener('touchmove', (e)=>{if(!this.disableScrolling){e.preventDefault()}}, false);
 
         this.setState({
-            height : this.state.tree.getHeight() + 40,
+            height : this.state.tree.getHeight() + 80,
         });
     }
 
@@ -53,7 +56,7 @@ class Canvas extends React.Component{
         if (this.state.canvasRef.current){
             var canvasWidth = this.state.canvasRef.current.offsetWidth;
             this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
-            this.setState({'height' : this.state.tree.getHeight() + 40});
+            this.setState({'height' : this.state.tree.getHeight() + 80});
         }
     }
 
@@ -155,7 +158,7 @@ class Canvas extends React.Component{
             this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
             this.state.tree.center();
             this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
-            this.setState({'height' : this.state.tree.getHeight() + 40});
+            this.setState({'height' : this.state.tree.getHeight() + 80});
 
             e.preventDefault();
         }
@@ -194,7 +197,7 @@ class Canvas extends React.Component{
                 this.stopSteps();
 
             if (++i < steps.length) {
-                setTimeout(loop.bind(this), delay * immediatly);  // call myself in 1 seconds time if required
+                setTimeout(loop.bind(this), this.state.speed * immediatly);  // call myself in 1 seconds time if required
             }
         }.bind(this))(); // above function expression is called immediately to start it off
 
@@ -216,6 +219,14 @@ class Canvas extends React.Component{
         }
         this.resize(); // in case original tree is larger
     }
+
+    handleSlider = (value) => {
+        // this.setState({speed : Number(e.target.value)});
+        console.log(value);
+        value = 3000 - ( value / 100 * 3000 );
+        this.state.speed = value;
+    }
+    
 
     render(){
         return  (
@@ -268,6 +279,11 @@ class Canvas extends React.Component{
                                 USE
                             </a>
                         </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Slider defaultValue={50} style={{'margin-bottom' : '0.5em', 'margin-top' : '0.5em'}} onChange={this.handleSlider}/>
                     </Col>
                 </Row>
                 <Row xs={1} md={1} lg={1} noGutters={true}>
