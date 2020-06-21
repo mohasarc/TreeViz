@@ -135,7 +135,8 @@ bool BTree<type>::getPrioritizeRotateLeft(){
 template <class type>
 string BTree<type>::toTreeString(){
     string output = "";
-    toTreeString(this->root, output);
+    if (this->root)
+        toTreeString(this->root, output);
 
     return output;
 }

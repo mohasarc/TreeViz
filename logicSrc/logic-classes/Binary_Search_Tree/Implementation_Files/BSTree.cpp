@@ -76,7 +76,9 @@ void BSTree<T>::setPrioritizePredecessor(bool prioritizePredecessor){
 template <class T>
 string BSTree<T>::toTreeString(){
     string treeStr = "";
-    this->toTreeString(this->root, treeStr);
+
+    if (this->root)
+        this->toTreeString(this->root, treeStr);
     return treeStr;
 }
 

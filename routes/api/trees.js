@@ -19,6 +19,7 @@ router.post('/performOperation', (req, res) => {
     var value = req.body.operation.value;
     var treeContent = req.body.treeContent;
     var targetTreeInfo = req.body.targetTreeInfo;
+    var status = '';
     console.log(req.body);
 
     // Create the tree
@@ -46,6 +47,7 @@ router.post('/performOperation', (req, res) => {
         break;
         
         default:
+            status = 'fail';
         break;
     }
 
@@ -81,7 +83,7 @@ router.post('/performOperation', (req, res) => {
 
         case 'remove':
             req.session.theTree.clearSteps();
-            req.session.theTree.remove(parseInt(value), 's');
+            req.session.theTree.remove(parseInt(value));
         break;
 
         // case 'build':
@@ -156,7 +158,8 @@ router.post('/performOperation', (req, res) => {
         'treeString' : req.session.theTree.toTreeString(),
         'treeSequence' : req.session.useSequence ? req.session.theTree.getSequence() : '',
         'preferences' : targetTreeInfo.preferences,
-        'steps' : steps
+        'steps' : steps,
+        'status' : status,
     }
 
     res.send(responseObj);

@@ -7,8 +7,8 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import axios from 'axios'
+import { withSnackbar } from 'notistack';
 import XRegExp from 'xregexp'
-
 import { unstable_batchedUpdates } from 'react-dom'
 
 class TreeOperations extends React.Component{
@@ -34,14 +34,21 @@ class TreeOperations extends React.Component{
         this.maxChanged = this.maxChanged.bind(this);
         this.numNodesChanged = this.numNodesChanged.bind(this);
         this.counter = 0;
+        this.usedLatest = '';
     }
 
-    performOperation = (e) => {
+    performOperation = (e, operationValue) => {
         // Local variables
         const emptiness = /^\s*$/;
+        var operation;
 
         // get the operation required
-        var operation = e.target.attributes.operation.value;
+        if (typeof e.target.attributes.operation != 'undefined')
+            operation = e.target.attributes.operation.value;
+        else 
+            operation = operationValue;
+
+        this.usedLatest = operation;
         var operationObj = {
             'treeContent' : {
                             'treeString' : this.state.trees.length > 0? this.state.trees[0].getTreeString() : '',
@@ -68,15 +75,25 @@ class TreeOperations extends React.Component{
             case 'insert':
                 operationObj.operation.type = 'insert';
 
-                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value))
+                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value)){
+                    if (emptiness.test(operationObj.operation.value))
+                        this.props.enqueueSnackbar(`Please enter a value first`, {variant: 'warning'});
+                    if (!Number.isInteger(+operationObj.operation.value))
+                        this.props.enqueueSnackbar(`The value should be integer`, {variant: 'error'});
                     return;
+                }
             break;
     
             case 'remove':
                 operationObj.operation.type = 'remove';
 
-                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value))
+                if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value)){
+                    if (emptiness.test(operationObj.operation.value))
+                        this.props.enqueueSnackbar(`Please enter a value first`, {variant: 'warning'});
+                    if (!Number.isInteger(+operationObj.operation.value))
+                        this.props.enqueueSnackbar(`The value should be integer`, {variant: 'error'});
                     return;
+                }
             break;
     
             case 'build':
@@ -103,6 +120,11 @@ class TreeOperations extends React.Component{
                 operationObj.treeContent.treeString = treeString;
                 operationObj.treeContent.treeSequence = treeSequence;
                 operationObj.operation.type = 'build';
+
+                if (emptiness.test(description)){
+                    this.props.enqueueSnackbar(`Please write a tree description first`, {variant: 'warning'});
+                    return;
+                }
             break;
     
             case 'buildRandom':
@@ -120,7 +142,35 @@ class TreeOperations extends React.Component{
                     !Number.isInteger(+operationObj.operation.preferences.range.min) ||
                     !Number.isInteger(+operationObj.operation.preferences.range.max) ||
                     !Number.isInteger(+operationObj.operation.preferences.numNodes)){
+                        if (emptiness.test(operationObj.operation.preferences.range.min))
+                            this.props.enqueueSnackbar(`Please specify the minimum value a key can get`, {variant: 'warning'});
+
+                        if (!Number.isInteger(+operationObj.operation.preferences.range.min))
+                            this.props.enqueueSnackbar(`The minimum value needs to be integer`, {variant: 'error'});
+
+                        if (emptiness.test(operationObj.operation.preferences.range.max))
+                            this.props.enqueueSnackbar(`Please specify the maximum value a key can get`, {variant: 'warning'});
+
+                        if (!Number.isInteger(+operationObj.operation.preferences.range.max))
+                            this.props.enqueueSnackbar(`The maximum value needs to be integer`, {variant: 'error'});
+
+                        if (emptiness.test(operationObj.operation.preferences.numNodes))
+                            this.props.enqueueSnackbar(`Please specify the number of nodes wanted`, {variant: 'warning'});
+
+                        if (!Number.isInteger(+operationObj.operation.preferences.numNodes))
+                            this.props.enqueueSnackbar(`The number of nodes needs to be integer`, {variant: 'error'});
+    
                         return;
+                    }
+
+                    if (operationObj.operation.preferences.range.max < operationObj.operation.preferences.range.min){
+                        this.props.enqueueSnackbar('The maximum value of the range cannot be less than the minimum', {variant: 'error'});
+                        return;
+                    }
+
+                    if (operationObj.operation.preferences.range.max - operationObj.operation.preferences.range.min + 1 < operationObj.operation.preferences.numNodes){
+                        this.props.enqueueSnackbar(`The range specified cannot fit ` + operationObj.operation.preferences.numNodes + ' keys.', {variant: 'info'});
+                        this.props.enqueueSnackbar('Therefore a tree of ' + (operationObj.operation.preferences.range.max - operationObj.operation.preferences.range.min + 1) + ' keys is created.', {variant: 'info'});
                     }
             break;
     
@@ -134,25 +184,33 @@ class TreeOperations extends React.Component{
                 var responseObj = response.data;
 
                 if (responseObj){
-                    // add the tree read into the trees array
-                    var tmpTree = new GenericTree();
-                    tmpTree.construct(responseObj.treeString);
-                    tmpTree.setTreeSequence(responseObj.treeSequence);
-                    tmpTree.setPreferences(responseObj.preferences);
-
-                    tmpTree.setTreeType(responseObj.type);
-                    tmpTree.setScale(1);
-                    if (this.state.trees.length == 0){
-                        tmpTree.setId(1);
+                    // If treeString is empty // tree is empty
+                    if (responseObj.treeString == ''){
+                        this.props.enqueueSnackbar('Tree is empty', {variant: 'error'});
                     } else {
-                        tmpTree.setId(this.state.trees[0].getId() + 1);
-                    }
-                    this.state.trees.unshift(tmpTree);
-                    tmpTree.setSteps(responseObj.steps);
+                        // create and add the tree read into the trees array
+                        var tmpTree = new GenericTree();
+                        tmpTree.construct(responseObj.treeString);
+                        tmpTree.setTreeSequence(responseObj.treeSequence);
 
-                    this.triggerUpdate();
+                        tmpTree.setPreferences(responseObj.preferences);
+                        tmpTree.setSteps(responseObj.steps);
+                        tmpTree.setTreeType(responseObj.type);
+                        tmpTree.setScale(1);
+
+                        // calculate the tree id and set it
+                        if (this.state.trees.length == 0){
+                            tmpTree.setId(1);
+                        } else {
+                            tmpTree.setId(this.state.trees[0].getId() + 1);
+                        }
+
+                        // Add the tree to trees aray
+                        this.state.trees.unshift(tmpTree);
+                        this.triggerUpdate();
+                    }
                 }
-            });
+            }).catch((error) => {this.props.enqueueSnackbar('Server error :' + error, {variant: 'error'})});
 
             this.isCalled = true;
         } else {
@@ -191,7 +249,17 @@ class TreeOperations extends React.Component{
             }
         });
     }
-    
+
+    handleInputEnter = (e) => {
+        e.preventDefault();
+        if (e.keyCode === 13){
+            if (this.usedLatest === 'insert'){
+                this.performOperation(e, 'insert')
+            } else if (this.usedLatest === 'remove') {
+                this.performOperation(e, 'remove');
+            }
+        }
+    }
 
     render(){
         return (
@@ -203,6 +271,7 @@ class TreeOperations extends React.Component{
                             placeholder="Enter a value"
                             aria-label="Enter a value"
                             aria-describedby="basic-addon2"
+                            onKeyUp={this.handleInputEnter}
                             />
                             <InputGroup.Append>
                             <Button operation='insert' variant="outline-secondary" onClick={this.performOperation}>+</Button>
@@ -217,7 +286,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Append>
-                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation}>Go</Button>
+                                <Button operation='build' variant="outline-secondary" onClick={this.performOperation} onKeyUp={this.performOperation}>Go</Button>
                             </InputGroup.Append>
                         </InputGroup>
                     </Col>
@@ -256,7 +325,7 @@ class TreeOperations extends React.Component{
                             aria-describedby="basic-addon2"
                             />
                             <InputGroup.Prepend>
-                                <Button operation='buildRandom' variant="outline-secondary" onClick={this.performOperation}>Create tree</Button>
+                                <Button operation='buildRandom' variant="outline-secondary" onClick={this.performOperation}>Generate</Button>
                             </InputGroup.Prepend>
                         </InputGroup>
                     </Col>
@@ -265,4 +334,4 @@ class TreeOperations extends React.Component{
     }
 }
 
-export default TreeOperations;
+export default withSnackbar(TreeOperations);
