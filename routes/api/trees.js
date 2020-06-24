@@ -3,6 +3,7 @@ const {AVLTree} = require('../../build/Release/AVLTree.node');
 const {Tree23} = require('../../build/Release/Tree23.node');
 const {BSTree} = require('../../build/Release/BSTree.node');
 const {BTree} = require('../../build/Release/BTree.node');
+const {Deelx} = require('../../build/Release/Deelx.node');
 const session = require('express-session');
 const express = require('express');
 const router = express.Router();
@@ -19,9 +20,11 @@ router.post('/performOperation', (req, res) => {
     var value = req.body.operation.value;
     var treeContent = req.body.treeContent;
     var targetTreeInfo = req.body.targetTreeInfo;
-    var status = '';
-    console.log(req.body);
-
+    var deelx = new Deelx();
+    req.session.status = '';
+    req.session.message = '';
+    req.session.isValidDescription = true;
+    
     // Create the tree
     switch (targetTreeInfo.type.value) {
         case 'BST':
@@ -47,119 +50,140 @@ router.post('/performOperation', (req, res) => {
         break;
         
         default:
-            status = 'fail';
+            req.session.status = 'fail';
         break;
     }
 
     // Populate tree
-    if (treeContent.treeSequence != ''){
-        req.session.theTree.insertSequence(treeContent.treeSequence);
-        req.session.useSequence = true;
-    }
-    else{
-        // If tree string has only one node with one value create tree + generate tree sequence
-
-        // If tree string has more than one node or a node with more than one value, DO NOT
-        // generate tree sequence and do not send back any tree sequence
-        var re = new RegExp("^{\\d+}$");
-        console.log('the test', re.test(treeContent.treeString));
-        if (re.test(treeContent.treeString)){
-            req.session.theTree.constructFromTreeString(treeContent.treeString);
-            var treeSequence = req.session.theTree.generateInorderSequence();
-            req.session.theTree.setSequence(treeSequence);
-            req.session.useSequence = true;
-        } else {
-            req.session.theTree.constructFromTreeString(treeContent.treeString);
-            req.session.useSequence = false;
+    if (operationType == 'insert' || operationType == 'remove' || operationType == 'build'){
+        if (treeContent.treeSequence != '' && typeof treeContent.treeSequence != 'undefined'){
+            if (deelx.isValidTreeSequence(treeContent.treeSequence)){
+                req.session.theTree.insertSequence(treeContent.treeSequence);
+                req.session.useSequence = true;
+                req.session.isValidDescription = true;
+            } else {
+                req.session.isValidDescription = false;
+            }
+        }
+        else{
+            if (deelx.isValidTreeString(treeContent.treeString)){
+                // If tree string has only one node with one value create tree + generate tree sequence
+    
+                // If tree string has more than one node or a node with more than one value, DO NOT
+                // generate tree sequence and do not send back any tree sequence
+                var re = new RegExp("^{\\d+}$");
+                console.log('the test', re.test(treeContent.treeString));
+                if (re.test(treeContent.treeString)){
+                    req.session.theTree.constructFromTreeString(treeContent.treeString);
+                    var treeSequence = req.session.theTree.generateInorderSequence();
+                    req.session.theTree.setSequence(treeSequence);
+                    req.session.useSequence = true;
+                } else {
+                    req.session.theTree.constructFromTreeString(treeContent.treeString);
+                    req.session.useSequence = false;
+                }
+    
+                req.session.isValidDescription = true;
+                req.session.message = 'Detected only tree string; cannot generate animation';
+                req.session.status = 'warning';
+            } else {
+                req.session.isValidDescription = false; 
+            }
         }
     }
 
     // Perform the operation
-    switch (operationType) {
-        case 'insert':
-            req.session.theTree.clearSteps();
-            req.session.theTree.insert(parseInt(value));
-        break;
-
-        case 'remove':
-            req.session.theTree.clearSteps();
-            req.session.theTree.remove(parseInt(value));
-        break;
-
-        // case 'build':
-
-        // break;
-
-        case 'buildRandom':
-            req.session.useSequence = true;
-
-            // utility function
-            function shuffle(o) {
-                for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-                return o;
-            };
-
-            // get values from request
-            var minRange = parseInt(operationPreferences.range.min);
-            var maxRange = parseInt(operationPreferences.range.max);
-            var numNodes = parseInt(operationPreferences.numNodes);
-
-            // Generate random numbers list
-            var numbers = [];
-            for (var i = minRange; i <= maxRange; i++){
-                numbers.push(i);
-            }
-            
-            // shuffle the list
-            var random = shuffle(numbers);
-
-            // insert random values into the tree
-            for (let i = 0; i < numNodes && i < random.length; i++)
-                req.session.theTree.insert(parseInt( random[i]));
-        break;
-
-        default:
+    if (req.session.isValidDescription){
+        switch (operationType) {
+            case 'insert':
+                req.session.theTree.clearSteps();
+                req.session.theTree.insert(parseInt(value));
             break;
-    }
-
-    // Send back the final product
-    // Special naming for B-trees
-    var treeName = targetTreeInfo.type.name;
-    if (targetTreeInfo.type.value == 'B-T'){
-        if (targetTreeInfo.preferences.order > 4)
-            treeName = targetTreeInfo.preferences.order + targetTreeInfo.type.name.substr(1);
-        else{
-            if (targetTreeInfo.preferences.order == 3)
-                treeName = '2-3 tree'
-            if (targetTreeInfo.preferences.order == 4)
-                treeName = '2-3-4 tree'
+    
+            case 'remove':
+                req.session.theTree.clearSteps();
+                req.session.theTree.remove(parseInt(value));
+            break;
+    
+            // case 'build':
+    
+            // break;
+    
+            case 'buildRandom':
+                req.session.useSequence = true;
+    
+                // utility function
+                function shuffle(o) {
+                    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+                    return o;
+                };
+    
+                // get values from request
+                var minRange = parseInt(operationPreferences.range.min);
+                var maxRange = parseInt(operationPreferences.range.max);
+                var numNodes = parseInt(operationPreferences.numNodes);
+    
+                // Generate random numbers list
+                var numbers = [];
+                for (var i = minRange; i <= maxRange; i++){
+                    numbers.push(i);
+                }
+                
+                // shuffle the list
+                var random = shuffle(numbers);
+    
+                // insert random values into the tree
+                for (let i = 0; i < numNodes && i < random.length; i++)
+                    req.session.theTree.insert(parseInt( random[i]));
+            break;
+    
+            default:
+                break;
         }
-    }
 
-    steps = [];
-    // Retrieving steps
-    for (var i = 0; i < req.session.theTree.getStepsNo(); i++){
+        // Send back the final product
+        // Special naming for B-trees
+        var treeName = targetTreeInfo.type.name;
+        if (targetTreeInfo.type.value == 'B-T'){
+            if (targetTreeInfo.preferences.order > 4)
+                treeName = targetTreeInfo.preferences.order + targetTreeInfo.type.name.substr(1);
+            else{
+                if (targetTreeInfo.preferences.order == 3)
+                    treeName = '2-3 tree'
+                if (targetTreeInfo.preferences.order == 4)
+                    treeName = '2-3-4 tree'
+            }
+        }
+
+        steps = [];
+        // Retrieving steps
+        for (var i = 0; i < req.session.theTree.getStepsNo(); i++){
+            steps.push({
+                'text' : req.session.theTree.getStepText(i),
+                'treeStr' : req.session.theTree.getStepTreeStr(i),
+                'note' : req.session.theTree.getStepNote(i),
+            });
+        }
+
+        // Add final result as a last step
         steps.push({
-            'text' : req.session.theTree.getStepText(i),
-            'treeStr' : req.session.theTree.getStepTreeStr(i),
-            'note' : req.session.theTree.getStepNote(i),
+            'text' : '',
+            'treeStr' : req.session.theTree.toTreeString(),
+            'note' : '',
         });
+    } else {
+        req.session.status = 'fail';
+        req.session.message = 'Not a valid tree description';
     }
-
-    // Add final result as a last step
-    steps.push({
-        'text' : '',
-        'treeStr' : req.session.theTree.toTreeString(),
-        'note' : '',
-    });
 
     var responseObj = {
         'type' : treeName,
-        'treeString' : req.session.theTree.toTreeString(),
+        'treeString' : req.session.isValidDescription ? req.session.theTree.toTreeString() : '',
         'treeSequence' : req.session.useSequence ? req.session.theTree.getSequence() : '',
         'preferences' : targetTreeInfo.preferences,
         'steps' : steps,
-        'status' : status,
+        'status' : req.session.status,
+        'message' : req.session.message,
     }
 
     res.send(responseObj);

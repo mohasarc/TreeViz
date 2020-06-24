@@ -185,9 +185,15 @@ class TreeOperations extends React.Component{
 
                 if (responseObj){
                     // If treeString is empty // tree is empty
-                    if (responseObj.treeString == ''){
+                    if (responseObj.status == 'fail'){
+                        this.props.enqueueSnackbar(responseObj.message, {variant: 'error'});
+                    } else if (responseObj.treeString == ''){
                         this.props.enqueueSnackbar('Tree is empty', {variant: 'error'});
                     } else {
+                        if (responseObj.status == 'warning'){
+                            this.props.enqueueSnackbar(responseObj.message, {variant: 'warning'});
+                        }
+                        
                         // create and add the tree read into the trees array
                         var tmpTree = new GenericTree();
                         tmpTree.construct(responseObj.treeString);
@@ -198,7 +204,7 @@ class TreeOperations extends React.Component{
                         tmpTree.setTreeType(responseObj.type);
                         tmpTree.setScale(1);
                         tmpTree.setNewlyAdded(true);
-                        
+
                         // calculate the tree id and set it
                         if (this.state.trees.length == 0){
                             tmpTree.setId(1);
