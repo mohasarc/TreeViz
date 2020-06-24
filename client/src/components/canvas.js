@@ -50,6 +50,12 @@ class Canvas extends React.Component{
         this.setState({
             height : this.state.tree.getHeight() + 80,
         });
+
+        // auto play steps
+        if (this.state.tree.isNewlyAdded()){
+            this.state.tree.setNewlyAdded(false);
+            this.playSteps();
+        }
     }
 
     resize = () => {
@@ -201,7 +207,8 @@ class Canvas extends React.Component{
             }
         }.bind(this))(); // above function expression is called immediately to start it off
 
-        e.preventDefault();
+        if (e)
+            e.preventDefault();
     }
 
     stopSteps = (e) => {

@@ -34,6 +34,7 @@ class GenericTree{
         this.centerY = 0;
 
         this.beingEnimated = false;
+        this.newlyAdded = false;
     }
 
     /**
@@ -508,6 +509,14 @@ class GenericTree{
 
     getCenterY(){
         return this.centerY;
+    }
+
+    setNewlyAdded(newlyAdded){
+        this.newlyAdded = newlyAdded;
+    }
+
+    isNewlyAdded(){
+        return this.newlyAdded;
     }
 }
 
