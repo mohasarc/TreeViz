@@ -77,7 +77,7 @@ void BTree<type>::remove(type key){
  * */
 template <class type>
 bool BTree<type>::find(type key){
-
+    return false;
 }
 
 /**

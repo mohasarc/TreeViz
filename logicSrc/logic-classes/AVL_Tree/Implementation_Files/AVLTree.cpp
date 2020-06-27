@@ -40,12 +40,12 @@ void AVLTree<T>::traverse(TreeNode<T>* root, string &outStr){
 
 template <class T>
 bool AVLTree<T>::search(T anItem){
-
+    return false;
 }
 
 template <class T>
 bool AVLTree<T>::search(TreeNode<T>* root, T anItem, TreeNode<T>* foundLocation){
-    
+    return false;
 }
 
 template <class T>
