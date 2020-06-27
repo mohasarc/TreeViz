@@ -186,14 +186,14 @@ class TreeOperations extends React.Component{
                 if (responseObj){
                     // If treeString is empty // tree is empty
                     if (responseObj.status == 'fail'){
-                        this.props.enqueueSnackbar(responseObj.message, {variant: 'error'});
+                        this.props.enqueueSnackbar(responseObj.message, {variant: 'error', 'horizontal': 'right', 'vertical': 'bottom'});
                     } else if (responseObj.treeString == ''){
-                        this.props.enqueueSnackbar('Tree is empty', {variant: 'error'});
+                        this.props.enqueueSnackbar('Tree is empty', {variant: 'error', 'horizontal': 'right', 'vertical': 'bottom'});
                     } else {
                         if (responseObj.status == 'warning'){
                             this.props.enqueueSnackbar(responseObj.message, {variant: 'warning'});
                         }
-                        
+
                         // create and add the tree read into the trees array
                         var tmpTree = new GenericTree();
                         tmpTree.construct(responseObj.treeString);
@@ -217,7 +217,7 @@ class TreeOperations extends React.Component{
                         this.triggerUpdate();
                     }
                 }
-            }).catch((error) => {this.props.enqueueSnackbar('Server error :' + error, {variant: 'error'})});
+            }).catch((error) => {this.props.enqueueSnackbar('Server error :' + error, {variant: 'error', anchorOrigin : { 'horizontal': 'center', 'vertical': 'bottom' }})});
 
             this.isCalled = true;
         } else {
