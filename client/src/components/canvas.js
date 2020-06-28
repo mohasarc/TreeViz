@@ -36,12 +36,16 @@ class Canvas extends React.Component{
     componentDidMount() {
         window.document.getElementById(this.state.canvasNo).appendChild(this.node);
         var canvasWidth = this.state.canvasRef.current.offsetWidth;
-        this.state.myP5.tree = this.state.tree; // put a reference to the tree into p5 object
+        // this.state.myP5.tree = this.state.tree; // put a reference to the tree into p5 object
+        this.state.myP5.setTree(this.state.tree);
         this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
 
-        this.state.tree.setCenterX(canvasWidth/2);
-        this.state.tree.setCenterY(40);
-        this.state.tree.center();
+        // this.state.tree.setCenterX(canvasWidth/2);
+        // this.state.tree.setCenterY(40);
+        // this.state.tree.center();
+
+        this.state.myP5.moveCamera(this.state.tree.tx ? this.state.tree.tx : canvasWidth/2, this.state.ty ? this.state.ty : 40);
+
 
         window.addEventListener("resize", this.resize);      
         window.addEventListener("orientationchange", ()=>{setTimeout(this.resize, 20)}, false);
@@ -91,12 +95,19 @@ class Canvas extends React.Component{
         if (this.mousePressed){
             // update initial values
             if (e.touches){
-                this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, 
-                                         e.changedTouches[0].clientY - this.initialY);
+                // this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, 
+                //                          e.changedTouches[0].clientY - this.initialY);
+                
+                this.state.myP5.moveCamera((e.clientX - this.initialX) * 0.5, (e.clientY - this.initialY) * 0.5);
+
                 this.initialX = e.touches[0].clientX;
                 this.initialY = e.touches[0].clientY;
             } else {
-                this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+                // this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+
+                this.state.myP5.moveCamera(e.clientX - this.initialX, e.clientY - this.initialY);
+
+
                 this.initialX = e.clientX;
                 this.initialY = e.clientY;
             }
@@ -126,11 +137,13 @@ class Canvas extends React.Component{
     }
 
     treeToCenter = (e) => {
-        this.state.tree.setCenterX(this.state.canvasRef.current.offsetWidth/2);
-        this.state.tree.setCenterY(40);
+        // this.state.tree.setCenterX(this.state.canvasRef.current.offsetWidth/2);
+        // this.state.tree.setCenterY(40);
+        // this.state.tree.center();
+        // this.resize();
+
+        this.state.myP5.moveCamera((this.state.canvasRef.current.offsetWidth/2) - this.state.myP5.tree.tx, 40 - this.state.myP5.tree.ty);
         this.state.tree.setScale(1);
-        this.state.tree.center();
-        this.resize();
         e.preventDefault();
     }
 
@@ -159,12 +172,15 @@ class Canvas extends React.Component{
         if (e.ctrlKey){
             let rect = this.state.canvasRef.current.getBoundingClientRect();
             var canvasWidth = this.state.canvasRef.current.offsetWidth;
-            this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - rect.left - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
+            // this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - rect.left - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
             // this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - rect.top - this.state.tree.getCenterY()) * e.deltaY * - 0.05);
-            this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
-            this.state.tree.center();
-            this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
-            this.setState({'height' : this.state.tree.getHeight() + 80});
+            // this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
+            // this.state.tree.center();
+            // this.state.myP5.windowResized(canvasWidth, this.state.tree.getHeight());
+
+
+            this.state.myP5.zoom(e.deltaY < 0 ? 1.05 : 0.95, e.clientX - rect.left, e.clientY - rect.top);
+            // this.setState({'height' : this.state.tree.getHeight() + 80});
 
             e.preventDefault();
         }

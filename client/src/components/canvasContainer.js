@@ -44,16 +44,26 @@ class CanvasContainer extends React.Component{
 
     Sketch = (p) => {
         p.tree = null;
+        p.curCameraX = 10;
+        p.curCameraY = 10;
+        p.curCameraZ = 0;
+        p.scaleValue = 1;
 
         p.setup = () => {
             var cnv = p.createCanvas(0, 0);
             cnv.style('visibility: visible');
+            // p.rectMode(p.CENTER);
         }
    
         p.draw = () => {
             p.background('#34495e');
             if (p.tree){
-                p.scale(p.tree.getScale());
+                // p.scale(p.tree.getScale());
+                // p.translate(p.curCameraX, p.curCameraY);
+                // p.scale(p.scaleValue);                
+                
+                p.translate(p.tree.tx, p.tree.ty);
+                p.scale(p.tree.scale);
                 p.tree.draw(p);
             }
         }
@@ -99,6 +109,32 @@ class CanvasContainer extends React.Component{
 
         p.redrawCanvas = () => {
             p.redraw();
+        }
+
+        p.moveCamera = (deltaX, deltaY) => {
+            // Update the current camera location
+            // p.curCameraX += deltaX;
+            // p.curCameraY += deltaY;       
+
+            p.tree.tx += deltaX;
+            p.tree.ty += deltaY;
+        }
+
+        p.zoom = (scale, mouseX, mouseY) => {
+            // p.scaleValue = scale;
+            console.log('mousex', mouseX, 'mousey', mouseY);
+            p.tree.scale = p.tree.scale * scale;
+            p.tree.tx = mouseX * (1-scale) + p.tree.tx * scale;
+            p.tree.ty = mouseY * (1-scale) + p.tree.ty * scale;
+        }
+
+        p.setTree = (tree) => {
+            p.tree = tree;
+            if (p.tree){
+                p.tree.scale = 1;
+                p.tree.tx = 0;
+                p.tree.ty = 0;
+            }
         }
     }
 

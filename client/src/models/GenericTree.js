@@ -35,6 +35,7 @@ class GenericTree{
 
         this.beingEnimated = false;
         this.newlyAdded = false;
+        
     }
 
     /**
@@ -166,19 +167,22 @@ class GenericTree{
      * @param {P5 object} p 
      */
     draw(p){
+        p.translate(this.tx * -1 / this.scale , this.ty * -1 / this.scale);
+        p.scale(1/this.scale);
+
         // Draw the note
-        if (this.note != ''){
+        if (this.note != ''){     
             var noteWidth = this.note.length * 8;
             var noteHeight = 25;
             var positionLeft = 25;
             var positionTop = 25;
             var textSize = 15;
 
-            noteWidth *= (1/this.scale);
-            noteHeight *= (1/this.scale);
-            positionLeft *= (1/this.scale);
-            positionTop *= (1/this.scale);
-            textSize *= (1/this.scale);
+            // noteWidth *= (1/this.scale);
+            // noteHeight *= (1/this.scale);
+            // positionLeft *= (1/this.scale);
+            // positionTop *= (1/this.scale);
+            // textSize *= (1/this.scale);
 
             // Draw circles
             p.rectMode(p.CENTER)
@@ -198,6 +202,9 @@ class GenericTree{
             // restore the default size for the rest of the drawing
             p.textSize(12);
         }
+
+        p.scale(this.scale);
+        p.translate(this.tx * 1/this.scale, this.ty * 1/this.scale);
 
         this.drawConnections(this.root, p, 0);
         this.drawNodes(this.root, p, 0);
