@@ -44,10 +44,6 @@ class CanvasContainer extends React.Component{
 
     Sketch = (p) => {
         p.tree = null;
-        p.curCameraX = 10;
-        p.curCameraY = 10;
-        p.curCameraZ = 0;
-        p.scaleValue = 1;
 
         p.setup = () => {
             var cnv = p.createCanvas(0, 0);
@@ -57,10 +53,6 @@ class CanvasContainer extends React.Component{
         p.draw = () => {
             p.background('#34495e');
             if (p.tree){
-                // p.scale(p.tree.getScale());
-                // p.translate(p.curCameraX, p.curCameraY);
-                // p.scale(p.scaleValue);                
-                
                 p.translate(p.tree.tx, p.tree.ty);
                 p.scale(p.tree.scale);
                 p.tree.draw(p);
@@ -100,8 +92,6 @@ class CanvasContainer extends React.Component{
         p.scaleValue = 1;
 
         p.windowResized = (width, height) => {
-            // if (p.tree)
-            //     p.tree.resize(p.tree.latestWidth, p.tree.latestCenterY);
             p.resizeCanvas(width, height);
             p.redraw();
         }
@@ -112,16 +102,11 @@ class CanvasContainer extends React.Component{
 
         p.moveCamera = (deltaX, deltaY) => {
             // Update the current camera location
-            // p.curCameraX += deltaX;
-            // p.curCameraY += deltaY;       
-
             p.tree.tx += deltaX;
             p.tree.ty += deltaY;
         }
 
         p.zoom = (scale, mouseX, mouseY) => {
-            // p.scaleValue = scale;
-            console.log('mousex', mouseX, 'mousey', mouseY);
             p.tree.scale = p.tree.scale * scale;
             p.tree.tx = mouseX * (1-scale) + p.tree.tx * scale;
             p.tree.ty = mouseY * (1-scale) + p.tree.ty * scale;

@@ -89,8 +89,6 @@ class Canvas extends React.Component{
 
     dragged = (e) => {
         e.preventDefault();
-        document.body.classList.add("no-sroll");
-
         if (this.mousePressed){
             // update initial values
             if (e.touches){

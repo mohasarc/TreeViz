@@ -18,6 +18,7 @@ class DetachedCanvas extends React.Component{
             speed : 1500,
         }
 
+        document.body.style.overflow = "hidden";
         this.node = document.createElement('div');
         this.myP5 = null;
     }
@@ -37,7 +38,8 @@ class DetachedCanvas extends React.Component{
         p.draw = () => {
             p.background('#34495e');
             if (p.tree){
-                p.scale(p.tree.getScale());
+                p.translate(p.tree.tx, p.tree.ty);
+                p.scale(p.tree.scale);
                 p.tree.draw(p);
             } else {
                 p.fill('FFFFF');
@@ -56,6 +58,27 @@ class DetachedCanvas extends React.Component{
                 p.redraw();
             }
         }
+
+        p.moveCamera = (deltaX, deltaY) => {
+            // Update the current camera location
+            p.tree.tx += deltaX;
+            p.tree.ty += deltaY;
+        }
+
+        p.zoom = (scale, mouseX, mouseY) => {
+            p.tree.scale = p.tree.scale * scale;
+            p.tree.tx = mouseX * (1-scale) + p.tree.tx * scale;
+            p.tree.ty = mouseY * (1-scale) + p.tree.ty * scale;
+        }
+
+        p.setTree = (tree) => {
+            p.tree = tree;
+            if (p.tree){
+                p.tree.scale = 1;
+                p.tree.tx = 0;
+                p.tree.ty = 0;
+            }
+        }
     }
 
     componentDidMount(){
@@ -63,25 +86,23 @@ class DetachedCanvas extends React.Component{
         window.document.getElementById(this.state.key).appendChild(this.node);
         window.addEventListener("resize", this.resize);
         this.myP5 = new p5(this.Sketch, this.node);
+
         this.myP5.windowResized(window.innerWidth - 5, window.innerHeight - 5);
     }
 
     recieveMessage = (e) => {
         if (e.data != ''){
             this.state.tree = new GenericTree();
-            this.state.tree.construct(e.data.tree.treeString);
             this.state.tree.setTreeType(e.data.tree.treeType);
             this.state.tree.setId(e.data.tree.id);
             this.state.tree.setScale(e.data.tree.scale);
             this.state.tree.setSteps(e.data.tree.steps);
+            this.state.tree.construct(e.data.tree.treeString);
 
-            this.myP5.tree = this.state.tree;
-
-            this.state.tree.setCenterX((window.innerWidth - 5) / 2);
-            this.state.tree.setCenterY(40);
-            this.state.tree.center();
+            this.myP5.setTree(this.state.tree);
 
             this.myP5.windowResized(window.innerWidth - 5, window.innerHeight - 5);
+            this.myP5.moveCamera((window.innerWidth - 5)/2, 50);
 
             this.setState((prevState)=>{
                 return {key : e.data}
@@ -113,12 +134,13 @@ class DetachedCanvas extends React.Component{
             if (this.mousePressed){
                 // update initial values
                 if (e.touches){
-                    this.state.tree.moveTree(e.changedTouches[0].clientX - this.initialX, 
-                                             e.changedTouches[0].clientY - this.initialY);
+                    this.myP5.moveCamera((e.touches[0].clientX - this.initialX) * 0.5, (e.touches[0].clientY - this.initialY) * 0.5);
+
                     this.initialX = e.touches[0].clientX;
                     this.initialY = e.touches[0].clientY;
                 } else {
-                    this.state.tree.moveTree(e.clientX - this.initialX, e.clientY - this.initialY);
+                    this.myP5.moveCamera((e.clientX - this.initialX) * 0.5, (e.clientY - this.initialY) * 0.5);
+
                     this.initialX = e.clientX;
                     this.initialY = e.clientY;
                 }
@@ -131,18 +153,15 @@ class DetachedCanvas extends React.Component{
         this.setState((prevState) => {
             return {'key' : !prevState.key};
         });
-        if (this.state.tree){
-            this.state.tree.center();
-        }
+        // if (this.state.tree){
+        //     this.state.tree.center();
+        // }
     }
 
     handleZoom = (e, value) => {
         if (this.state.tree){
             if (e.ctrlKey){
-                this.state.tree.setCenterX(this.state.tree.getCenterX() - (e.clientX - this.state.tree.getCenterX()) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
-                this.state.tree.setCenterY(this.state.tree.getCenterY() - (e.clientY - (window.innerHeight - 20) / 2) * e.deltaY * - 0.05 * (1/this.state.tree.scale));
-                this.state.tree.setScale(this.state.tree.getScale() - e.deltaY * 0.05 * this.state.tree.getScale());
-                this.state.tree.center();
+                this.myP5.zoom(e.deltaY < 0 ? 1.05 : 0.95, e.clientX, e.clientY);
             }
         }
 
@@ -151,10 +170,8 @@ class DetachedCanvas extends React.Component{
 
     treeToCenter = (e) => {
         if (this.state.tree){
-            this.state.tree.setCenterX((window.innerWidth - 5) / 2);
-            this.state.tree.setCenterY(40);
+            this.state.myP5.moveCamera((this.state.canvasRef.current.offsetWidth/2) - this.state.myP5.tree.tx, 50 - this.state.myP5.tree.ty);
             this.state.tree.setScale(1);
-            this.state.tree.center();
             e.preventDefault();
         }
     }
