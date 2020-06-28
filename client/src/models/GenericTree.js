@@ -36,6 +36,7 @@ class GenericTree{
         this.beingEnimated = false;
         this.newlyAdded = false;
         
+        this.scale = 1;
     }
 
     /**
@@ -101,6 +102,9 @@ class GenericTree{
         this.shapeTree(this.root, 1, properties);
         this.width = properties.spaceLeftBound;
         this.treeRightBound = this.width;
+
+        this.center();
+        // this.center();
     }
 
     /**

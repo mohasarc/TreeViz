@@ -52,7 +52,6 @@ class CanvasContainer extends React.Component{
         p.setup = () => {
             var cnv = p.createCanvas(0, 0);
             cnv.style('visibility: visible');
-            // p.rectMode(p.CENTER);
         }
    
         p.draw = () => {
