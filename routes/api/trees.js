@@ -181,7 +181,7 @@ router.post('/performOperation', (req, res) => {
         'treeString' : req.session.isValidDescription ? req.session.theTree.toTreeString() : '',
         'treeSequence' : req.session.useSequence ? req.session.theTree.getSequence() : '',
         'preferences' : targetTreeInfo.preferences,
-        'steps' : steps,
+        'steps' : typeof steps != 'undefined' ? steps : '',
         'status' : req.session.status,
         'message' : req.session.message,
     }
