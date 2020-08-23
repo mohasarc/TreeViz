@@ -547,7 +547,7 @@ void BSTree<T>::remove(TreeNode<T>* curNode, TreeNode<T>* parent, T anItem, bool
     }
 
     cout << "old height " << curNode->getHeight() << endl;
-    curNode->setHeight(max(lChildHeight, rChildHeight) + 1);
+    curNode->setHeight(findMax(lChildHeight, rChildHeight) + 1);
     cout << "new height " << curNode->getHeight() << endl;
 
     if (this->balanced){

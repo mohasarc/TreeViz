@@ -9,6 +9,8 @@
 
 using namespace std;
 
+#define findMax(a, b)  (((a) > (b)) ? (a) : (b))
+
 struct Step
 {
     string text;
