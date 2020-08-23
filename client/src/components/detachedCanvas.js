@@ -170,7 +170,7 @@ class DetachedCanvas extends React.Component{
 
     treeToCenter = (e) => {
         if (this.state.tree){
-            this.state.myP5.moveCamera((this.state.canvasRef.current.offsetWidth/2) - this.state.myP5.tree.tx, 50 - this.state.myP5.tree.ty);
+            this.myP5.moveCamera(((window.innerWidth - 5)/2) - this.state.tree.tx, 50 - this.state.tree.ty);
             this.state.tree.setScale(1);
             e.preventDefault();
         }
