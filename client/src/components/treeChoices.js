@@ -41,12 +41,12 @@ class TreeChoices extends React.Component{
         this.preferences = props.preferences;
         this.state = {key : 3};
         this.treeOptions = [
-            {'name' : 'Binary tree'   , 'value' : 'BST'},
-            {'name' : 'AVL tree'      , 'value' : 'AVL'},
-            {'name' : 'Red-Black tree', 'value' : 'RBT'},
-            {'name' : '2-3 tree'      , 'value' : '23T'},
-            {'name' : '2-3-4 tree'    , 'value' : '234'},
-            {'name' : 'B-tree'        , 'value' : 'B-T'},
+            {'name' : 'Binary tree'   , 'value' : 'BST', 'disabled' : false},
+            {'name' : 'AVL tree'      , 'value' : 'AVL', 'disabled' : false},
+            {'name' : 'Red-Black tree', 'value' : 'RBT', 'disabled' : true},
+            {'name' : '2-3 tree'      , 'value' : '23T', 'disabled' : false},
+            {'name' : '2-3-4 tree'    , 'value' : '234', 'disabled' : false},
+            {'name' : 'B-tree'        , 'value' : 'B-T', 'disabled' : false},
         ];
     }
 
@@ -68,6 +68,7 @@ class TreeChoices extends React.Component{
                             id="choose-tree-combo-box"
                             options={this.treeOptions}
                             getOptionLabel={(option) => option.name}
+                            getOptionDisabled={(option) => option.disabled}
                             style={{ height : 60 }}
                             onChange={this.updateChoice}
                             disableClearable={true}
