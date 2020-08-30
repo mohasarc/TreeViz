@@ -263,10 +263,10 @@ class Canvas extends React.Component{
                             <div className={!this.state.tree.beingEnimated?'play':'stop'} style={{'color' : '#FFFFFF'}}>.</div>
                             </a>
 
-                            {/* <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
+                            <a href='#' className='badge badge-light'  onClick={this.saveAsImage}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
                                 <div className='save' >.</div>
-                            </a> */}
+                            </a>
                             <a href='#' className='badge badge-light'  onClick={this.treeDetach}
                                style={{'margin-right':'0.2em', 'margin-bottom':'0.3em'}}>
                                 <div className='detach' style={{'color' : '#FFFFFF'}} >.</div>
