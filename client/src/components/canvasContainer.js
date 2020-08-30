@@ -227,7 +227,7 @@ class CanvasContainer extends React.Component{
             <Container className="canvasContainer h-auto d-inline-block">
                 <br/>
                 <Row xs={12} md={12} lg={12}>
-                    <Col xs={6} md={4} lg={4}>
+                    <Col xs={4} md={4} lg={4}>
                         <a  href='#' className='badge badge-warning' 
                             style={{'border-radius' : '100%'}} 
                             onClick={this.viewNewerTrees}>
@@ -240,7 +240,7 @@ class CanvasContainer extends React.Component{
                                 onChange={e=>{this.toggleTreesInView(e.target.checked)}} 
                         />
                     </Col>
-                    <Col xs={6} md={4} lg={4}>
+                    <Col xs={4} md={4} lg={4}>
                         <a  href='#' className='badge badge-warning' 
                             style={{'border-radius' : '100%'}} 
                             onClick={this.viewOlderTrees}>
