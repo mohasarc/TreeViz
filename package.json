@@ -2,7 +2,7 @@
   "name": "treeviz.tech",
   "version": "1.0.0",
   "engines": {
-    "node": "10.16.3"
+    "node": "12.18.2"
   },
   "description": "",
   "main": "server.js",
