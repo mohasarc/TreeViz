@@ -7,6 +7,7 @@ import { Slider } from 'rsuite';
 import 'rsuite/dist/styles/rsuite-default.css';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import {Helmet} from 'react-helmet'
 
 class DetachedCanvas extends React.Component{
     constructor(props){
@@ -248,6 +249,11 @@ class DetachedCanvas extends React.Component{
     render(){
         return (
             <div>
+                <Helmet>
+                    <title>Detached TreeViz</title>
+                    <meta name="description" content="This is a tree in full screen" />
+                </Helmet>
+
                 <div className='float-right' style={{height : 25, width : 100, 'position': 'absolute', 'top': '5px', 'right': '70px'}}>
                         <Slider defaultValue={50} tooltip={false} style={{'margin-bottom' : '0.5em', 'margin-top' : '0.5em'}} onChange={this.handleSlider}/>
                 </div>

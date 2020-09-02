@@ -3,6 +3,7 @@ import Header from './header';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import {Helmet} from 'react-helmet'
 
 class About extends React.Component{
     constructor(props){
@@ -21,6 +22,10 @@ class About extends React.Component{
     render(){
         return (
             <div>
+                <Helmet>
+                    <title>About TreeViz</title>
+                    <meta name="description" content="More information about TreeViz tool." />
+                </Helmet>
                 <Header/>
                 <Jumbotron>
                     <Row xs={12} md={12} lg={12}>

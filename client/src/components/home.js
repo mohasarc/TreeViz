@@ -7,6 +7,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Container from 'react-bootstrap/Container'
+import {Helmet} from 'react-helmet'
 
 class Home extends React.Component{
     constructor(props){
@@ -42,6 +43,10 @@ class Home extends React.Component{
     render(){
         return (
             <div>
+                <Helmet>
+                    <title>TreeViz</title>
+                    <meta name="description" content="The best tree data structure visualization tool" />
+                </Helmet>
                 <Header/>
                 <Jumbotron>
                     <Container>

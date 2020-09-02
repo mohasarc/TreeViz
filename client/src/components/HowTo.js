@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ReactMarkdown from 'react-markdown'
 import howTo from '../howTo.md'
+import {Helmet} from 'react-helmet'
 
 class HowTo extends React.Component{
     constructor(props){
@@ -29,7 +30,10 @@ class HowTo extends React.Component{
     render(){
         return (
             <div>
-
+                <Helmet>
+                    <title>How To TreeViz</title>
+                    <meta name="description" content="A guide on how to get the most out of TreeViz" />
+                </Helmet>
                 <Header/>
                 <Jumbotron>
                     {/*
