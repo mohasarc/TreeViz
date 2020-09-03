@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const trees = require('./routes/api/trees');
 const robots = require("express-robots-txt");
+const sitemap = require("./sitemap");
 const app = express();
 // body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -12,12 +13,14 @@ app.use(bodyParser.json());
 // redirecting api requests to items
 app.use('/api/trees', trees);
 
+app.use(sitemap);
+
 // Adding robots.txt
 app.use(
     robots({
       UserAgent: "*",
       Disallow: "",
-      Sitemap: "https://www.website.com/sitemap.xml"
+      Sitemap: "http://www.treeviz.xyz/sitemap.xml"
     })
 );
 
