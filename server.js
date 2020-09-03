@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const trees = require('./routes/api/trees');
+const robots = require("express-robots-txt");
 const app = express();
 // body-parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -10,6 +11,15 @@ app.use(bodyParser.json());
 
 // redirecting api requests to items
 app.use('/api/trees', trees);
+
+// Adding robots.txt
+app.use(
+    robots({
+      UserAgent: "*",
+      Disallow: "",
+      Sitemap: "https://www.website.com/sitemap.xml"
+    })
+);
 
 // serve static assets if in production
 if (process.env.NODE_ENV === 'production'){
