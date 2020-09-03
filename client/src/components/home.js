@@ -44,7 +44,7 @@ class Home extends React.Component{
         return (
             <div>
                 <Helmet>
-                    <title>TreeViz</title>
+                    <title>TreeViz - a tree data structures visualization tool</title>
                     <meta name="description" content="The best tree data structure visualization tool, TreeViz is used to visualize and convert multiple different types of trees including Binary, AVL, and B-tree" />
                 </Helmet>
                 <Header/>
