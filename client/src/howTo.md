@@ -4,6 +4,9 @@ and adding or removing values using + or - buttons, using tree string structure 
 particular tree then perform operations on it, and generating a random tree using random tree
 generator by pressing Generate button. Here are the steps needed to perform the most common operations:
 
+--------------------------
+##### Also checkout our youtube channel for half a minute tutorials [→](https://www.youtube.com/channel/UCK7IL7eG_Dmf0xCuL5gvotg)
+--------------------------
 ### Generating random tree
 - Choose a tree type 
 - Choose the range of numbers
