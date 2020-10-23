@@ -2,7 +2,11 @@ const expressSitemapXml = require("express-sitemap-xml");
 
 const staticURLs = [
   "", // don't forget the base route! 
-  "/fullTreeView",
+  "/2-3-tree",
+  "/2-3-4-tree",
+  "/binary-tree",
+  "/avl-tree",
+  "/b-tree",
   "/about",
   "/how-to",
 ];
