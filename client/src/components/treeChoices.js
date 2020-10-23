@@ -18,6 +18,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Grid from '@material-ui/core/Grid';
 import Container from 'react-bootstrap/Container';
+import history from "../utils/history";
 
 class ChoiceButton extends React.Component {
     constructor(props){
@@ -25,6 +26,8 @@ class ChoiceButton extends React.Component {
         this.name = props.name;
         this.id = props.id;
         this.value = props.value;
+        
+        
     }
 
     render(){
@@ -41,12 +44,12 @@ class TreeChoices extends React.Component{
         this.preferences = props.preferences;
         this.state = {key : 3};
         this.treeOptions = [
-            {'name' : 'Binary tree'   , 'value' : 'BST', 'disabled' : false},
-            {'name' : 'AVL tree'      , 'value' : 'AVL', 'disabled' : false},
-            {'name' : 'Red-Black tree', 'value' : 'RBT', 'disabled' : true},
-            {'name' : '2-3 tree'      , 'value' : '23T', 'disabled' : false},
-            {'name' : '2-3-4 tree'    , 'value' : '234', 'disabled' : false},
-            {'name' : 'B-tree'        , 'value' : 'B-T', 'disabled' : false},
+            {'name' : 'Binary tree'   , 'value' : 'BST', 'disabled' : false, 'path' : '/binary-tree'},
+            {'name' : 'AVL tree'      , 'value' : 'AVL', 'disabled' : false, 'path' : '/avl-tree'},
+            {'name' : 'Red-Black tree', 'value' : 'RBT', 'disabled' : true, 'path' : '/red-black-tree'},
+            {'name' : '2-3 tree'      , 'value' : '23T', 'disabled' : false, 'path' : '/2-3-tree'},
+            {'name' : '2-3-4 tree'    , 'value' : '234', 'disabled' : false, 'path' : '/2-3-4-tree'},
+            {'name' : 'B-tree'        , 'value' : 'B-T', 'disabled' : false, 'path' : '/b-tree'},
         ];
     }
 
@@ -67,6 +70,8 @@ class TreeChoices extends React.Component{
 
         this.preferences.type = type;
         this.setState({key : this.preferences.order});
+
+        history.push(type.path);
     }
 
     render(){

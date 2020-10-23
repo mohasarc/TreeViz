@@ -9,6 +9,7 @@ import { unstable_batchedUpdates } from 'react-dom';
 // import {Router, Route} from 'react-router';
 // import { createBrowserHistory } from 'history';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import history from "./utils/history";
 
 class App extends React.Component {
   constructor(props){
@@ -17,7 +18,7 @@ class App extends React.Component {
 
   render(){
     return (
-      <Router>
+      <Router history={history}>
         <div className="App">
           <Switch>
             <Route path={'/fullTreeView'} component={DetachedCanvas}/>
