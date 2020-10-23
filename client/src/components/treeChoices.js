@@ -51,12 +51,21 @@ class TreeChoices extends React.Component{
     }
 
     updateChoice(e){
-        var choiceIndex = parseInt(e.target.dataset.optionIndex);
-        if (this.treeOptions[choiceIndex].value == '234')
+        let theChoiceValue = e.target.value;
+
+        if (theChoiceValue == '234')
             this.preferences.order = 4;
-        if (this.treeOptions[choiceIndex].value == '23T')
+        if (theChoiceValue == '23T')
             this.preferences.order = 3;
-        this.preferences.type = this.treeOptions[choiceIndex];
+        
+        let type = {};
+        this.treeOptions.map(option => {
+            if (option.value == theChoiceValue){
+                type = option;
+            }
+        });
+
+        this.preferences.type = type;
         this.setState({key : this.preferences.order});
     }
 
@@ -64,17 +73,25 @@ class TreeChoices extends React.Component{
         return (
                 <Row xs={12} md={12} lg={12}>
                     <Col xs={6} md={12} lg={12} style={{ width: 190}}>
-                        <Autocomplete
-                            id="choose-tree-combo-box"
-                            options={this.treeOptions}
-                            getOptionLabel={(option) => option.name}
-                            getOptionDisabled={(option) => option.disabled}
-                            style={{ height : 60 }}
+                        <TextField
+                            id="choose-tree-box"
+                            select
+                            label="Choose a tree type"
+                            value={this.preferences.type.value}
                             onChange={this.updateChoice}
-                            disableClearable={true}
+                            SelectProps={{
+                                native: true,
+                            }}
                             fullWidth={true}
-                            renderInput={(params) => <TextField {...params} label="Choose a tree type" variant="outlined" />}
-                        />
+                            style={{ height : 60 }}
+                            variant="outlined"
+                            >
+                            {this.treeOptions.map((option) => (
+                                <option key={option.value} value={option.value} disabled={option.disabled}>
+                                {option.name}
+                                </option>
+                            ))}
+                        </TextField>
                     </Col>
                     <Col xs={6} md={12} lg={12}>
                         {/* <Grid container direction="row" justify="center" alignItems="center" spacing={0}> */}
