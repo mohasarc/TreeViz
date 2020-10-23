@@ -12,6 +12,8 @@ import {Helmet} from 'react-helmet'
 class Home extends React.Component{
     constructor(props){
         super(props);
+        this.title = props.title;
+        this.description = props.description;
         this.TreeOperationsRef = React.createRef();
         this.canvasContainerRef = React.createRef();
         this.trees = [];
@@ -19,8 +21,8 @@ class Home extends React.Component{
         this.treeChoice = [];
         this.treeChoice[0] = '23';
         this.preferences = {
-            'type' : {'name' : '2-3 tree'      , 'value' : '23T'},
-            'order' : 3,
+            'type' : {'name' : '2-3 tree'      , 'value' : props.initialTreeChoice},
+            'order' : props.order,
             'propagateSmallerValue' : false,
             'prioritizeInorderPredecessor' : false,
             'prioritizeRotateLeft' : false,
@@ -44,8 +46,8 @@ class Home extends React.Component{
         return (
             <div>
                 <Helmet>
-                    <title>TreeViz - a tree data structures visualization tool</title>
-                    <meta name="description" content="The best tree data structure visualization tool, TreeViz is used to visualize and convert multiple different types of trees including Binary, AVL, and B-tree" />
+                    <title>{this.title}</title>
+                    <meta name="description" content={this.description}/>
                 </Helmet>
                 <Header/>
                 <Jumbotron>
