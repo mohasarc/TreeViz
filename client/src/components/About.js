@@ -37,7 +37,7 @@ class About extends React.Component{
                     <br/>
                     <Row>
                         <Col md={{ span: 6, offset: 3 }} lg={{ span: 6, offset: 3 }} style={{"text-align":"left"}}>
-                        latest update: 23/10/2020
+                        latest update: 12/11/2020
                         </Col>
                     </Row>
                 </Jumbotron>

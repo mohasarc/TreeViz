@@ -73,7 +73,12 @@ class TreeOperations extends React.Component{
 
         switch (operation) {
             case 'insert':
-                operationObj.operation.type = 'insert';
+                if (operationObj.treeContent.treeSequence == '' && operationObj.treeContent.treeString == ''){
+                    operationObj.operation.type = 'build';
+                    operationObj.treeContent.treeSequence = operationObj.operation.value;
+                } else {
+                    operationObj.operation.type = 'insert';
+                }
 
                 if (emptiness.test(operationObj.operation.value) || !Number.isInteger(+operationObj.operation.value)){
                     if (emptiness.test(operationObj.operation.value))

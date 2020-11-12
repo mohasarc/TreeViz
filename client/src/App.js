@@ -4,7 +4,8 @@ import './App.css';
 import Home from './components/home';
 import About from './components/About';
 import HowTo from './components/HowTo';
-import DetachedCanvas from './components/detachedCanvas'
+import Contact from './components/contact';
+import DetachedCanvas from './components/detachedCanvas';
 import { unstable_batchedUpdates } from 'react-dom';
 // import {Router, Route} from 'react-router';
 // import { createBrowserHistory } from 'history';
@@ -24,6 +25,7 @@ class App extends React.Component {
             <Route path={'/fullTreeView'} component={DetachedCanvas}/>
             <Route path={'/about'} component={About}/>
             <Route path={'/how-to'} component={HowTo}/>
+            <Route path={'/contact'} component={Contact}/>
             <Route path={'/'} exact component={()=><Home initialTreeChoice={'23T'} 
                                                          order={3} 
                                                          title={'TreeViz - a tree data structures visualization tool'} 
