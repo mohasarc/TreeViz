@@ -6,7 +6,7 @@
 </p>   
 
 ## How to use TreeViz
-Head to [www.TreeViz.xyz](https://www.TreeViz.xyz). There are multiple different ways to create a 
+Head to [www.TreeViz.xyz](http://www.TreeViz.xyz). There are multiple different ways to create a 
 tree including: starting with and empty tree and adding or removing values using + or - buttons, 
 using tree string structure to describe a particular tree then perform operations on it, and generating 
 a random tree using random tree generator by pressing Generate button. Here are the steps needed to 
