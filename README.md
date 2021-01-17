@@ -1,8 +1,7 @@
-# TreeViz   
 <p align="center">
     <img width="255.5" height="231" src="./client/public/treeviz.png" alt="TreeViz logo"/>
 </p>
-
+<p align="center" font-size="40px"> TreeViz </p>
 The best tree data-structures visualization tool.   
 
 ## How to use TreeViz
