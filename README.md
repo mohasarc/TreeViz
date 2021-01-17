@@ -1,8 +1,9 @@
 <p align="center">
     <img width="255.5" height="231" src="./client/public/logo.png" alt="TreeViz logo"/>
 </p>
-
-The best tree data-structures visualization tool.   
+<p align="center" style="font-family:georgia,garamond,serif;font-size:16px;font-style:italic;">
+    The best tree data-structures visualization tool.
+</p>   
 
 ## How to use TreeViz
 There are multiple different ways to create a tree including: starting with and empty tree
