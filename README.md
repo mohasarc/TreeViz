@@ -2,14 +2,15 @@
     <img width="255.5" height="231" src="./client/public/logo.png" alt="TreeViz logo"/>
 </p>
 <p align="center" style="font-family:georgia,garamond,serif;font-size:16px;font-style:italic;">
-    The best tree data-structures visualization tool.
+    The best tree data-structures visualization tool
 </p>   
 
 ## How to use TreeViz
-There are multiple different ways to create a tree including: starting with and empty tree
-and adding or removing values using + or - buttons, using tree string structure to describe a
-particular tree then perform operations on it, and generating a random tree using random tree
-generator by pressing Generate button. Here are the steps needed to perform the most common operations:
+Head to [www.TreeViz.xyz](https://www.TreeViz.xyz). There are multiple different ways to create a 
+tree including: starting with and empty tree and adding or removing values using + or - buttons, 
+using tree string structure to describe a particular tree then perform operations on it, and generating 
+a random tree using random tree generator by pressing Generate button. Here are the steps needed to 
+perform the most common operations:
 
 --------------------------
 ##### Also checkout our youtube channel for half a minute tutorials [→](https://www.youtube.com/channel/UCK7IL7eG_Dmf0xCuL5gvotg)
